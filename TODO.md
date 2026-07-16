@@ -1,12 +1,12 @@
 # TODO
 
-Running task list, per the GDD workflow. Current milestone: **M3 done → M4 — Polish**.
+Running task list, per the GDD workflow. Current milestone: **M4 done → M5 — App Store launch**.
 
 ## Now
 
-- [ ] Play a full campaign on the simulator and tune the feel of the loop
-- [ ] Art batch 2: barista, human manager, meme wall (alive/KPI dashboard), pizza box, city backdrop for endings
-- [ ] M5 prep: App Store metadata, screenshots, privacy declarations (no data collected)
+- [ ] Play a full campaign on a real device and tune the feel of the loop
+- [ ] M5: App Store metadata, screenshots, privacy declarations (no data collected)
+- [ ] M5: signing setup (Apple Developer account, bundle ID registration, TestFlight)
 
 ## Later
 
@@ -29,3 +29,4 @@ Running task list, per the GDD workflow. Current milestone: **M3 done → M4 —
 - [x] M3: 7 data-driven endings (`endings.json`), first-match-wins + exhaustive coverage test; ending screen in UI (31 tests)
 - [x] M4: batch-1 pixel art integrated (backgrounds, characters, props, app icon) — sprites with nearest filtering, emoji fallback for missing art
 - [x] M4: synthesized 8-bit sound gags (7 effects, `tools/make_sfx.py`), squash-and-stretch on task resolution, scene shake + haptics on events
+- [x] M4: batch-2 art integrated — every event has a sprite now, no emoji fallbacks left in use
