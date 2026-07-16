@@ -20,6 +20,9 @@ final class OfficeScene: SKScene {
         var z: CGFloat = 1
         var animation: SKAction? = nil
         var isCast: Bool = false
+        /// Floor items anchor at their feet so depth scaling keeps them
+        /// standing on the ground; furniture/wall items stay centered.
+        var onFloor: Bool = false
     }
 
     private static let bob: SKAction = .repeatForever(.sequence([
@@ -64,13 +67,15 @@ final class OfficeScene: SKScene {
         rebuild()
     }
 
-    /// Squash-and-stretch on the cast when a task resolves.
+    /// Squash-and-stretch on the cast when a task resolves. Preserves the
+    /// horizontal flip of anyone currently walking the other way.
     func react() {
         for node in castNodes {
+            let sign: CGFloat = node.xScale < 0 ? -1 : 1
             node.run(.sequence([
-                .group([.scaleX(to: 1.25, duration: 0.08), .scaleY(to: 0.75, duration: 0.08)]),
-                .group([.scaleX(to: 0.9, duration: 0.1), .scaleY(to: 1.15, duration: 0.1)]),
-                .group([.scaleX(to: 1.0, duration: 0.12), .scaleY(to: 1.0, duration: 0.12)])
+                .group([.scaleX(to: 1.25 * sign, duration: 0.08), .scaleY(to: 0.75, duration: 0.08)]),
+                .group([.scaleX(to: 0.9 * sign, duration: 0.1), .scaleY(to: 1.15, duration: 0.1)]),
+                .group([.scaleX(to: 1.0 * sign, duration: 0.12), .scaleY(to: 1.0, duration: 0.12)])
             ]))
         }
     }
@@ -96,8 +101,14 @@ final class OfficeScene: SKScene {
             texture.filteringMode = .nearest
             let node = SKSpriteNode(texture: texture)
             node.size = CGSize(width: placement.size, height: placement.size)
+            if placement.onFloor {
+                node.anchorPoint = CGPoint(x: 0.5, y: 0)
+                // Lower on screen = closer to the camera.
+                node.zPosition = 3 - placement.y * 4
+            } else {
+                node.zPosition = placement.z
+            }
             node.position = CGPoint(x: size.width * placement.x, y: size.height * placement.y)
-            node.zPosition = placement.z
             if let animation = placement.animation {
                 node.run(animation)
             }
@@ -124,10 +135,35 @@ final class OfficeScene: SKScene {
         if active.contains("coworkers_bots") {
             cast = cast.map { $0.hasPrefix("worker") ? "robot_worker" : $0 }
         }
+        // Staggered depth: back row by the desks (higher, smaller), front
+        // row on the rug (lower, bigger). Bobs are desynced, and whoever
+        // holds the second spot strolls around a bit.
+        let spots: [(x: CGFloat, y: CGFloat, size: CGFloat)] = [
+            (0.13, 0.24, 46),
+            (0.34, 0.06, 62),
+            (0.58, 0.15, 54)
+        ]
         for (index, sprite) in cast.enumerated() {
+            let spot = spots[index % spots.count]
+            let idle: SKAction = .sequence([
+                .wait(forDuration: 0.18 * Double(index)),
+                .repeatForever(.sequence([
+                    .moveBy(x: 0, y: 5, duration: 0.42 + 0.07 * Double(index)),
+                    .moveBy(x: 0, y: -5, duration: 0.42 + 0.07 * Double(index))
+                ]))
+            ])
+            let stroll: SKAction? = index == 1 ? .repeatForever(.sequence([
+                .wait(forDuration: 2.5),
+                .scaleX(to: -1, duration: 0.12),
+                .moveBy(x: -50, y: 0, duration: 2.2),
+                .wait(forDuration: 1.2),
+                .scaleX(to: 1, duration: 0.12),
+                .moveBy(x: 50, y: 0, duration: 2.2)
+            ])) : nil
+            let animation: SKAction = stroll.map { .group([idle, $0]) } ?? idle
             items.append(Placement(
-                sprite: sprite, x: 0.14 + 0.20 * CGFloat(index), y: 0.15,
-                size: 58, animation: Self.bob.copy() as? SKAction, isCast: true
+                sprite: sprite, x: spot.x, y: spot.y, size: spot.size,
+                animation: animation, isCast: true, onFloor: true
             ))
         }
 
@@ -135,7 +171,7 @@ final class OfficeScene: SKScene {
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.74, y: 0.14, size: 46))
+        items.append(Placement(sprite: ficus, x: 0.78, y: 0.08, size: 50, onFloor: true))
         items.append(Placement(sprite: "printer", x: 0.90, y: 0.15, size: 48))
         if stage == .lively {
             items.append(Placement(sprite: "pizza_box", x: 0.60, y: 0.36, size: 34, z: 0.6))
@@ -146,13 +182,13 @@ final class OfficeScene: SKScene {
 
         // --- Event props, each in its own curated spot.
         if active.contains("robot_cleaner") {
-            items.append(Placement(sprite: "robot_cleaner", x: 0.22, y: 0.05, size: 38, z: 3, animation: Self.patrol.copy() as? SKAction))
+            items.append(Placement(sprite: "robot_cleaner", x: 0.22, y: 0.01, size: 38, animation: Self.patrol.copy() as? SKAction, onFloor: true))
         }
         if active.contains("layoff_gino") {
-            items.append(Placement(sprite: "mug_gino", x: 0.54, y: 0.16, size: 30, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "mug_gino", x: 0.58, y: 0.16, size: 28, animation: .repeatForever(.sequence([
                 .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
-            ]))))
+            ])), onFloor: true))
         }
         if active.contains("ai_coffee_machine") {
             items.append(Placement(sprite: "coffee_machine_ai", x: 0.06, y: 0.42, size: 44, z: 0.6, animation: .repeatForever(.sequence([
