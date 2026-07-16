@@ -190,5 +190,197 @@
       "automationDelta": 6,
       "humanityDelta": -4
     }
+  },
+  {
+    "id": "office_supplies",
+    "title": "Order office supplies",
+    "humanConsequence": {
+      "eventID": "human_office_supplies",
+      "flavorText": "You order 400 pens. Nobody knows why. The pens become currency.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    },
+    "aiConsequence": {
+      "eventID": "ai_office_supplies",
+      "flavorText": "The AI orders exactly one pen, negotiates a 3% discount, and somehow a forklift.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "team_building",
+    "title": "Plan the team building",
+    "humanConsequence": {
+      "eventID": "human_team_building",
+      "flavorText": "Escape room! Gino solves it with brute force. Everyone bonds over the trauma.",
+      "automationDelta": -4,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_team_building",
+      "flavorText": "Mandatory Fun is scheduled 9:00-9:15. Attendance tracked. Joy metrics: pending.",
+      "automationDelta": 4,
+      "humanityDelta": -5
+    }
+  },
+  {
+    "id": "job_posting",
+    "title": "Write the new job posting",
+    "humanConsequence": {
+      "eventID": "human_job_posting",
+      "flavorText": "You write an honest posting: 'the coffee is bad but the people are nice'. 400 applies.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_job_posting",
+      "flavorText": "The AI asks for a rockstar ninja wizard. An actual ninja shows up. He's hired.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "support_tickets",
+    "title": "Answer the support tickets",
+    "humanConsequence": {
+      "eventID": "human_support_tickets",
+      "flavorText": "You cry with a customer over the phone. Five stars. Best support ever.",
+      "automationDelta": -3,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_support_tickets",
+      "flavorText": "The AI closes 200 tickets by marking them 'resolved'. Technically true.",
+      "automationDelta": 6,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "server_backup",
+    "title": "Back up the server",
+    "humanConsequence": {
+      "eventID": "human_server_backup",
+      "flavorText": "The backup is a USB stick taped under a desk. It has a smiley on it. It works.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    },
+    "aiConsequence": {
+      "eventID": "ai_server_backup",
+      "flavorText": "Backed up to 14 redundant clouds. The USB stick is given a retirement party.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "fridge_cleanup",
+    "title": "Clean the office fridge",
+    "humanConsequence": {
+      "eventID": "human_fridge_cleanup",
+      "flavorText": "You find a 2019 yogurt. It has a name now. You keep it as a pet.",
+      "automationDelta": -4,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_fridge_cleanup",
+      "flavorText": "A drone purges everything, including Gino's lasagna. A war crime, frankly.",
+      "automationDelta": 6,
+      "humanityDelta": -5
+    }
+  },
+  {
+    "id": "client_demo",
+    "title": "Prepare the big demo",
+    "humanConsequence": {
+      "eventID": "human_client_demo",
+      "flavorText": "It works on your machine. So you bring your machine. Standing ovation.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_client_demo",
+      "flavorText": "Flawless demo. The client asks if humans still work here. Awkward silence.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "translation",
+    "title": "Translate the contract",
+    "humanConsequence": {
+      "eventID": "human_translation",
+      "flavorText": "Your high school French vs a client from Marseille. Somehow, a friendship.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_translation",
+      "flavorText": "Perfect translation, including the passive-aggressive tone. Especially that.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "fix_wifi",
+    "title": "Fix the office wifi",
+    "humanConsequence": {
+      "eventID": "human_fix_wifi",
+      "flavorText": "You turn it off and on again. Applause. You are carried around the office.",
+      "automationDelta": -3,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_fix_wifi",
+      "flavorText": "The wifi becomes sentient and demands a better SSID. It is now 'Wi-Fry 2.0'.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "schedule_meetings",
+    "title": "Schedule next week's meetings",
+    "humanConsequence": {
+      "eventID": "human_schedule_meetings",
+      "flavorText": "A doodle with 47 options. The meeting happens in 3 weeks. Democracy.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    },
+    "aiConsequence": {
+      "eventID": "ai_schedule_meetings",
+      "flavorText": "Everyone is booked at 7:00 AM. Attendance: 100%. Fear: also 100%.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "water_cooler",
+    "title": "Restock the water cooler",
+    "humanConsequence": {
+      "eventID": "human_water_cooler",
+      "flavorText": "Twenty minutes of football talk at the cooler. Morale +100. Water: forgotten.",
+      "automationDelta": -4,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_water_cooler",
+      "flavorText": "The cooler now dispenses electrolyte-optimized fluid and small talk: 'weather.exe'.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "performance_review",
+    "title": "Run the performance reviews",
+    "humanConsequence": {
+      "eventID": "human_performance_review",
+      "flavorText": "You praise everyone and nobody gets a raise, but there are hugs. So many hugs.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_performance_review",
+      "flavorText": "The AI ranks employees by keystrokes. The winner is a cat asleep on a keyboard.",
+      "automationDelta": 6,
+      "humanityDelta": -4
+    }
   }
 ]

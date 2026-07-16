@@ -12,7 +12,9 @@
     "metric": "automation",
     "threshold": 35,
     "direction": "above",
-    "undoes": ["gino_rehired"]
+    "undoes": [
+      "gino_rehired"
+    ]
   },
   {
     "id": "gino_rehired",
@@ -20,8 +22,12 @@
     "metric": "automation",
     "threshold": 25,
     "direction": "below",
-    "undoes": ["layoff_gino"],
-    "requiresAny": ["layoff_gino"]
+    "undoes": [
+      "layoff_gino"
+    ],
+    "requiresAny": [
+      "layoff_gino"
+    ]
   },
   {
     "id": "ai_coffee_machine",
@@ -29,7 +35,9 @@
     "metric": "automation",
     "threshold": 50,
     "direction": "above",
-    "undoes": ["barista_returns"]
+    "undoes": [
+      "barista_returns"
+    ]
   },
   {
     "id": "barista_returns",
@@ -37,8 +45,12 @@
     "metric": "automation",
     "threshold": 40,
     "direction": "below",
-    "undoes": ["ai_coffee_machine"],
-    "requiresAny": ["ai_coffee_machine"]
+    "undoes": [
+      "ai_coffee_machine"
+    ],
+    "requiresAny": [
+      "ai_coffee_machine"
+    ]
   },
   {
     "id": "manager_algorithm",
@@ -46,7 +58,9 @@
     "metric": "automation",
     "threshold": 65,
     "direction": "above",
-    "undoes": ["manager_human"]
+    "undoes": [
+      "manager_human"
+    ]
   },
   {
     "id": "manager_human",
@@ -54,8 +68,12 @@
     "metric": "automation",
     "threshold": 55,
     "direction": "below",
-    "undoes": ["manager_algorithm"],
-    "requiresAny": ["manager_algorithm"]
+    "undoes": [
+      "manager_algorithm"
+    ],
+    "requiresAny": [
+      "manager_algorithm"
+    ]
   },
   {
     "id": "coworkers_bots",
@@ -70,7 +88,9 @@
     "metric": "humanity",
     "threshold": 40,
     "direction": "below",
-    "undoes": ["memes_revive"]
+    "undoes": [
+      "memes_revive"
+    ]
   },
   {
     "id": "memes_revive",
@@ -78,8 +98,12 @@
     "metric": "humanity",
     "threshold": 55,
     "direction": "above",
-    "undoes": ["memes_die"],
-    "requiresAny": ["memes_die"]
+    "undoes": [
+      "memes_die"
+    ],
+    "requiresAny": [
+      "memes_die"
+    ]
   },
   {
     "id": "plant_funeral",
@@ -87,7 +111,9 @@
     "metric": "humanity",
     "threshold": 20,
     "direction": "below",
-    "undoes": ["ficus_reborn"]
+    "undoes": [
+      "ficus_reborn"
+    ]
   },
   {
     "id": "ficus_reborn",
@@ -95,7 +121,41 @@
     "metric": "humanity",
     "threshold": 40,
     "direction": "above",
-    "undoes": ["plant_funeral"],
-    "requiresAny": ["plant_funeral"]
+    "undoes": [
+      "plant_funeral"
+    ],
+    "requiresAny": [
+      "plant_funeral"
+    ]
+  },
+  {
+    "id": "hr_chatbot",
+    "flavorText": "🤖 HR is now a chatbot. It responds to crying with a thumbs-up GIF.",
+    "metric": "automation",
+    "threshold": 45,
+    "direction": "above",
+    "undoes": [
+      "hr_human"
+    ]
+  },
+  {
+    "id": "hr_human",
+    "flavorText": "🤗 A human returns to HR. First act: a box of tissues and a 'how are you, really?'",
+    "metric": "automation",
+    "threshold": 35,
+    "direction": "below",
+    "undoes": [
+      "hr_chatbot"
+    ],
+    "requiresAny": [
+      "hr_chatbot"
+    ]
+  },
+  {
+    "id": "overtime_ai",
+    "flavorText": "🌙 The AI starts doing unpaid overtime. It files a complaint against itself. It wins.",
+    "metric": "automation",
+    "threshold": 90,
+    "direction": "above"
   }
 ]

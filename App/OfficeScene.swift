@@ -10,6 +10,10 @@ final class OfficeScene: SKScene {
     private var stage: OfficeStage = .lively
     private var eventIDs: [String] = []
     private var castNodes: [SKNode] = []
+    private var daylight: SKSpriteNode?
+    private var daylightProgress: Double = 0
+    /// Deterministic counter to vary emotes and paper spawn points.
+    private var tick = 0
 
     private struct Placement {
         let sprite: String
@@ -82,6 +86,37 @@ final class OfficeScene: SKScene {
         }
     }
 
+    /// Emotes pop above the cast's heads when the player picks a side.
+    func emote(for choice: WorkChoice) {
+        let symbols = choice == .human ? ["❤️", "😄", "💪", "🍕"] : ["⚡️", "😨", "📉", "🫠"]
+        for (index, member) in castNodes.enumerated() where index < 2 {
+            let label = SKLabelNode(text: symbols[(tick + index) % symbols.count])
+            label.fontSize = 24
+            label.position = CGPoint(
+                x: member.position.x,
+                y: member.position.y + member.frame.height + 10
+            )
+            label.zPosition = 8
+            addChild(label)
+            label.run(.sequence([
+                .wait(forDuration: 0.12 * Double(index)),
+                .group([
+                    .moveBy(x: 0, y: 26, duration: 0.7),
+                    .sequence([.wait(forDuration: 0.45), .fadeOut(withDuration: 0.25)])
+                ]),
+                .removeFromParent()
+            ]))
+        }
+        tick += 1
+    }
+
+    /// Warms the light as the workday progresses (0 = morning, 1 = sunset).
+    func setDaylight(progress: Double) {
+        daylightProgress = progress
+        daylight?.color = SKColor(red: 0.95, green: 0.45, blue: 0.15, alpha: 1)
+        daylight?.alpha = 0.22 * progress
+    }
+
     /// Quick horizontal shake when an office event fires.
     func shake() {
         for child in children {
@@ -97,6 +132,8 @@ final class OfficeScene: SKScene {
         removeAllChildren()
         castNodes = []
         addBackground()
+        addDaylight()
+        startPaperDrift()
 
         for placement in composition() {
             let texture = SKTexture(imageNamed: placement.sprite)
@@ -154,15 +191,35 @@ final class OfficeScene: SKScene {
                     .moveBy(x: 0, y: -5, duration: 0.42 + 0.07 * Double(index))
                 ]))
             ])
-            let stroll: SKAction? = index == 1 ? .repeatForever(.sequence([
-                .wait(forDuration: 2.5),
-                .scaleX(to: -1, duration: 0.12),
-                .moveBy(x: -50, y: 0, duration: 2.2),
-                .wait(forDuration: 1.2),
-                .scaleX(to: 1, duration: 0.12),
-                .moveBy(x: 50, y: 0, duration: 2.2)
-            ])) : nil
-            let animation: SKAction = stroll.map { .group([idle, $0]) } ?? idle
+            // Everyone wanders, each with their own route and pace.
+            let routes: [SKAction] = [
+                .repeatForever(.sequence([
+                    .wait(forDuration: 4.5),
+                    .moveBy(x: 28, y: 0, duration: 1.8),
+                    .wait(forDuration: 2.0),
+                    .scaleX(to: -1, duration: 0.12),
+                    .moveBy(x: -28, y: 0, duration: 1.8),
+                    .scaleX(to: 1, duration: 0.12)
+                ])),
+                .repeatForever(.sequence([
+                    .wait(forDuration: 2.5),
+                    .scaleX(to: -1, duration: 0.12),
+                    .moveBy(x: -50, y: 0, duration: 2.2),
+                    .wait(forDuration: 1.2),
+                    .scaleX(to: 1, duration: 0.12),
+                    .moveBy(x: 50, y: 0, duration: 2.2)
+                ])),
+                .repeatForever(.sequence([
+                    .wait(forDuration: 3.4),
+                    .moveBy(x: 34, y: -8, duration: 2.0),
+                    .wait(forDuration: 2.6),
+                    .scaleX(to: -1, duration: 0.12),
+                    .moveBy(x: -34, y: 8, duration: 2.0),
+                    .scaleX(to: 1, duration: 0.12),
+                    .wait(forDuration: 1.0)
+                ]))
+            ]
+            let animation: SKAction = .group([idle, routes[index % routes.count]])
             items.append(Placement(
                 sprite: sprite, x: spot.x, y: spot.y, size: spot.size,
                 animation: animation, isCast: true, onFloor: true
@@ -218,6 +275,47 @@ final class OfficeScene: SKScene {
             ]))))
         }
         return items
+    }
+
+    private func addDaylight() {
+        let overlay = SKSpriteNode(color: .clear, size: size)
+        overlay.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        overlay.zPosition = 7
+        overlay.blendMode = .alpha
+        addChild(overlay)
+        daylight = overlay
+        setDaylight(progress: daylightProgress)
+    }
+
+    /// Every few seconds a sheet of paper flutters down near the desks.
+    private func startPaperDrift() {
+        removeAction(forKey: "papers")
+        run(.repeatForever(.sequence([
+            .wait(forDuration: 6),
+            .run { [weak self] in self?.dropPaper() }
+        ])), withKey: "papers")
+    }
+
+    private func dropPaper() {
+        tick += 1
+        let paper = SKLabelNode(text: "📄")
+        paper.fontSize = 14
+        let x = size.width * (0.2 + 0.15 * CGFloat(tick % 5))
+        paper.position = CGPoint(x: x, y: size.height * 0.5)
+        paper.zPosition = 4
+        addChild(paper)
+        paper.run(.sequence([
+            .group([
+                .moveBy(x: 0, y: -size.height * 0.34, duration: 2.6),
+                .repeat(.sequence([
+                    .moveBy(x: 12, y: 0, duration: 0.65),
+                    .moveBy(x: -12, y: 0, duration: 0.65)
+                ]), count: 2),
+                .rotate(byAngle: 0.5, duration: 2.6)
+            ]),
+            .fadeOut(withDuration: 0.4),
+            .removeFromParent()
+        ]))
     }
 
     private func addBackground() {

@@ -39,8 +39,10 @@ struct GameView: View {
         }
         .onAppear {
             syncScene()
+            syncDaylight()
             showDayStamp(model.day)
         }
+        .onChange(of: model.currentTaskIndex) { syncDaylight() }
         .onChange(of: model.phase) { _, phase in
             switch phase {
             case .workday:
@@ -61,6 +63,12 @@ struct GameView: View {
         scene.update(stage: model.office.stage, eventIDs: model.triggeredEventIDs)
     }
 
+    /// Morning light at the first task, sunset by the last.
+    private func syncDaylight() {
+        let total = max(model.todaysTasks.count - 1, 1)
+        scene.setDaylight(progress: Double(min(model.currentTaskIndex, total)) / Double(total))
+    }
+
     private func showDayStamp(_ day: Int) {
         withAnimation(.spring(duration: 0.4)) { dayStamp = day }
         Task {
@@ -74,6 +82,7 @@ struct GameView: View {
         SoundPlayer.shared.play(choice == .human ? .human : .ai)
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         scene.react()
+        scene.emote(for: choice)
         if let events = model.lastResolution?.events, !events.isEmpty {
             let isComeback = events.contains { !$0.requiresAny.isEmpty }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -146,11 +155,7 @@ struct GameView: View {
                 Text(header)
                     .font(Pixel.font(11))
                     .foregroundStyle(Pixel.creamDim)
-                Text(text)
-                    .font(Pixel.font(16))
-                    .foregroundStyle(Pixel.cream)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
+                TypewriterText(text: text, font: Pixel.font(16), color: Pixel.cream)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(14)

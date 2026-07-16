@@ -52,7 +52,8 @@ struct PixelButtonStyle: ButtonStyle {
     }
 }
 
-/// Ten-block retro meter for a 0...100 score.
+/// Ten-block retro meter for a 0...100 score. Blocks light up one after
+/// the other and the number ticks when the value changes.
 struct PixelMeter: View {
     let icon: String
     let value: Int
@@ -64,8 +65,13 @@ struct PixelMeter: View {
             HStack(spacing: 2) {
                 ForEach(0..<10, id: \.self) { block in
                     Rectangle()
-                        .fill(block < (value + 5) / 10 ? color : Pixel.bg)
+                        .fill(color)
+                        .opacity(block < (value + 5) / 10 ? 1 : 0.13)
                         .frame(width: 8, height: 13)
+                        .animation(
+                            .easeOut(duration: 0.25).delay(0.05 * Double(block)),
+                            value: value
+                        )
                 }
             }
             .padding(3)
@@ -74,7 +80,36 @@ struct PixelMeter: View {
             Text("\(value)")
                 .font(Pixel.font(12))
                 .foregroundStyle(Pixel.cream)
+                .contentTransition(.numericText(value: Double(value)))
+                .animation(.easeOut(duration: 0.4), value: value)
                 .frame(width: 34, alignment: .leading)
+        }
+    }
+}
+
+/// Reveals its text one character at a time, reserving full layout space
+/// so nothing jumps around while it types.
+struct TypewriterText: View {
+    let text: String
+    let font: Font
+    let color: Color
+    @State private var shown = 0
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            Text(text).opacity(0)
+            Text(String(text.prefix(shown)))
+        }
+        .font(font)
+        .foregroundStyle(color)
+        .multilineTextAlignment(.leading)
+        .fixedSize(horizontal: false, vertical: true)
+        .task(id: text) {
+            shown = 0
+            while shown < text.count {
+                try? await Task.sleep(for: .milliseconds(13))
+                shown += 1
+            }
         }
     }
 }
