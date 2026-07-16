@@ -4,12 +4,9 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 
 ## Now
 
-- [ ] Create the Xcode project (iOS app, Swift/SwiftUI/SpriteKit)
-- [ ] Define the core data model: `GameDay`, `Task`, `Choice` (Human/AI), `OfficeState`
-- [ ] Data-driven task/event definitions (JSON or Swift resource)
-- [ ] Basic day loop: present 3–5 tasks → choose Human/AI → show consequence → end day
-- [ ] Minimal office scene in SpriteKit with one visible transformation
-- [ ] Local save/load of game state
+- [ ] Run the prototype on a simulator/device and tune the feel of the loop
+- [ ] Balance consequence deltas (a full-AI run should reach `automated` before the campaign ends)
+- [ ] First real pixel-art sprite to replace one emoji placeholder
 
 ## Next (M2 — Office evolution)
 
@@ -27,3 +24,8 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 
 - [x] GDD v0.1
 - [x] GitHub repository setup
+- [x] `MyBossCore` Swift package: `OfficeTask`, `Consequence`, `OfficeState`, `GameEngine`, `TaskCatalog` (15 tests, TDD)
+- [x] Data-driven task content (`tasks.json`, 12 tasks with gags)
+- [x] Xcode project via XcodeGen (SwiftUI app + SpriteKit placeholder office scene)
+- [x] Playable day loop: 3–5 tasks → Human/AI → consequence gag → day summary → campaign end
+- [x] Local save/load (`save.json` in Documents, resume on launch)

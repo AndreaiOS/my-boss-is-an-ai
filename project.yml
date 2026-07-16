@@ -1,0 +1,25 @@
+name: MyBossIsAnAI
+options:
+  bundleIdPrefix: com.andreaios
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  MyBossCore:
+    path: MyBossCore
+targets:
+  MyBossIsAnAI:
+    type: application
+    platform: iOS
+    sources: [App]
+    dependencies:
+      - package: MyBossCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.andreaios.mybossisanai
+        MARKETING_VERSION: 0.1.0
+        CURRENT_PROJECT_VERSION: 1
+        TARGETED_DEVICE_FAMILY: 1
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        SWIFT_VERSION: 6.0

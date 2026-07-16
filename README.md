@@ -35,6 +35,19 @@ Delegate everything to AI and colleagues get laid off, a robot cleaner shows up,
 | M4 | Polish: animations & sounds |
 | M5 | App Store launch |
 
+## Development
+
+```bash
+# Run the core game-logic tests
+cd MyBossCore && swift test
+
+# Generate the Xcode project (requires `brew install xcodegen`)
+xcodegen generate
+open MyBossIsAnAI.xcodeproj
+```
+
+The repo has two layers: `MyBossCore/` (pure Swift package — models, game engine, data-driven task content, fully tested) and `App/` (SwiftUI + SpriteKit shell). The `.xcodeproj` is generated and not committed.
+
 ## Documents
 
 - [Game Design Document v0.1](My_Boss_Is_an_AI_GDD_v0.1.pdf)

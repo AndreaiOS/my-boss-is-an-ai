@@ -1,4 +1,5 @@
-# Xcode
+# Xcode (project is generated via `xcodegen generate`)
+MyBossIsAnAI.xcodeproj/
 build/
 DerivedData/
 *.xcuserstate

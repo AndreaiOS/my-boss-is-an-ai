@@ -1,0 +1,194 @@
+[
+  {
+    "id": "reply_emails",
+    "title": "Reply to 47 unread emails",
+    "humanConsequence": {
+      "eventID": "human_emails",
+      "flavorText": "You typed 'Best regards' 47 times. Your soul briefly left your body.",
+      "automationDelta": -5,
+      "humanityDelta": 6
+    },
+    "aiConsequence": {
+      "eventID": "ai_emails",
+      "flavorText": "The AI replied to everyone. Including your mom. And your ex.",
+      "automationDelta": 10,
+      "humanityDelta": -5
+    }
+  },
+  {
+    "id": "quarterly_report",
+    "title": "Write the quarterly report",
+    "humanConsequence": {
+      "eventID": "human_report",
+      "flavorText": "You wrote 30 pages. Nobody will read page 2. You know this.",
+      "automationDelta": -6,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_report",
+      "flavorText": "The AI generated 200 pages with graphs. The boss frames one and hangs it.",
+      "automationDelta": 12,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "coffee_run",
+    "title": "Do the coffee run",
+    "humanConsequence": {
+      "eventID": "human_coffee",
+      "flavorText": "You memorized 9 orders. You got 8 wrong. Everyone loves you anyway.",
+      "automationDelta": -8,
+      "humanityDelta": 8
+    },
+    "aiConsequence": {
+      "eventID": "ai_coffee_machine",
+      "flavorText": "A sentient coffee machine arrives. It judges your caffeine intake. Loudly.",
+      "automationDelta": 14,
+      "humanityDelta": -7
+    }
+  },
+  {
+    "id": "fix_printer",
+    "title": "Fix the printer (again)",
+    "humanConsequence": {
+      "eventID": "human_printer",
+      "flavorText": "You hit it. It works. You are now the office wizard.",
+      "automationDelta": -7,
+      "humanityDelta": 7
+    },
+    "aiConsequence": {
+      "eventID": "ai_printer",
+      "flavorText": "The AI declares the printer obsolete. The printer prints one final tear.",
+      "automationDelta": 11,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "team_meeting",
+    "title": "Run the Monday stand-up",
+    "humanConsequence": {
+      "eventID": "human_meeting",
+      "flavorText": "The meeting runs 40 minutes over. But Gino's weekend story was worth it.",
+      "automationDelta": -6,
+      "humanityDelta": 8
+    },
+    "aiConsequence": {
+      "eventID": "ai_meeting",
+      "flavorText": "The AI condenses the meeting to a 12-second voice note. Efficiency: 100%. Gossip: 0%.",
+      "automationDelta": 10,
+      "humanityDelta": -8
+    }
+  },
+  {
+    "id": "birthday_card",
+    "title": "Sign Karen's birthday card",
+    "humanConsequence": {
+      "eventID": "human_birthday",
+      "flavorText": "You draw a little cake. Karen cries. Happy tears. Probably.",
+      "automationDelta": -9,
+      "humanityDelta": 10
+    },
+    "aiConsequence": {
+      "eventID": "ai_birthday",
+      "flavorText": "The AI writes a heartfelt message referencing memories you never had with Karen.",
+      "automationDelta": 8,
+      "humanityDelta": -9
+    }
+  },
+  {
+    "id": "excel_cleanup",
+    "title": "Clean up THE spreadsheet",
+    "humanConsequence": {
+      "eventID": "human_excel",
+      "flavorText": "Four hours in, you find a cell that just says 'lasagna'. You leave it. Respect.",
+      "automationDelta": -4,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_excel",
+      "flavorText": "The AI fixes everything in 2 seconds, then quietly deletes 'lasagna'. Monster.",
+      "automationDelta": 12,
+      "humanityDelta": -5
+    }
+  },
+  {
+    "id": "client_call",
+    "title": "Call the angry client",
+    "humanConsequence": {
+      "eventID": "human_client",
+      "flavorText": "You apologize 14 times. The client invites you to their kid's baptism.",
+      "automationDelta": -7,
+      "humanityDelta": 9
+    },
+    "aiConsequence": {
+      "eventID": "ai_client",
+      "flavorText": "The AI's soothing voice calms the client into a nap. Mid-sentence.",
+      "automationDelta": 11,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "water_plants",
+    "title": "Water the office plants",
+    "humanConsequence": {
+      "eventID": "human_plants",
+      "flavorText": "You talk to the ficus. The ficus thrives. HR watches with concern.",
+      "automationDelta": -8,
+      "humanityDelta": 7
+    },
+    "aiConsequence": {
+      "eventID": "ai_plants",
+      "flavorText": "A drone mists the plants on schedule. The ficus misses your voice.",
+      "automationDelta": 12,
+      "humanityDelta": -7
+    }
+  },
+  {
+    "id": "onboarding_intern",
+    "title": "Onboard the new intern",
+    "humanConsequence": {
+      "eventID": "human_intern",
+      "flavorText": "You teach the intern the sacred rule: never touch Gino's mug. They nod solemnly.",
+      "automationDelta": -6,
+      "humanityDelta": 9
+    },
+    "aiConsequence": {
+      "eventID": "ai_intern",
+      "flavorText": "The AI onboards the intern via 74 mandatory videos. The intern ages visibly.",
+      "automationDelta": 10,
+      "humanityDelta": -8
+    }
+  },
+  {
+    "id": "expense_reports",
+    "title": "File the expense reports",
+    "humanConsequence": {
+      "eventID": "human_expenses",
+      "flavorText": "You lose three receipts and gain one existential crisis. Standard procedure.",
+      "automationDelta": -4,
+      "humanityDelta": 3
+    },
+    "aiConsequence": {
+      "eventID": "ai_expenses",
+      "flavorText": "The AI flags your 'team lunch' as suspiciously fun. Audit pending.",
+      "automationDelta": 12,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "slide_deck",
+    "title": "Make slides for the big pitch",
+    "humanConsequence": {
+      "eventID": "human_slides",
+      "flavorText": "You use Comic Sans ironically. The client loves it unironically. Deal closed.",
+      "automationDelta": -6,
+      "humanityDelta": 6
+    },
+    "aiConsequence": {
+      "eventID": "ai_slides",
+      "flavorText": "The AI makes 300 flawless slides. The projector unionizes in protest.",
+      "automationDelta": 13,
+      "humanityDelta": -6
+    }
+  }
+]
