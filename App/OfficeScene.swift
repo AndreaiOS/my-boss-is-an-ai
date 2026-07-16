@@ -62,11 +62,8 @@ final class OfficeScene: SKScene {
             ]))
         ),
         "barista_returns": Prop(
-            visual: .emoji("🧋"), x: 0.07, y: 0.42,
-            animation: .repeatForever(.sequence([
-                .rotate(byAngle: 0.2, duration: 0.5),
-                .rotate(byAngle: -0.2, duration: 0.5)
-            ]))
+            visual: .sprite("barista"), x: 0.07, y: 0.42,
+            animation: bob
         ),
         "manager_algorithm": Prop(
             visual: .sprite("manager_chart"), x: 0.5, y: 0.72,
@@ -76,7 +73,7 @@ final class OfficeScene: SKScene {
             ]))
         ),
         "manager_human": Prop(
-            visual: .emoji("🧑‍💼"), x: 0.5, y: 0.72,
+            visual: .sprite("manager_human"), x: 0.5, y: 0.72,
             animation: bob
         ),
         "coworkers_bots": Prop(
@@ -84,13 +81,13 @@ final class OfficeScene: SKScene {
             animation: nil
         ),
         "memes_die": Prop(
-            visual: .emoji("📉"), x: 0.92, y: 0.75,
+            visual: .sprite("kpi_dashboard"), x: 0.92, y: 0.75,
             animation: nil
         ),
         "memes_revive": Prop(
-            visual: .emoji("😂"), x: 0.92, y: 0.75,
+            visual: .sprite("meme_wall"), x: 0.92, y: 0.75,
             animation: .repeatForever(.sequence([
-                .scale(to: 1.2, duration: 0.5),
+                .scale(to: 1.08, duration: 0.5),
                 .scale(to: 1.0, duration: 0.5)
             ]))
         ),
@@ -166,10 +163,12 @@ final class OfficeScene: SKScene {
         decorationNodes = []
         addBackground()
 
-        for (index, spriteName) in decorations(for: stage).enumerated() {
+        let cast = decorations(for: stage)
+        for (index, spriteName) in cast.enumerated() {
             let node = makeNode(.sprite(spriteName))
+            let step = 0.76 / CGFloat(max(cast.count - 1, 1))
             node.position = CGPoint(
-                x: size.width * (0.14 + 0.18 * CGFloat(index)),
+                x: size.width * (0.12 + step * CGFloat(index)),
                 y: size.height * 0.16
             )
             node.zPosition = 1
@@ -219,7 +218,7 @@ final class OfficeScene: SKScene {
     private func decorations(for stage: OfficeStage) -> [String] {
         switch stage {
         case .lively:
-            ["worker_a", "worker_b", "gino", "ficus_healthy", "printer"]
+            ["worker_a", "worker_b", "gino", "ficus_healthy", "pizza_box", "printer"]
         case .hybrid:
             ["worker_a", "robot_worker", "gino", "ficus_healthy", "printer"]
         case .automated:
