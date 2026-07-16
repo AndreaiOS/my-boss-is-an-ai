@@ -17,6 +17,30 @@ struct GameView: View {
         .onAppear { syncScene() }
         .onChange(of: model.office.stage) { syncScene() }
         .onChange(of: model.triggeredEventIDs) { syncScene() }
+        .onChange(of: model.phase) { _, phase in
+            switch phase {
+            case .daySummary: SoundPlayer.shared.play(.dayEnd)
+            case .campaignOver: SoundPlayer.shared.play(.ending)
+            case .workday: break
+            }
+        }
+    }
+
+    private func resolveCurrentTask(with choice: WorkChoice) {
+        model.choose(choice)
+        SoundPlayer.shared.play(choice == .human ? .human : .ai)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        scene.react()
+        if let events = model.lastResolution?.events, !events.isEmpty {
+            // Comebacks (they require something to undo) get the sparkle;
+            // everything else gets the dramatic sting.
+            let isComeback = events.contains { !$0.requiresAny.isEmpty }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                SoundPlayer.shared.play(isComeback ? .eventGood : .eventBad)
+                scene.shake()
+                UINotificationFeedbackGenerator().notificationOccurred(isComeback ? .success : .warning)
+            }
+        }
     }
 
     private func syncScene() {
@@ -66,8 +90,8 @@ struct GameView: View {
                 .font(.title3.bold())
                 .multilineTextAlignment(.center)
             HStack(spacing: 16) {
-                choiceButton("🙋 Do it myself", tint: .orange) { model.choose(.human) }
-                choiceButton("🤖 Let AI do it", tint: .indigo) { model.choose(.ai) }
+                choiceButton("🙋 Do it myself", tint: .orange) { resolveCurrentTask(with: .human) }
+                choiceButton("🤖 Let AI do it", tint: .indigo) { resolveCurrentTask(with: .ai) }
             }
         }
         .padding()
@@ -96,8 +120,11 @@ struct GameView: View {
                     .padding(12)
                     .background(.yellow.opacity(0.25), in: RoundedRectangle(cornerRadius: 12))
             }
-            Button("Next") { model.advanceAfterConsequence() }
-                .buttonStyle(.borderedProminent)
+            Button("Next") {
+                SoundPlayer.shared.play(.tap)
+                model.advanceAfterConsequence()
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }
@@ -109,8 +136,11 @@ struct GameView: View {
             Text(stageBlurb)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
-            Button("Start next day") { model.startNextDay() }
-                .buttonStyle(.borderedProminent)
+            Button("Start next day") {
+                SoundPlayer.shared.play(.tap)
+                model.startNextDay()
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }
@@ -133,8 +163,11 @@ struct GameView: View {
                 Text(stageBlurb)
                     .multilineTextAlignment(.center)
             }
-            Button("Play again") { model.restartCampaign() }
-                .buttonStyle(.borderedProminent)
+            Button("Play again") {
+                SoundPlayer.shared.play(.tap)
+                model.restartCampaign()
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }

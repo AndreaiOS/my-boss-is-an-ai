@@ -137,8 +137,33 @@ final class OfficeScene: SKScene {
         rebuild()
     }
 
+    private var decorationNodes: [SKNode] = []
+
+    /// Squash-and-stretch on everyone in the office when a task resolves.
+    func react() {
+        for node in decorationNodes {
+            node.run(.sequence([
+                .group([.scaleX(to: 1.25, duration: 0.08), .scaleY(to: 0.75, duration: 0.08)]),
+                .group([.scaleX(to: 0.9, duration: 0.1), .scaleY(to: 1.15, duration: 0.1)]),
+                .group([.scaleX(to: 1.0, duration: 0.12), .scaleY(to: 1.0, duration: 0.12)])
+            ]))
+        }
+    }
+
+    /// Quick horizontal shake when an office event fires.
+    func shake() {
+        for child in children {
+            child.run(.sequence([
+                .moveBy(x: 6, y: 0, duration: 0.05),
+                .moveBy(x: -12, y: 0, duration: 0.08),
+                .moveBy(x: 6, y: 0, duration: 0.05)
+            ]))
+        }
+    }
+
     private func rebuild() {
         removeAllChildren()
+        decorationNodes = []
         addBackground()
 
         for (index, spriteName) in decorations(for: stage).enumerated() {
@@ -150,6 +175,7 @@ final class OfficeScene: SKScene {
             node.zPosition = 1
             node.run(Self.bob.copy() as! SKAction)
             addChild(node)
+            decorationNodes.append(node)
         }
 
         // Persistent props for every event that has fired, in trigger order.
