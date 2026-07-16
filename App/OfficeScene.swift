@@ -35,10 +35,12 @@ final class OfficeScene: SKScene {
         .moveBy(x: 0, y: -8, duration: 1.2)
     ]))
 
+    /// The vacuum roams the floor in a little loop, not just left-right.
     private static let patrol: SKAction = .repeatForever(.sequence([
-        .moveBy(x: 70, y: 0, duration: 3),
+        .moveBy(x: 60, y: 14, duration: 2.2),
         .scaleX(to: -1, duration: 0.15),
-        .moveBy(x: -70, y: 0, duration: 3),
+        .moveBy(x: -35, y: 10, duration: 1.4),
+        .moveBy(x: -25, y: -24, duration: 1.6),
         .scaleX(to: 1, duration: 0.15)
     ]))
 
@@ -139,9 +141,9 @@ final class OfficeScene: SKScene {
         // row on the rug (lower, bigger). Bobs are desynced, and whoever
         // holds the second spot strolls around a bit.
         let spots: [(x: CGFloat, y: CGFloat, size: CGFloat)] = [
-            (0.13, 0.24, 46),
-            (0.34, 0.06, 62),
-            (0.58, 0.15, 54)
+            (0.13, 0.24, 69),
+            (0.34, 0.06, 93),
+            (0.58, 0.15, 81)
         ]
         for (index, sprite) in cast.enumerated() {
             let spot = spots[index % spots.count]
