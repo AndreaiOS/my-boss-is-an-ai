@@ -4,8 +4,7 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 
 ## Now
 
-- [ ] Run the prototype on a simulator/device and tune the feel of the loop
-- [ ] Reflect triggered office events in the SpriteKit scene (persistent props: robot cleaner, Gino's mug…)
+- [ ] Play a full campaign on the simulator and tune the feel of the loop
 - [ ] Comeback events (automation dropping back down: "Gino is rehired. The mug is reunited.")
 - [ ] First real pixel-art sprite to replace one emoji placeholder
 
@@ -26,3 +25,4 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 - [x] Local save/load (`save.json` in Documents, resume on launch)
 - [x] M2: persistent office events (`events.json`, 7 events with thresholds), fire-once + survive save/restore
 - [x] M2: campaign balance — full-AI run reaches `automated` on day 4–6, never before day 3 (test-enforced)
+- [x] M2: triggered events render as persistent props in the office scene (+ fixed empty-scene rendering bug, verified via simulator screenshot)
