@@ -22,5 +22,7 @@ targets:
         TARGETED_DEVICE_FAMILY: 1
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        DEVELOPMENT_TEAM: RA4VQQK3U6
+        CODE_SIGN_STYLE: Automatic
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         SWIFT_VERSION: 6.0
