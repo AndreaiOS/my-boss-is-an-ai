@@ -21,13 +21,40 @@ public struct OfficeEvent: Codable, Equatable, Sendable, Identifiable {
     public let metric: Metric
     public let threshold: Int
     public let direction: Direction
+    /// Events this one reverses: their IDs (and scene props) are removed
+    /// when this fires, so they can fire again later — the world oscillates.
+    public let undoes: [String]
+    /// This event only fires while at least one of these events is active.
+    /// Keeps comebacks from firing before there is anything to come back from.
+    public let requiresAny: [String]
 
-    public init(id: String, flavorText: String, metric: Metric, threshold: Int, direction: Direction) {
+    public init(
+        id: String,
+        flavorText: String,
+        metric: Metric,
+        threshold: Int,
+        direction: Direction,
+        undoes: [String] = [],
+        requiresAny: [String] = []
+    ) {
         self.id = id
         self.flavorText = flavorText
         self.metric = metric
         self.threshold = threshold
         self.direction = direction
+        self.undoes = undoes
+        self.requiresAny = requiresAny
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        flavorText = try container.decode(String.self, forKey: .flavorText)
+        metric = try container.decode(Metric.self, forKey: .metric)
+        threshold = try container.decode(Int.self, forKey: .threshold)
+        direction = try container.decode(Direction.self, forKey: .direction)
+        undoes = try container.decodeIfPresent([String].self, forKey: .undoes) ?? []
+        requiresAny = try container.decodeIfPresent([String].self, forKey: .requiresAny) ?? []
     }
 
     func isTriggered(by office: OfficeState) -> Bool {

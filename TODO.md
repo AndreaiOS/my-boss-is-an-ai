@@ -1,16 +1,15 @@
 # TODO
 
-Running task list, per the GDD workflow. Current milestone: **M1 — Playable prototype**.
+Running task list, per the GDD workflow. Current milestone: **M2 done → M3 — Endings**.
 
 ## Now
 
 - [ ] Play a full campaign on the simulator and tune the feel of the loop
-- [ ] Comeback events (automation dropping back down: "Gino is rehired. The mug is reunited.")
+- [ ] M3: multiple endings (full-AI, full-human, hybrids) driven by final automation/humanity
 - [ ] First real pixel-art sprite to replace one emoji placeholder
 
 ## Later
 
-- [ ] M3: multiple endings (full-AI, full-human, hybrids)
 - [ ] M4: polish — animations, squash-and-stretch, sound gags
 - [ ] M5: App Store launch prep
 
@@ -26,3 +25,4 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 - [x] M2: persistent office events (`events.json`, 7 events with thresholds), fire-once + survive save/restore
 - [x] M2: campaign balance — full-AI run reaches `automated` on day 4–6, never before day 3 (test-enforced)
 - [x] M2: triggered events render as persistent props in the office scene (+ fixed empty-scene rendering bug, verified via simulator screenshot)
+- [x] M2: comeback events (`undoes`/`requiresAny`) — the world oscillates: Gino rehired, barista returns, memes revive (5 comeback pairs, 26 tests)

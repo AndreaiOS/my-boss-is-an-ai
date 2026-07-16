@@ -76,8 +76,13 @@ public final class GameEngine {
         let consequence = task.consequence(for: choice)
         state.office.apply(consequence)
         let fired = events.filter { event in
-            !state.triggeredEventIDs.contains(event.id) && event.isTriggered(by: state.office)
+            !state.triggeredEventIDs.contains(event.id)
+                && event.isTriggered(by: state.office)
+                && (event.requiresAny.isEmpty
+                    || event.requiresAny.contains(where: state.triggeredEventIDs.contains))
         }
+        let undone = Set(fired.flatMap(\.undoes))
+        state.triggeredEventIDs.removeAll(where: undone.contains)
         state.triggeredEventIDs.append(contentsOf: fired.map(\.id))
         return Resolution(consequence: consequence, events: fired)
     }

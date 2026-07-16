@@ -58,6 +58,42 @@ final class OfficeScene: SKScene {
                 .rotate(byAngle: -0.15, duration: 2),
                 .rotate(byAngle: 0.15, duration: 2)
             ]))
+        ),
+        "gino_rehired": Prop(
+            emoji: "🧔☕️", x: 0.85, y: 0.12,
+            animation: .repeatForever(.sequence([
+                .moveBy(x: 0, y: 8, duration: 0.3),
+                .moveBy(x: 0, y: -8, duration: 0.3),
+                .wait(forDuration: 1.5)
+            ]))
+        ),
+        "barista_returns": Prop(
+            emoji: "🧋", x: 0.08, y: 0.45,
+            animation: .repeatForever(.sequence([
+                .rotate(byAngle: 0.2, duration: 0.5),
+                .rotate(byAngle: -0.2, duration: 0.5)
+            ]))
+        ),
+        "manager_human": Prop(
+            emoji: "🧑‍💼", x: 0.5, y: 0.82,
+            animation: .repeatForever(.sequence([
+                .moveBy(x: 0, y: 5, duration: 0.6),
+                .moveBy(x: 0, y: -5, duration: 0.6)
+            ]))
+        ),
+        "memes_revive": Prop(
+            emoji: "😂", x: 0.92, y: 0.8,
+            animation: .repeatForever(.sequence([
+                .scale(to: 1.2, duration: 0.5),
+                .scale(to: 1.0, duration: 0.5)
+            ]))
+        ),
+        "ficus_reborn": Prop(
+            emoji: "🌱", x: 0.3, y: 0.12,
+            animation: .repeatForever(.sequence([
+                .scale(to: 1.1, duration: 1.2),
+                .scale(to: 1.0, duration: 1.2)
+            ]))
         )
     ]
 

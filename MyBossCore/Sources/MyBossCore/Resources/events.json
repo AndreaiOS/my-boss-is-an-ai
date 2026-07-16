@@ -11,21 +11,51 @@
     "flavorText": "📦 Gino from accounting has been 'optimized'. His mug remains. Nobody dares touch it.",
     "metric": "automation",
     "threshold": 35,
-    "direction": "above"
+    "direction": "above",
+    "undoes": ["gino_rehired"]
+  },
+  {
+    "id": "gino_rehired",
+    "flavorText": "🤝 Gino is rehired. The mug is reunited with its human. There is not a dry eye in the office.",
+    "metric": "automation",
+    "threshold": 25,
+    "direction": "below",
+    "undoes": ["layoff_gino"],
+    "requiresAny": ["layoff_gino"]
   },
   {
     "id": "ai_coffee_machine",
     "flavorText": "☕️ The new AI coffee machine replaces the barista. It spells everyone's name correctly. It's unsettling.",
     "metric": "automation",
     "threshold": 50,
-    "direction": "above"
+    "direction": "above",
+    "undoes": ["barista_returns"]
+  },
+  {
+    "id": "barista_returns",
+    "flavorText": "🧋 The barista is back! Your name is misspelled again. Order is restored to the universe.",
+    "metric": "automation",
+    "threshold": 40,
+    "direction": "below",
+    "undoes": ["ai_coffee_machine"],
+    "requiresAny": ["ai_coffee_machine"]
   },
   {
     "id": "manager_algorithm",
     "flavorText": "📊 Your manager has been replaced by an algorithm. Performance reviews are now push notifications.",
     "metric": "automation",
     "threshold": 65,
-    "direction": "above"
+    "direction": "above",
+    "undoes": ["manager_human"]
+  },
+  {
+    "id": "manager_human",
+    "flavorText": "🧑‍💼 A human manager returns. Their first act: a meeting that could have been an email. Ah, tradition.",
+    "metric": "automation",
+    "threshold": 55,
+    "direction": "below",
+    "undoes": ["manager_algorithm"],
+    "requiresAny": ["manager_algorithm"]
   },
   {
     "id": "coworkers_bots",
@@ -39,13 +69,33 @@
     "flavorText": "💀 Nobody laughs at the memes anymore. The meme wall has been converted to a KPI dashboard.",
     "metric": "humanity",
     "threshold": 40,
-    "direction": "below"
+    "direction": "below",
+    "undoes": ["memes_revive"]
+  },
+  {
+    "id": "memes_revive",
+    "flavorText": "😂 The meme wall is back. Today's entry: a cat wearing a tie. Productivity drops 12%. Worth it.",
+    "metric": "humanity",
+    "threshold": 55,
+    "direction": "above",
+    "undoes": ["memes_die"],
+    "requiresAny": ["memes_die"]
   },
   {
     "id": "plant_funeral",
     "flavorText": "🥀 The ficus has dried up. A small funeral is held. The drone does not attend.",
     "metric": "humanity",
     "threshold": 20,
-    "direction": "below"
+    "direction": "below",
+    "undoes": ["ficus_reborn"]
+  },
+  {
+    "id": "ficus_reborn",
+    "flavorText": "🌱 A new sprout appears in the ficus pot. Someone has been talking to it. HR knows who.",
+    "metric": "humanity",
+    "threshold": 40,
+    "direction": "above",
+    "undoes": ["plant_funeral"],
+    "requiresAny": ["plant_funeral"]
   }
 ]
