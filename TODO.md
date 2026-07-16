@@ -5,9 +5,8 @@ Running task list, per the GDD workflow. Current milestone: **M3 done → M4 —
 ## Now
 
 - [ ] Play a full campaign on the simulator and tune the feel of the loop
-- [ ] Sound gags (per GDD: funny sound effect for every interaction)
-- [ ] Squash-and-stretch on task resolution and scene props
 - [ ] Art batch 2: barista, human manager, meme wall (alive/KPI dashboard), pizza box, city backdrop for endings
+- [ ] M5 prep: App Store metadata, screenshots, privacy declarations (no data collected)
 
 ## Later
 
@@ -29,3 +28,4 @@ Running task list, per the GDD workflow. Current milestone: **M3 done → M4 —
 - [x] M2: comeback events (`undoes`/`requiresAny`) — the world oscillates: Gino rehired, barista returns, memes revive (5 comeback pairs, 26 tests)
 - [x] M3: 7 data-driven endings (`endings.json`), first-match-wins + exhaustive coverage test; ending screen in UI (31 tests)
 - [x] M4: batch-1 pixel art integrated (backgrounds, characters, props, app icon) — sprites with nearest filtering, emoji fallback for missing art
+- [x] M4: synthesized 8-bit sound gags (7 effects, `tools/make_sfx.py`), squash-and-stretch on task resolution, scene shake + haptics on events
