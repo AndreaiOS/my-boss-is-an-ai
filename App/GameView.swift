@@ -14,8 +14,13 @@ struct GameView: View {
             content
             Spacer()
         }
-        .onAppear { scene.stage = model.office.stage }
-        .onChange(of: model.office.stage) { scene.stage = model.office.stage }
+        .onAppear { syncScene() }
+        .onChange(of: model.office.stage) { syncScene() }
+        .onChange(of: model.triggeredEventIDs) { syncScene() }
+    }
+
+    private func syncScene() {
+        scene.update(stage: model.office.stage, eventIDs: model.triggeredEventIDs)
     }
 
     private var header: some View {

@@ -27,6 +27,7 @@ final class GameViewModel {
 
     var day: Int { engine.state.day }
     var office: OfficeState { engine.state.office }
+    var triggeredEventIDs: [String] { engine.state.triggeredEventIDs }
     var currentTask: OfficeTask? {
         guard phase == .workday, currentTaskIndex < todaysTasks.count else { return nil }
         return todaysTasks[currentTaskIndex]
