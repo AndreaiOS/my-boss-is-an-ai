@@ -5,14 +5,9 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 ## Now
 
 - [ ] Run the prototype on a simulator/device and tune the feel of the loop
-- [ ] Balance consequence deltas (a full-AI run should reach `automated` before the campaign ends)
+- [ ] Reflect triggered office events in the SpriteKit scene (persistent props: robot cleaner, Gino's mug…)
+- [ ] Comeback events (automation dropping back down: "Gino is rehired. The mug is reunited.")
 - [ ] First real pixel-art sprite to replace one emoji placeholder
-
-## Next (M2 — Office evolution)
-
-- [ ] Office state machine driven by cumulative Human/AI balance
-- [ ] Colleague appearance/disappearance events
-- [ ] Environmental storytelling props (robot cleaner, AI coffee machine…)
 
 ## Later
 
@@ -29,3 +24,5 @@ Running task list, per the GDD workflow. Current milestone: **M1 — Playable pr
 - [x] Xcode project via XcodeGen (SwiftUI app + SpriteKit placeholder office scene)
 - [x] Playable day loop: 3–5 tasks → Human/AI → consequence gag → day summary → campaign end
 - [x] Local save/load (`save.json` in Documents, resume on launch)
+- [x] M2: persistent office events (`events.json`, 7 events with thresholds), fire-once + survive save/restore
+- [x] M2: campaign balance — full-AI run reaches `automated` on day 4–6, never before day 3 (test-enforced)

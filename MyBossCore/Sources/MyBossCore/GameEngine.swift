@@ -5,6 +5,8 @@ public struct GameState: Codable, Equatable, Sendable {
     public var day: Int
     public var campaignLength: Int
     public var office: OfficeState
+    /// IDs of office events that already fired; they never repeat.
+    public var triggeredEventIDs: [String]
 
     public var isFinished: Bool { day > campaignLength }
 
@@ -12,7 +14,15 @@ public struct GameState: Codable, Equatable, Sendable {
         day = 1
         self.campaignLength = campaignLength
         office = OfficeState()
+        triggeredEventIDs = []
     }
+}
+
+/// What happened when a task was resolved: the immediate gag plus any
+/// persistent office events its score change triggered.
+public struct Resolution: Equatable, Sendable {
+    public let consequence: Consequence
+    public let events: [OfficeEvent]
 }
 
 /// Deterministic RNG (SplitMix64) so workdays are reproducible in tests
@@ -35,17 +45,20 @@ struct SeededRandomNumberGenerator: RandomNumberGenerator {
 public final class GameEngine {
     public private(set) var state: GameState
     private let catalog: [OfficeTask]
+    private let events: [OfficeEvent]
     private var rng: SeededRandomNumberGenerator
 
-    public init(catalog: [OfficeTask], seed: UInt64, campaignLength: Int = 7) {
+    public init(catalog: [OfficeTask], seed: UInt64, campaignLength: Int = 7, events: [OfficeEvent] = []) {
         self.catalog = catalog
+        self.events = events
         rng = SeededRandomNumberGenerator(seed: seed)
         state = GameState(campaignLength: campaignLength)
     }
 
     /// Resumes a campaign from a previously saved state.
-    public init(catalog: [OfficeTask], seed: UInt64, state: GameState) {
+    public init(catalog: [OfficeTask], seed: UInt64, state: GameState, events: [OfficeEvent] = []) {
         self.catalog = catalog
+        self.events = events
         rng = SeededRandomNumberGenerator(seed: seed)
         self.state = state
     }
@@ -56,12 +69,17 @@ public final class GameEngine {
         return Array(catalog.shuffled(using: &rng).prefix(count))
     }
 
-    /// Applies the choice's consequence to the office and returns it
-    /// so the presentation layer can show the gag immediately.
-    public func resolve(_ task: OfficeTask, with choice: WorkChoice) -> Consequence {
+    /// Applies the choice's consequence to the office and returns it —
+    /// together with any newly triggered office events — so the
+    /// presentation layer can show everything immediately.
+    public func resolve(_ task: OfficeTask, with choice: WorkChoice) -> Resolution {
         let consequence = task.consequence(for: choice)
         state.office.apply(consequence)
-        return consequence
+        let fired = events.filter { event in
+            !state.triggeredEventIDs.contains(event.id) && event.isTriggered(by: state.office)
+        }
+        state.triggeredEventIDs.append(contentsOf: fired.map(\.id))
+        return Resolution(consequence: consequence, events: fired)
     }
 
     public func endDay() {

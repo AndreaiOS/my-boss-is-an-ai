@@ -41,8 +41,8 @@ struct GameEngineTests {
     func aiChoice() {
         let engine = GameEngine(catalog: makeCatalog(), seed: 1)
         let task = engine.startDay()[0]
-        let consequence = engine.resolve(task, with: .ai)
-        #expect(consequence == task.aiConsequence)
+        let resolution = engine.resolve(task, with: .ai)
+        #expect(resolution.consequence == task.aiConsequence)
         #expect(engine.state.office.automation == 10)
         #expect(engine.state.office.humanity == 95)
     }
@@ -51,8 +51,8 @@ struct GameEngineTests {
     func humanChoice() {
         let engine = GameEngine(catalog: makeCatalog(), seed: 1)
         let task = engine.startDay()[0]
-        let consequence = engine.resolve(task, with: .human)
-        #expect(consequence == task.humanConsequence)
+        let resolution = engine.resolve(task, with: .human)
+        #expect(resolution.consequence == task.humanConsequence)
         #expect(engine.state.office.automation == 0)
         #expect(engine.state.office.humanity == 100)
     }

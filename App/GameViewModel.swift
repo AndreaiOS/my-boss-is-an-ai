@@ -15,11 +15,13 @@ final class GameViewModel {
 
     private var engine: GameEngine
     private let catalog: [OfficeTask]
+    private let events: [OfficeEvent]
     private(set) var todaysTasks: [OfficeTask] = []
     private(set) var currentTaskIndex = 0
     private(set) var phase: Phase = .workday
-    /// The gag to show for the last resolved task, cleared on advance.
-    private(set) var lastConsequence: Consequence?
+    /// The gag (and any office events) to show for the last resolved task,
+    /// cleared on advance.
+    private(set) var lastResolution: Resolution?
 
     private static let saveURL = URL.documentsDirectory.appending(path: "save.json")
 
@@ -32,25 +34,26 @@ final class GameViewModel {
 
     init() {
         catalog = (try? TaskCatalog.loadDefault()) ?? []
+        events = (try? EventCatalog.loadDefault()) ?? []
         let seed = UInt64.random(in: .min ... .max)
         if let data = try? Data(contentsOf: Self.saveURL),
            let saved = try? JSONDecoder().decode(GameState.self, from: data),
            !saved.isFinished {
-            engine = GameEngine(catalog: catalog, seed: seed, state: saved)
+            engine = GameEngine(catalog: catalog, seed: seed, state: saved, events: events)
         } else {
-            engine = GameEngine(catalog: catalog, seed: seed)
+            engine = GameEngine(catalog: catalog, seed: seed, events: events)
         }
         beginDay()
     }
 
     func choose(_ choice: WorkChoice) {
         guard let task = currentTask else { return }
-        lastConsequence = engine.resolve(task, with: choice)
+        lastResolution = engine.resolve(task, with: choice)
         save()
     }
 
     func advanceAfterConsequence() {
-        lastConsequence = nil
+        lastResolution = nil
         currentTaskIndex += 1
         if currentTaskIndex >= todaysTasks.count {
             engine.endDay()
@@ -65,14 +68,14 @@ final class GameViewModel {
 
     func restartCampaign() {
         try? FileManager.default.removeItem(at: Self.saveURL)
-        engine = GameEngine(catalog: catalog, seed: UInt64.random(in: .min ... .max))
+        engine = GameEngine(catalog: catalog, seed: UInt64.random(in: .min ... .max), events: events)
         beginDay()
     }
 
     private func beginDay() {
         todaysTasks = engine.startDay()
         currentTaskIndex = 0
-        lastConsequence = nil
+        lastResolution = nil
         phase = .workday
     }
 

@@ -40,8 +40,8 @@ struct GameView: View {
     private var content: some View {
         switch model.phase {
         case .workday:
-            if let consequence = model.lastConsequence {
-                consequenceCard(consequence)
+            if let resolution = model.lastResolution {
+                consequenceCard(resolution)
             } else if let task = model.currentTask {
                 taskCard(task)
             }
@@ -79,11 +79,18 @@ struct GameView: View {
         .tint(tint)
     }
 
-    private func consequenceCard(_ consequence: Consequence) -> some View {
+    private func consequenceCard(_ resolution: Resolution) -> some View {
         VStack(spacing: 16) {
-            Text(consequence.flavorText)
+            Text(resolution.consequence.flavorText)
                 .font(.body.italic())
                 .multilineTextAlignment(.center)
+            ForEach(resolution.events) { event in
+                Text(event.flavorText)
+                    .font(.callout.bold())
+                    .multilineTextAlignment(.center)
+                    .padding(12)
+                    .background(.yellow.opacity(0.25), in: RoundedRectangle(cornerRadius: 12))
+            }
             Button("Next") { model.advanceAfterConsequence() }
                 .buttonStyle(.borderedProminent)
         }

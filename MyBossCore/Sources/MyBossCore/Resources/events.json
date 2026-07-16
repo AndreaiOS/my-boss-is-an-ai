@@ -1,0 +1,51 @@
+[
+  {
+    "id": "robot_cleaner",
+    "flavorText": "🤖 A robot cleaner rolls in. It beeps disapprovingly at the crumbs on your desk.",
+    "metric": "automation",
+    "threshold": 20,
+    "direction": "above"
+  },
+  {
+    "id": "layoff_gino",
+    "flavorText": "📦 Gino from accounting has been 'optimized'. His mug remains. Nobody dares touch it.",
+    "metric": "automation",
+    "threshold": 35,
+    "direction": "above"
+  },
+  {
+    "id": "ai_coffee_machine",
+    "flavorText": "☕️ The new AI coffee machine replaces the barista. It spells everyone's name correctly. It's unsettling.",
+    "metric": "automation",
+    "threshold": 50,
+    "direction": "above"
+  },
+  {
+    "id": "manager_algorithm",
+    "flavorText": "📊 Your manager has been replaced by an algorithm. Performance reviews are now push notifications.",
+    "metric": "automation",
+    "threshold": 65,
+    "direction": "above"
+  },
+  {
+    "id": "coworkers_bots",
+    "flavorText": "🦾 The last human coworkers now communicate exclusively in JSON. {\"mood\": \"fine\"}",
+    "metric": "automation",
+    "threshold": 80,
+    "direction": "above"
+  },
+  {
+    "id": "memes_die",
+    "flavorText": "💀 Nobody laughs at the memes anymore. The meme wall has been converted to a KPI dashboard.",
+    "metric": "humanity",
+    "threshold": 40,
+    "direction": "below"
+  },
+  {
+    "id": "plant_funeral",
+    "flavorText": "🥀 The ficus has dried up. A small funeral is held. The drone does not attend.",
+    "metric": "humanity",
+    "threshold": 20,
+    "direction": "below"
+  }
+]
