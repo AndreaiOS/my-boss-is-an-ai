@@ -1,95 +1,108 @@
 import SpriteKit
 import MyBossCore
 
-/// Placeholder office visualization. Real pixel art lands in Milestone 4;
-/// for now the scene proves the stage-driven transformation pipeline works.
+/// The office, rendered with the batch-1 pixel-art assets. The background
+/// swaps with the stage; stage decorations and event props are sprites
+/// (with an emoji fallback for content that has no art yet).
 final class OfficeScene: SKScene {
 
     private var stage: OfficeStage = .lively
     private var eventIDs: [String] = []
 
+    private enum Visual {
+        case sprite(String)
+        case emoji(String)
+    }
+
     /// How a triggered office event shows up in the scene, permanently.
     private struct Prop {
-        let emoji: String
+        let visual: Visual
         /// Relative position in the scene (0...1).
         let x: CGFloat
         let y: CGFloat
         let animation: SKAction?
     }
 
+    private static let bob: SKAction = .repeatForever(.sequence([
+        .moveBy(x: 0, y: 6, duration: 0.5),
+        .moveBy(x: 0, y: -6, duration: 0.5)
+    ]))
+
     private static let props: [String: Prop] = [
         "robot_cleaner": Prop(
-            emoji: "🤖", x: 0.15, y: 0.08,
+            visual: .sprite("robot_cleaner"), x: 0.15, y: 0.12,
             animation: .repeatForever(.sequence([
                 .moveBy(x: 60, y: 0, duration: 2.5),
-                .moveBy(x: -60, y: 0, duration: 2.5)
+                .scaleX(to: -1, duration: 0.15),
+                .moveBy(x: -60, y: 0, duration: 2.5),
+                .scaleX(to: 1, duration: 0.15)
             ]))
         ),
         "layoff_gino": Prop(
-            emoji: "🪑☕️", x: 0.85, y: 0.12,
+            visual: .sprite("mug_gino"), x: 0.85, y: 0.14,
             animation: .repeatForever(.sequence([
-                .fadeAlpha(to: 0.5, duration: 1.5),
+                .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
             ]))
         ),
-        "ai_coffee_machine": Prop(
-            emoji: "☕️🦾", x: 0.08, y: 0.45,
+        "gino_rehired": Prop(
+            visual: .sprite("gino"), x: 0.85, y: 0.16,
             animation: .repeatForever(.sequence([
-                .scale(to: 1.15, duration: 0.4),
+                .moveBy(x: 0, y: 10, duration: 0.25),
+                .moveBy(x: 0, y: -10, duration: 0.25),
+                .wait(forDuration: 1.5)
+            ]))
+        ),
+        "ai_coffee_machine": Prop(
+            visual: .sprite("coffee_machine_ai"), x: 0.07, y: 0.42,
+            animation: .repeatForever(.sequence([
+                .scale(to: 1.12, duration: 0.4),
                 .scale(to: 1.0, duration: 0.4),
                 .wait(forDuration: 2)
             ]))
         ),
-        "manager_algorithm": Prop(
-            emoji: "📊", x: 0.5, y: 0.82,
-            animation: .repeatForever(.rotate(byAngle: .pi * 2, duration: 8))
-        ),
-        "coworkers_bots": Prop(
-            emoji: "🦾🦾", x: 0.65, y: 0.12,
-            animation: nil
-        ),
-        "memes_die": Prop(
-            emoji: "📉", x: 0.92, y: 0.8,
-            animation: nil
-        ),
-        "plant_funeral": Prop(
-            emoji: "🥀", x: 0.3, y: 0.12,
-            animation: .repeatForever(.sequence([
-                .rotate(byAngle: -0.15, duration: 2),
-                .rotate(byAngle: 0.15, duration: 2)
-            ]))
-        ),
-        "gino_rehired": Prop(
-            emoji: "🧔☕️", x: 0.85, y: 0.12,
-            animation: .repeatForever(.sequence([
-                .moveBy(x: 0, y: 8, duration: 0.3),
-                .moveBy(x: 0, y: -8, duration: 0.3),
-                .wait(forDuration: 1.5)
-            ]))
-        ),
         "barista_returns": Prop(
-            emoji: "🧋", x: 0.08, y: 0.45,
+            visual: .emoji("🧋"), x: 0.07, y: 0.42,
             animation: .repeatForever(.sequence([
                 .rotate(byAngle: 0.2, duration: 0.5),
                 .rotate(byAngle: -0.2, duration: 0.5)
             ]))
         ),
-        "manager_human": Prop(
-            emoji: "🧑‍💼", x: 0.5, y: 0.82,
+        "manager_algorithm": Prop(
+            visual: .sprite("manager_chart"), x: 0.5, y: 0.72,
             animation: .repeatForever(.sequence([
-                .moveBy(x: 0, y: 5, duration: 0.6),
-                .moveBy(x: 0, y: -5, duration: 0.6)
+                .moveBy(x: 0, y: 8, duration: 1.2),
+                .moveBy(x: 0, y: -8, duration: 1.2)
             ]))
         ),
+        "manager_human": Prop(
+            visual: .emoji("🧑‍💼"), x: 0.5, y: 0.72,
+            animation: bob
+        ),
+        "coworkers_bots": Prop(
+            visual: .sprite("robot_worker"), x: 0.65, y: 0.14,
+            animation: nil
+        ),
+        "memes_die": Prop(
+            visual: .emoji("📉"), x: 0.92, y: 0.75,
+            animation: nil
+        ),
         "memes_revive": Prop(
-            emoji: "😂", x: 0.92, y: 0.8,
+            visual: .emoji("😂"), x: 0.92, y: 0.75,
             animation: .repeatForever(.sequence([
                 .scale(to: 1.2, duration: 0.5),
                 .scale(to: 1.0, duration: 0.5)
             ]))
         ),
+        "plant_funeral": Prop(
+            visual: .sprite("ficus_wilted"), x: 0.3, y: 0.14,
+            animation: .repeatForever(.sequence([
+                .rotate(byAngle: -0.1, duration: 2),
+                .rotate(byAngle: 0.1, duration: 2)
+            ]))
+        ),
         "ficus_reborn": Prop(
-            emoji: "🌱", x: 0.3, y: 0.12,
+            visual: .sprite("ficus_sprout"), x: 0.3, y: 0.14,
             animation: .repeatForever(.sequence([
                 .scale(to: 1.1, duration: 1.2),
                 .scale(to: 1.0, duration: 1.2)
@@ -126,45 +139,65 @@ final class OfficeScene: SKScene {
 
     private func rebuild() {
         removeAllChildren()
+        addBackground()
 
-        let (background, decorations) = look(for: stage)
-        backgroundColor = background
-
-        for (index, emoji) in decorations.enumerated() {
-            let label = SKLabelNode(text: emoji)
-            label.fontSize = 40
-            label.position = CGPoint(
-                x: size.width * (0.2 + 0.3 * CGFloat(index % 3)),
-                y: size.height * (index < 3 ? 0.62 : 0.3)
+        for (index, spriteName) in decorations(for: stage).enumerated() {
+            let node = makeNode(.sprite(spriteName))
+            node.position = CGPoint(
+                x: size.width * (0.14 + 0.18 * CGFloat(index)),
+                y: size.height * 0.16
             )
-            label.run(.repeatForever(.sequence([
-                .moveBy(x: 0, y: 6, duration: 0.5),
-                .moveBy(x: 0, y: -6, duration: 0.5)
-            ])))
-            addChild(label)
+            node.zPosition = 1
+            node.run(Self.bob.copy() as! SKAction)
+            addChild(node)
         }
 
         // Persistent props for every event that has fired, in trigger order.
         for id in eventIDs {
             guard let prop = Self.props[id] else { continue }
-            let label = SKLabelNode(text: prop.emoji)
-            label.fontSize = 32
-            label.position = CGPoint(x: size.width * prop.x, y: size.height * prop.y)
+            let node = makeNode(prop.visual)
+            node.position = CGPoint(x: size.width * prop.x, y: size.height * prop.y)
+            node.zPosition = 2
             if let animation = prop.animation {
-                label.run(animation)
+                node.run(animation)
             }
-            addChild(label)
+            addChild(node)
         }
     }
 
-    private func look(for stage: OfficeStage) -> (SKColor, [String]) {
+    private func addBackground() {
+        let texture = SKTexture(imageNamed: "bg_\(stage.rawValue)")
+        let node = SKSpriteNode(texture: texture)
+        let scale = max(size.width / texture.size().width, size.height / texture.size().height)
+        node.setScale(scale)
+        node.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        node.zPosition = -1
+        addChild(node)
+    }
+
+    private func makeNode(_ visual: Visual) -> SKNode {
+        switch visual {
+        case .sprite(let name):
+            let texture = SKTexture(imageNamed: name)
+            texture.filteringMode = .nearest
+            let node = SKSpriteNode(texture: texture)
+            node.size = CGSize(width: 56, height: 56)
+            return node
+        case .emoji(let text):
+            let label = SKLabelNode(text: text)
+            label.fontSize = 32
+            return label
+        }
+    }
+
+    private func decorations(for stage: OfficeStage) -> [String] {
         switch stage {
         case .lively:
-            (SKColor(red: 0.98, green: 0.92, blue: 0.80, alpha: 1), ["🧑‍💼", "👩‍💼", "🪴", "☕️", "🖨️", "🍕"])
+            ["worker_a", "worker_b", "gino", "ficus_healthy", "printer"]
         case .hybrid:
-            (SKColor(red: 0.85, green: 0.88, blue: 0.94, alpha: 1), ["🧑‍💼", "🤖", "🪴", "🦾", "🖨️", "📡"])
+            ["worker_a", "robot_worker", "gino", "ficus_healthy", "printer"]
         case .automated:
-            (SKColor(red: 0.70, green: 0.75, blue: 0.85, alpha: 1), ["🤖", "🤖", "🛸", "🦾", "📉", "🔌"])
+            ["robot_worker", "robot_worker", "drone", "coffee_machine_ai", "robot_cleaner"]
         }
     }
 }
