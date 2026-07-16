@@ -46,21 +46,43 @@ public final class GameEngine {
     public private(set) var state: GameState
     private let catalog: [OfficeTask]
     private let events: [OfficeEvent]
+    private let endings: [Ending]
     private var rng: SeededRandomNumberGenerator
 
-    public init(catalog: [OfficeTask], seed: UInt64, campaignLength: Int = 7, events: [OfficeEvent] = []) {
+    public init(
+        catalog: [OfficeTask],
+        seed: UInt64,
+        campaignLength: Int = 7,
+        events: [OfficeEvent] = [],
+        endings: [Ending] = []
+    ) {
         self.catalog = catalog
         self.events = events
+        self.endings = endings
         rng = SeededRandomNumberGenerator(seed: seed)
         state = GameState(campaignLength: campaignLength)
     }
 
     /// Resumes a campaign from a previously saved state.
-    public init(catalog: [OfficeTask], seed: UInt64, state: GameState, events: [OfficeEvent] = []) {
+    public init(
+        catalog: [OfficeTask],
+        seed: UInt64,
+        state: GameState,
+        events: [OfficeEvent] = [],
+        endings: [Ending] = []
+    ) {
         self.catalog = catalog
         self.events = events
+        self.endings = endings
         rng = SeededRandomNumberGenerator(seed: seed)
         self.state = state
+    }
+
+    /// The campaign's ending — nil while days remain. First match in
+    /// catalog order wins.
+    public func finale() -> Ending? {
+        guard state.isFinished else { return nil }
+        return endings.first { $0.matches(state.office) }
     }
 
     /// Deals 3–5 unique tasks for today's workday.

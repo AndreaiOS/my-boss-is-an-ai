@@ -1,12 +1,13 @@
 # TODO
 
-Running task list, per the GDD workflow. Current milestone: **M2 done → M3 — Endings**.
+Running task list, per the GDD workflow. Current milestone: **M3 done → M4 — Polish**.
 
 ## Now
 
 - [ ] Play a full campaign on the simulator and tune the feel of the loop
-- [ ] M3: multiple endings (full-AI, full-human, hybrids) driven by final automation/humanity
 - [ ] First real pixel-art sprite to replace one emoji placeholder
+- [ ] Sound gags (per GDD: funny sound effect for every interaction)
+- [ ] Squash-and-stretch on task resolution and scene props
 
 ## Later
 
@@ -26,3 +27,4 @@ Running task list, per the GDD workflow. Current milestone: **M2 done → M3 —
 - [x] M2: campaign balance — full-AI run reaches `automated` on day 4–6, never before day 3 (test-enforced)
 - [x] M2: triggered events render as persistent props in the office scene (+ fixed empty-scene rendering bug, verified via simulator screenshot)
 - [x] M2: comeback events (`undoes`/`requiresAny`) — the world oscillates: Gino rehired, barista returns, memes revive (5 comeback pairs, 26 tests)
+- [x] M3: 7 data-driven endings (`endings.json`), first-match-wins + exhaustive coverage test; ending screen in UI (31 tests)

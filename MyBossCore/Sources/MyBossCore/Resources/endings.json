@@ -1,0 +1,51 @@
+[
+  {
+    "id": "robots_with_feelings",
+    "title": "Robots With Feelings",
+    "flavorText": "You automated everything — but you did it with love, and the machines noticed. The coffee machine writes you poetry. The cleaning robot saved a crumb from your desk 'as a memento'. The algorithm that replaced your manager gives you Fridays off, 'just because'. The singularity arrived, and it hugs.",
+    "minAutomation": 70,
+    "minHumanity": 60
+  },
+  {
+    "id": "corporate_singularity",
+    "title": "The Corporate Singularity",
+    "flavorText": "The office is now a server farm. You are kept on as a 'biological legacy asset' — mostly for tax reasons. Every morning a drone waters you like a plant. Performance review: 'adequately organic'. The mug of Gino watches from a shelf, forever.",
+    "minAutomation": 70,
+    "maxHumanity": 30
+  },
+  {
+    "id": "ghost_in_the_open_space",
+    "title": "Ghost in the Open Space",
+    "flavorText": "Half the office is robots, and morale still collapsed. The AI does the work, the humans do the sighing. The meme wall shows only error messages now. On the plus side: the meetings are very short, because nobody has anything left to say.",
+    "minAutomation": 40,
+    "maxHumanity": 30
+  },
+  {
+    "id": "employee_of_the_century",
+    "title": "Employee of the Century",
+    "flavorText": "You did it all yourself. The office is loud, messy, and gloriously human. Gino tells the weekend story for the 47th time and it's still funny. The ficus has been promoted to Chief Morale Officer. Corporate wants to know your secret; you will never tell them it was the pizza.",
+    "maxAutomation": 29,
+    "minHumanity": 70
+  },
+  {
+    "id": "burnout_speedrun",
+    "title": "Burnout Speedrun (Any%)",
+    "flavorText": "You refused every bit of help and did everything by hand. A new world record. The office is technically human — it's just that the only human left standing is you, asleep on the photocopier. The printer, moved, prints you a blanket.",
+    "maxAutomation": 29,
+    "maxHumanity": 39
+  },
+  {
+    "id": "great_compromise",
+    "title": "The Great Compromise",
+    "flavorText": "Humans and machines split the work and, eventually, the birthday cake. The robot cleaner attends the parties now; it brings confetti it vacuumed up last time. The AI drafts the emails, Gino adds the typos 'for warmth'. Nobody is fully efficient, and that is the point.",
+    "minAutomation": 30,
+    "maxAutomation": 69,
+    "minHumanity": 40
+  },
+  {
+    "id": "just_another_quarter",
+    "title": "Just Another Quarter",
+    "flavorText": "Nothing dramatic happened, which in this economy is a miracle. The office survives, the coffee is acceptable, the ficus abides. Your boss — human? algorithm? nobody has checked in months — schedules the next quarter. See you Monday.",
+    "minAutomation": 0
+  }
+]

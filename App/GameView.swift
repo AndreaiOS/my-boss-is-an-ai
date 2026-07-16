@@ -117,10 +117,22 @@ struct GameView: View {
 
     private var campaignOver: some View {
         VStack(spacing: 16) {
-            Text("The campaign is over!")
-                .font(.title2.bold())
-            Text(stageBlurb)
-                .multilineTextAlignment(.center)
+            if let ending = model.ending {
+                Text(ending.title)
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                ScrollView {
+                    Text(ending.flavorText)
+                        .font(.body.italic())
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxHeight: 220)
+            } else {
+                Text("The campaign is over!")
+                    .font(.title2.bold())
+                Text(stageBlurb)
+                    .multilineTextAlignment(.center)
+            }
             Button("Play again") { model.restartCampaign() }
                 .buttonStyle(.borderedProminent)
         }

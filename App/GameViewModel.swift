@@ -16,6 +16,7 @@ final class GameViewModel {
     private var engine: GameEngine
     private let catalog: [OfficeTask]
     private let events: [OfficeEvent]
+    private let endings: [Ending]
     private(set) var todaysTasks: [OfficeTask] = []
     private(set) var currentTaskIndex = 0
     private(set) var phase: Phase = .workday
@@ -28,6 +29,7 @@ final class GameViewModel {
     var day: Int { engine.state.day }
     var office: OfficeState { engine.state.office }
     var triggeredEventIDs: [String] { engine.state.triggeredEventIDs }
+    var ending: Ending? { engine.finale() }
     var currentTask: OfficeTask? {
         guard phase == .workday, currentTaskIndex < todaysTasks.count else { return nil }
         return todaysTasks[currentTaskIndex]
@@ -36,13 +38,14 @@ final class GameViewModel {
     init() {
         catalog = (try? TaskCatalog.loadDefault()) ?? []
         events = (try? EventCatalog.loadDefault()) ?? []
+        endings = (try? EndingCatalog.loadDefault()) ?? []
         let seed = UInt64.random(in: .min ... .max)
         if let data = try? Data(contentsOf: Self.saveURL),
            let saved = try? JSONDecoder().decode(GameState.self, from: data),
            !saved.isFinished {
-            engine = GameEngine(catalog: catalog, seed: seed, state: saved, events: events)
+            engine = GameEngine(catalog: catalog, seed: seed, state: saved, events: events, endings: endings)
         } else {
-            engine = GameEngine(catalog: catalog, seed: seed, events: events)
+            engine = GameEngine(catalog: catalog, seed: seed, events: events, endings: endings)
         }
         beginDay()
     }
@@ -69,7 +72,7 @@ final class GameViewModel {
 
     func restartCampaign() {
         try? FileManager.default.removeItem(at: Self.saveURL)
-        engine = GameEngine(catalog: catalog, seed: UInt64.random(in: .min ... .max), events: events)
+        engine = GameEngine(catalog: catalog, seed: UInt64.random(in: .min ... .max), events: events, endings: endings)
         beginDay()
     }
 
