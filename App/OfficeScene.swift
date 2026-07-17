@@ -372,7 +372,7 @@ final class OfficeScene: SKScene {
         // Each background has a different walkable corridor, so the cast
         // spots are tuned per stage: [back, front, mid].
         let spots: [(x: CGFloat, y: CGFloat, size: CGFloat)] = switch stage {
-        case .lively: [(0.45, 0.44, 58), (0.36, 0.20, 94), (0.56, 0.32, 76)]
+        case .lively: [(0.45, 0.46, 56), (0.38, 0.30, 84), (0.58, 0.38, 70)]
         case .hybrid: [(0.50, 0.48, 54), (0.46, 0.29, 84), (0.58, 0.38, 68)]
         case .automated: [(0.35, 0.48, 56), (0.38, 0.20, 92), (0.62, 0.34, 74)]
         }
@@ -387,7 +387,7 @@ final class OfficeScene: SKScene {
         // Guest desk worker: Karen keeps the lively office company, the
         // intern survives the hybrid one.
         if stage == .lively {
-            items.append(Placement(sprite: "karen", x: 0.66, y: 0.18, size: 88, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "karen", x: 0.72, y: 0.30, size: 78, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
         if stage == .hybrid {
             items.append(Placement(sprite: "intern", x: 0.70, y: 0.30, size: 76, animation: Self.bob.copy() as? SKAction, onFloor: true))
@@ -397,19 +397,24 @@ final class OfficeScene: SKScene {
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.72, y: 0.11, size: 84, onFloor: true))
-        items.append(Placement(sprite: "printer", x: 0.92, y: 0.11, size: 70, onFloor: true))
+        let counterY: CGFloat = stage == .hybrid ? 0.19 : 0.11
+        items.append(Placement(sprite: ficus, x: 0.72, y: counterY, size: 84, onFloor: true))
+        items.append(Placement(sprite: "printer", x: 0.92, y: counterY, size: 70, onFloor: true))
         if stage == .automated {
             items.append(Placement(sprite: "drone", x: 0.50, y: 0.46, size: 50, animation: Self.float.copy() as? SKAction))
         }
 
         // --- Event props, each in its own curated spot.
         if active.contains("robot_cleaner") {
-            let cleanerSpot: (x: CGFloat, y: CGFloat) = stage == .hybrid ? (0.58, 0.28) : (0.20, 0.17)
+            let cleanerSpot: (x: CGFloat, y: CGFloat) = switch stage {
+            case .lively: (0.20, 0.30)
+            case .hybrid: (0.15, 0.30)
+            case .automated: (0.20, 0.17)
+            }
             items.append(Placement(sprite: "robot_cleaner", x: cleanerSpot.x, y: cleanerSpot.y, size: 46, animation: Self.patrol.copy() as? SKAction, onFloor: true))
         }
         if active.contains("layoff_gino") {
-            items.append(Placement(sprite: "mug_gino", x: 0.56, y: 0.12, size: 40, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "mug_gino", x: 0.56, y: counterY + 0.01, size: 40, animation: .repeatForever(.sequence([
                 .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
             ])), onFloor: true))
