@@ -6,7 +6,8 @@ Running task list, per the GDD workflow. Current milestone: **M4 done → M5 —
 
 - [ ] Play a full campaign on a real device and tune the feel of the loop
 - [ ] M5: App Store metadata, screenshots, privacy declarations (no data collected)
-- [ ] M5: signing setup (Apple Developer account, bundle ID registration, TestFlight)
+- [ ] M5: TestFlight build upload
+- [ ] M5: Game Center setup in App Store Connect — enable Game Center, create leaderboard `campaigns_completed` and one achievement per ending: `ending.robots_with_feelings`, `ending.corporate_singularity`, `ending.ghost_in_the_open_space`, `ending.employee_of_the_century`, `ending.burnout_speedrun`, `ending.great_compromise`, `ending.just_another_quarter`
 
 ## Later
 
