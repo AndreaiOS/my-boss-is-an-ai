@@ -189,7 +189,17 @@ struct GameView: View {
             } else if model.phase == .duel, let duel = model.currentDuel {
                 ScrollView {
                     VStack(spacing: 10) {
-                        dialog(header: "⚔️ MEETING DUEL — \(duel.opponent.uppercased())", text: "“\(duel.provocation)”")
+                        HStack(spacing: 10) {
+                            Image(uiImage: UIImage(named: "angry_client") ?? UIImage())
+                                .resizable()
+                                .interpolation(.none)
+                                .frame(width: 56, height: 56)
+                            Text("⚔️ MEETING DUEL")
+                                .font(Pixel.font(14))
+                                .foregroundStyle(Pixel.bad)
+                            Spacer()
+                        }
+                        dialog(header: duel.opponent.uppercased(), text: "“\(duel.provocation)”")
                         ForEach(duel.comebacks.indices, id: \.self) { index in
                             Button(duel.comebacks[index]) { fightDuel(comebackIndex: index) }
                                 .buttonStyle(PixelComebackButtonStyle())
@@ -238,8 +248,10 @@ struct GameView: View {
         overlayCard {
             if let offer = model.consultantOffer, model.consultantResolution == nil {
                 // The consultant knocks before the night ends.
-                Text("🕴")
-                    .font(.system(size: 44))
+                Image(uiImage: UIImage(named: "consultant") ?? UIImage())
+                    .resizable()
+                    .interpolation(.none)
+                    .frame(width: 80, height: 80)
                 Text("A KNOCK AT THE DOOR")
                     .font(Pixel.font(16))
                     .foregroundStyle(Pixel.cream)

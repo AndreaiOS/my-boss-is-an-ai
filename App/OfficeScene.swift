@@ -350,9 +350,9 @@ final class OfficeScene: SKScene {
             members = members.map { $0.hasPrefix("worker") ? "robot_worker" : $0 }
         }
         let spots: [(x: CGFloat, y: CGFloat, size: CGFloat)] = [
-            (0.18, 0.30, 82),
-            (0.38, 0.05, 122),
-            (0.62, 0.17, 102)
+            (0.18, 0.40, 62),
+            (0.38, 0.22, 94),
+            (0.62, 0.30, 78)
         ]
         for (index, sprite) in members.enumerated() {
             let spot = spots[index % spots.count]
@@ -365,35 +365,35 @@ final class OfficeScene: SKScene {
         // Guest desk worker: Karen keeps the lively office company, the
         // intern survives the hybrid one.
         if stage == .lively {
-            items.append(Placement(sprite: "karen", x: 0.10, y: 0.05, size: 106, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "karen", x: 0.12, y: 0.24, size: 88, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
         if stage == .hybrid {
-            items.append(Placement(sprite: "intern", x: 0.10, y: 0.05, size: 106, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "intern", x: 0.12, y: 0.24, size: 88, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
 
         // --- Fixtures: the ficus is one pot whose state follows events.
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.70, y: -0.02, size: 88, onFloor: true))
-        items.append(Placement(sprite: "printer", x: 0.92, y: -0.02, size: 74, onFloor: true))
+        items.append(Placement(sprite: ficus, x: 0.72, y: 0.11, size: 84, onFloor: true))
+        items.append(Placement(sprite: "printer", x: 0.92, y: 0.11, size: 70, onFloor: true))
         if stage == .automated {
-            items.append(Placement(sprite: "drone", x: 0.50, y: 0.55, size: 50, animation: Self.float.copy() as? SKAction))
+            items.append(Placement(sprite: "drone", x: 0.50, y: 0.46, size: 50, animation: Self.float.copy() as? SKAction))
         }
 
         // --- Event props, each in its own curated spot.
         if active.contains("robot_cleaner") {
-            items.append(Placement(sprite: "robot_cleaner", x: 0.16, y: -0.04, size: 52, animation: Self.patrol.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "robot_cleaner", x: 0.16, y: 0.19, size: 46, animation: Self.patrol.copy() as? SKAction, onFloor: true))
         }
         if active.contains("layoff_gino") {
-            items.append(Placement(sprite: "mug_gino", x: 0.51, y: -0.01, size: 42, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "mug_gino", x: 0.51, y: 0.12, size: 40, animation: .repeatForever(.sequence([
                 .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
             ])), onFloor: true))
         }
         let coffeeSpot: (x: CGFloat, y: CGFloat, onFloor: Bool) = stage == .automated
-            ? (0.07, -0.02, true)
-            : (0.90, 0.50, false)
+            ? (0.07, 0.11, true)
+            : (0.90, 0.42, false)
         if active.contains("ai_coffee_machine") {
             items.append(Placement(sprite: "coffee_machine_ai", x: coffeeSpot.x, y: coffeeSpot.y, size: 60, z: 0.6, animation: .repeatForever(.sequence([
                 .scale(to: 1.1, duration: 0.4),
@@ -405,16 +405,16 @@ final class OfficeScene: SKScene {
             items.append(Placement(sprite: "barista", x: coffeeSpot.x, y: coffeeSpot.y, size: 66, z: 0.6, animation: Self.bob.copy() as? SKAction, onFloor: coffeeSpot.onFloor))
         }
         if active.contains("manager_algorithm") {
-            items.append(Placement(sprite: "manager_chart", x: 0.14, y: 0.62, size: 56, z: 0.5, animation: Self.float.copy() as? SKAction))
+            items.append(Placement(sprite: "manager_chart", x: 0.14, y: 0.54, size: 56, z: 0.5, animation: Self.float.copy() as? SKAction))
         }
         if active.contains("manager_human") {
-            items.append(Placement(sprite: "manager_human", x: 0.14, y: 0.62, size: 64, z: 0.5, animation: Self.bob.copy() as? SKAction))
+            items.append(Placement(sprite: "manager_human", x: 0.14, y: 0.54, size: 64, z: 0.5, animation: Self.bob.copy() as? SKAction))
         }
         if active.contains("memes_die") {
-            items.append(Placement(sprite: "kpi_dashboard", x: 0.50, y: 0.74, size: 56, z: 0.5))
+            items.append(Placement(sprite: "kpi_dashboard", x: 0.50, y: 0.72, size: 56, z: 0.5))
         }
         if active.contains("memes_revive") {
-            items.append(Placement(sprite: "meme_wall", x: 0.50, y: 0.74, size: 56, z: 0.5, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "meme_wall", x: 0.50, y: 0.72, size: 56, z: 0.5, animation: .repeatForever(.sequence([
                 .scale(to: 1.06, duration: 0.5),
                 .scale(to: 1.0, duration: 0.5)
             ]))))
@@ -425,14 +425,14 @@ final class OfficeScene: SKScene {
     // MARK: - Nodes
 
     private func addBackground() {
-        let texture = SKTexture(imageNamed: "bg_\(stage.rawValue)_v")
+        let texture = SKTexture(imageNamed: "bg_\(stage.rawValue)_v2")
         texture.filteringMode = .nearest
         let node = SKSpriteNode(texture: texture)
         let scale = max(size.width / texture.size().width, size.height / texture.size().height)
         node.setScale(scale)
-        // Anchor the image's bottom to the scene's bottom: the floor stays
-        // visible and the crop eats the ceiling instead.
-        node.position = CGPoint(x: size.width / 2, y: texture.size().height * scale / 2)
+        // Anchor near the bottom, nudged down 10% so the counter's wooden
+        // face doesn't eat the scene; the crop eats the ceiling instead.
+        node.position = CGPoint(x: size.width / 2, y: texture.size().height * scale / 2 - size.height * 0.10)
         node.zPosition = -1
         addChild(node)
     }
@@ -461,12 +461,12 @@ final class OfficeScene: SKScene {
         let paper = SKLabelNode(text: "📄")
         paper.fontSize = 14
         let x = size.width * (0.2 + 0.15 * CGFloat(tick % 5))
-        paper.position = CGPoint(x: x, y: size.height * 0.5)
+        paper.position = CGPoint(x: x, y: size.height * 0.46)
         paper.zPosition = 4
         addChild(paper)
         paper.run(.sequence([
             .group([
-                .moveBy(x: 0, y: -size.height * 0.34, duration: 2.6),
+                .moveBy(x: 0, y: -size.height * 0.20, duration: 2.6),
                 .repeat(.sequence([
                     .moveBy(x: 12, y: 0, duration: 0.65),
                     .moveBy(x: -12, y: 0, duration: 0.65)
