@@ -269,9 +269,9 @@ final class OfficeScene: SKScene {
             members = members.map { $0.hasPrefix("worker") ? "robot_worker" : $0 }
         }
         let spots: [(x: CGFloat, y: CGFloat, size: CGFloat)] = [
-            (0.18, 0.30, 64),
-            (0.38, 0.05, 96),
-            (0.62, 0.17, 80)
+            (0.18, 0.30, 82),
+            (0.38, 0.05, 122),
+            (0.62, 0.17, 102)
         ]
         for (index, sprite) in members.enumerated() {
             let spot = spots[index % spots.count]
@@ -284,53 +284,53 @@ final class OfficeScene: SKScene {
         // Guest desk worker: Karen keeps the lively office company, the
         // intern survives the hybrid one.
         if stage == .lively {
-            items.append(Placement(sprite: "karen", x: 0.82, y: 0.33, size: 56, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "karen", x: 0.82, y: 0.33, size: 70, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
         if stage == .hybrid {
-            items.append(Placement(sprite: "intern", x: 0.82, y: 0.33, size: 56, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "intern", x: 0.82, y: 0.33, size: 70, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
 
         // --- Fixtures: the ficus is one pot whose state follows events.
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.82, y: 0.04, size: 52, onFloor: true))
-        items.append(Placement(sprite: "printer", x: 0.94, y: 0.18, size: 42, onFloor: true))
+        items.append(Placement(sprite: ficus, x: 0.82, y: 0.04, size: 64, onFloor: true))
+        items.append(Placement(sprite: "printer", x: 0.94, y: 0.18, size: 52, onFloor: true))
         if stage == .automated {
-            items.append(Placement(sprite: "drone", x: 0.50, y: 0.55, size: 40, animation: Self.float.copy() as? SKAction))
+            items.append(Placement(sprite: "drone", x: 0.50, y: 0.55, size: 50, animation: Self.float.copy() as? SKAction))
         }
 
         // --- Event props, each in its own curated spot.
         if active.contains("robot_cleaner") {
-            items.append(Placement(sprite: "robot_cleaner", x: 0.24, y: 0.01, size: 40, animation: Self.patrol.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "robot_cleaner", x: 0.24, y: 0.01, size: 50, animation: Self.patrol.copy() as? SKAction, onFloor: true))
         }
         if active.contains("layoff_gino") {
-            items.append(Placement(sprite: "mug_gino", x: 0.62, y: 0.18, size: 28, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "mug_gino", x: 0.62, y: 0.18, size: 34, animation: .repeatForever(.sequence([
                 .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
             ])), onFloor: true))
         }
         if active.contains("ai_coffee_machine") {
-            items.append(Placement(sprite: "coffee_machine_ai", x: 0.90, y: 0.50, size: 44, z: 0.6, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "coffee_machine_ai", x: 0.90, y: 0.50, size: 54, z: 0.6, animation: .repeatForever(.sequence([
                 .scale(to: 1.1, duration: 0.4),
                 .scale(to: 1.0, duration: 0.4),
                 .wait(forDuration: 2)
             ]))))
         }
         if active.contains("barista_returns") {
-            items.append(Placement(sprite: "barista", x: 0.90, y: 0.50, size: 50, z: 0.6, animation: Self.bob.copy() as? SKAction))
+            items.append(Placement(sprite: "barista", x: 0.90, y: 0.50, size: 62, z: 0.6, animation: Self.bob.copy() as? SKAction))
         }
         if active.contains("manager_algorithm") {
-            items.append(Placement(sprite: "manager_chart", x: 0.14, y: 0.62, size: 46, z: 0.5, animation: Self.float.copy() as? SKAction))
+            items.append(Placement(sprite: "manager_chart", x: 0.14, y: 0.62, size: 56, z: 0.5, animation: Self.float.copy() as? SKAction))
         }
         if active.contains("manager_human") {
-            items.append(Placement(sprite: "manager_human", x: 0.14, y: 0.62, size: 52, z: 0.5, animation: Self.bob.copy() as? SKAction))
+            items.append(Placement(sprite: "manager_human", x: 0.14, y: 0.62, size: 64, z: 0.5, animation: Self.bob.copy() as? SKAction))
         }
         if active.contains("memes_die") {
-            items.append(Placement(sprite: "kpi_dashboard", x: 0.50, y: 0.74, size: 46, z: 0.5))
+            items.append(Placement(sprite: "kpi_dashboard", x: 0.50, y: 0.74, size: 56, z: 0.5))
         }
         if active.contains("memes_revive") {
-            items.append(Placement(sprite: "meme_wall", x: 0.50, y: 0.74, size: 46, z: 0.5, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "meme_wall", x: 0.50, y: 0.74, size: 56, z: 0.5, animation: .repeatForever(.sequence([
                 .scale(to: 1.06, duration: 0.5),
                 .scale(to: 1.0, duration: 0.5)
             ]))))
