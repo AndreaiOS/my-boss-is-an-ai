@@ -302,23 +302,26 @@ final class OfficeScene: SKScene {
 
         // --- Event props, each in its own curated spot.
         if active.contains("robot_cleaner") {
-            items.append(Placement(sprite: "robot_cleaner", x: 0.24, y: 0.01, size: 50, animation: Self.patrol.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "robot_cleaner", x: 0.16, y: -0.04, size: 52, animation: Self.patrol.copy() as? SKAction, onFloor: true))
         }
         if active.contains("layoff_gino") {
-            items.append(Placement(sprite: "mug_gino", x: 0.62, y: 0.18, size: 34, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "mug_gino", x: 0.51, y: -0.01, size: 42, animation: .repeatForever(.sequence([
                 .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
             ])), onFloor: true))
         }
+        let coffeeSpot: (x: CGFloat, y: CGFloat, onFloor: Bool) = stage == .automated
+            ? (0.07, -0.02, true)
+            : (0.90, 0.50, false)
         if active.contains("ai_coffee_machine") {
-            items.append(Placement(sprite: "coffee_machine_ai", x: 0.90, y: 0.50, size: 54, z: 0.6, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "coffee_machine_ai", x: coffeeSpot.x, y: coffeeSpot.y, size: 60, z: 0.6, animation: .repeatForever(.sequence([
                 .scale(to: 1.1, duration: 0.4),
                 .scale(to: 1.0, duration: 0.4),
                 .wait(forDuration: 2)
-            ]))))
+            ])), onFloor: coffeeSpot.onFloor))
         }
         if active.contains("barista_returns") {
-            items.append(Placement(sprite: "barista", x: 0.90, y: 0.50, size: 62, z: 0.6, animation: Self.bob.copy() as? SKAction))
+            items.append(Placement(sprite: "barista", x: coffeeSpot.x, y: coffeeSpot.y, size: 66, z: 0.6, animation: Self.bob.copy() as? SKAction, onFloor: coffeeSpot.onFloor))
         }
         if active.contains("manager_algorithm") {
             items.append(Placement(sprite: "manager_chart", x: 0.14, y: 0.62, size: 56, z: 0.5, animation: Self.float.copy() as? SKAction))
