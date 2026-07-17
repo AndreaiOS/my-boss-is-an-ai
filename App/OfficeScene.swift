@@ -2,18 +2,25 @@ import SpriteKit
 import MyBossCore
 
 /// The office. Composition is semantic: the cast and fixtures react to the
-/// stage and to which events are active (Gino leaves when laid off and his
-/// mug stays; the ficus is one pot whose state changes; the barista and the
-/// AI coffee machine swap the same corner). Updated only at day boundaries.
+/// stage and to which events are active. Characters walk with real frame
+/// animation (sliced from the batch-3 sheets) and react to choices with
+/// dedicated poses. Updated only at day boundaries.
 final class OfficeScene: SKScene {
 
     private var stage: OfficeStage = .lively
     private var eventIDs: [String] = []
-    private var castNodes: [SKNode] = []
+    private var cast: [CastMember] = []
     private var daylight: SKSpriteNode?
     private var daylightProgress: Double = 0
     /// Deterministic counter to vary emotes and paper spawn points.
     private var tick = 0
+
+    private struct CastMember {
+        let node: SKSpriteNode
+        let standing: SKTexture
+        /// [celebrating, shocked], if this character has reaction art.
+        let reactions: [SKTexture]?
+    }
 
     private struct Placement {
         let sprite: String
@@ -23,15 +30,28 @@ final class OfficeScene: SKScene {
         let size: CGFloat
         var z: CGFloat = 1
         var animation: SKAction? = nil
-        var isCast: Bool = false
         /// Floor items anchor at their feet so depth scaling keeps them
         /// standing on the ground; furniture/wall items stay centered.
         var onFloor: Bool = false
+        var isCast: Bool = false
     }
 
+    private static let walkSheets: [String: String] = [
+        "worker_a": "walk_worker_a",
+        "worker_b": "walk_worker_b",
+        "gino": "walk_gino",
+        "robot_worker": "walk_robot"
+    ]
+
+    private static let reactSheets: [String: String] = [
+        "worker_a": "react_worker_a",
+        "worker_b": "react_worker_b",
+        "gino": "react_gino"
+    ]
+
     private static let bob: SKAction = .repeatForever(.sequence([
-        .moveBy(x: 0, y: 6, duration: 0.5),
-        .moveBy(x: 0, y: -6, duration: 0.5)
+        .moveBy(x: 0, y: 5, duration: 0.5),
+        .moveBy(x: 0, y: -5, duration: 0.5)
     ]))
 
     private static let float: SKAction = .repeatForever(.sequence([
@@ -41,14 +61,14 @@ final class OfficeScene: SKScene {
 
     /// The vacuum roams the floor in a little loop, not just left-right.
     private static let patrol: SKAction = .repeatForever(.sequence([
-        .moveBy(x: 60, y: 14, duration: 2.2),
+        .moveBy(x: 70, y: 16, duration: 2.2),
         .scaleX(to: -1, duration: 0.15),
-        .moveBy(x: -35, y: 10, duration: 1.4),
-        .moveBy(x: -25, y: -24, duration: 1.6),
+        .moveBy(x: -40, y: 12, duration: 1.4),
+        .moveBy(x: -30, y: -28, duration: 1.6),
         .scaleX(to: 1, duration: 0.15)
     ]))
 
-    override init(size: CGSize = CGSize(width: 390, height: 420)) {
+    override init(size: CGSize = CGSize(width: 390, height: 470)) {
         super.init(size: size)
         scaleMode = .resizeFill
     }
@@ -73,28 +93,34 @@ final class OfficeScene: SKScene {
         rebuild()
     }
 
-    /// Squash-and-stretch on the cast when a task resolves. Preserves the
-    /// horizontal flip of anyone currently walking the other way.
-    func react() {
-        for node in castNodes {
-            let sign: CGFloat = node.xScale < 0 ? -1 : 1
-            node.run(.sequence([
+    /// Squash-and-stretch plus the reaction pose when a task resolves.
+    func react(to choice: WorkChoice) {
+        for member in cast {
+            let sign: CGFloat = member.node.xScale < 0 ? -1 : 1
+            member.node.run(.sequence([
                 .group([.scaleX(to: 1.25 * sign, duration: 0.08), .scaleY(to: 0.75, duration: 0.08)]),
                 .group([.scaleX(to: 0.9 * sign, duration: 0.1), .scaleY(to: 1.15, duration: 0.1)]),
                 .group([.scaleX(to: 1.0 * sign, duration: 0.12), .scaleY(to: 1.0, duration: 0.12)])
             ]))
+            if let reactions = member.reactions {
+                member.node.run(.sequence([
+                    .setTexture(reactions[choice == .human ? 0 : 1]),
+                    .wait(forDuration: 0.9),
+                    .setTexture(member.standing)
+                ]))
+            }
         }
     }
 
     /// Emotes pop above the cast's heads when the player picks a side.
     func emote(for choice: WorkChoice) {
         let symbols = choice == .human ? ["❤️", "😄", "💪", "🍕"] : ["⚡️", "😨", "📉", "🫠"]
-        for (index, member) in castNodes.enumerated() where index < 2 {
+        for (index, member) in cast.enumerated() where index < 2 {
             let label = SKLabelNode(text: symbols[(tick + index) % symbols.count])
             label.fontSize = 24
             label.position = CGPoint(
-                x: member.position.x,
-                y: member.position.y + member.frame.height + 10
+                x: member.node.position.x,
+                y: member.node.position.y + member.node.frame.height + 10
             )
             label.zPosition = 8
             addChild(label)
@@ -128,9 +154,11 @@ final class OfficeScene: SKScene {
         }
     }
 
+    // MARK: - Build
+
     private func rebuild() {
         removeAllChildren()
-        castNodes = []
+        cast = []
         addBackground()
         addDaylight()
         startPaperDrift()
@@ -151,10 +179,76 @@ final class OfficeScene: SKScene {
             if let animation = placement.animation {
                 node.run(animation)
             }
-            addChild(node)
             if placement.isCast {
-                castNodes.append(node)
+                let index = cast.count
+                let idle = SKAction.sequence([
+                    .wait(forDuration: 0.18 * Double(index)),
+                    .repeatForever(.sequence([
+                        .moveBy(x: 0, y: 5, duration: 0.42 + 0.07 * Double(index)),
+                        .moveBy(x: 0, y: -5, duration: 0.42 + 0.07 * Double(index))
+                    ]))
+                ])
+                let walkFrames = Self.walkSheets[placement.sprite].map { frames(fromSheet: $0, count: 3) }
+                let reactions = Self.reactSheets[placement.sprite].map { frames(fromSheet: $0, count: 2) }
+                node.run(.group([idle, route(index: index, walkFrames: walkFrames)]))
+                cast.append(CastMember(node: node, standing: texture, reactions: reactions))
             }
+            addChild(node)
+        }
+    }
+
+    /// Slices a horizontal sprite sheet into equal square frames.
+    private func frames(fromSheet name: String, count: Int) -> [SKTexture] {
+        let sheet = SKTexture(imageNamed: name)
+        sheet.filteringMode = .nearest
+        return (0..<count).map { index in
+            let frame = SKTexture(
+                rect: CGRect(x: CGFloat(index) / CGFloat(count), y: 0, width: 1 / CGFloat(count), height: 1),
+                in: sheet
+            )
+            frame.filteringMode = .nearest
+            return frame
+        }
+    }
+
+    /// A wander route where every move segment plays the walk cycle.
+    private func route(index: Int, walkFrames: [SKTexture]?) -> SKAction {
+        func step(_ dx: CGFloat, _ dy: CGFloat, _ duration: TimeInterval) -> SKAction {
+            let move = SKAction.moveBy(x: dx, y: dy, duration: duration)
+            guard let walkFrames else { return move }
+            let cycle = SKAction.animate(with: walkFrames, timePerFrame: 0.13, resize: false, restore: true)
+            let cycles = max(1, Int(duration / (0.13 * Double(walkFrames.count))))
+            return .group([move, .repeat(cycle, count: cycles)])
+        }
+        switch index % 3 {
+        case 0:
+            return .repeatForever(.sequence([
+                .wait(forDuration: 4.5),
+                step(30, 0, 1.8),
+                .wait(forDuration: 2.0),
+                .scaleX(to: -1, duration: 0.12),
+                step(-30, 0, 1.8),
+                .scaleX(to: 1, duration: 0.12)
+            ]))
+        case 1:
+            return .repeatForever(.sequence([
+                .wait(forDuration: 2.5),
+                .scaleX(to: -1, duration: 0.12),
+                step(-56, 0, 2.2),
+                .wait(forDuration: 1.2),
+                .scaleX(to: 1, duration: 0.12),
+                step(56, 0, 2.2)
+            ]))
+        default:
+            return .repeatForever(.sequence([
+                .wait(forDuration: 3.4),
+                step(38, -10, 2.0),
+                .wait(forDuration: 2.6),
+                .scaleX(to: -1, duration: 0.12),
+                step(-38, 10, 2.0),
+                .scaleX(to: 1, duration: 0.12),
+                .wait(forDuration: 1.0)
+            ]))
         }
     }
 
@@ -162,119 +256,101 @@ final class OfficeScene: SKScene {
         let active = Set(eventIDs)
         var items: [Placement] = []
 
-        // --- Floor cast: three slots, left to center.
-        var cast: [String] = switch stage {
+        // --- Floor cast on the free corridor: back, front, mid.
+        var members: [String] = switch stage {
         case .lively: ["worker_a", "worker_b", "gino"]
         case .hybrid: ["worker_a", "robot_worker", "gino"]
         case .automated: ["robot_worker", "robot_worker", "robot_worker"]
         }
         if active.contains("layoff_gino") {
-            cast.removeAll { $0 == "gino" }
+            members.removeAll { $0 == "gino" }
         }
         if active.contains("coworkers_bots") {
-            cast = cast.map { $0.hasPrefix("worker") ? "robot_worker" : $0 }
+            members = members.map { $0.hasPrefix("worker") ? "robot_worker" : $0 }
         }
-        // Staggered depth: back row by the desks (higher, smaller), front
-        // row on the rug (lower, bigger). Bobs are desynced, and whoever
-        // holds the second spot strolls around a bit.
         let spots: [(x: CGFloat, y: CGFloat, size: CGFloat)] = [
-            (0.13, 0.24, 69),
-            (0.34, 0.06, 93),
-            (0.58, 0.15, 81)
+            (0.18, 0.30, 64),
+            (0.38, 0.05, 96),
+            (0.62, 0.17, 80)
         ]
-        for (index, sprite) in cast.enumerated() {
+        for (index, sprite) in members.enumerated() {
             let spot = spots[index % spots.count]
-            let idle: SKAction = .sequence([
-                .wait(forDuration: 0.18 * Double(index)),
-                .repeatForever(.sequence([
-                    .moveBy(x: 0, y: 5, duration: 0.42 + 0.07 * Double(index)),
-                    .moveBy(x: 0, y: -5, duration: 0.42 + 0.07 * Double(index))
-                ]))
-            ])
-            // Everyone wanders, each with their own route and pace.
-            let routes: [SKAction] = [
-                .repeatForever(.sequence([
-                    .wait(forDuration: 4.5),
-                    .moveBy(x: 28, y: 0, duration: 1.8),
-                    .wait(forDuration: 2.0),
-                    .scaleX(to: -1, duration: 0.12),
-                    .moveBy(x: -28, y: 0, duration: 1.8),
-                    .scaleX(to: 1, duration: 0.12)
-                ])),
-                .repeatForever(.sequence([
-                    .wait(forDuration: 2.5),
-                    .scaleX(to: -1, duration: 0.12),
-                    .moveBy(x: -50, y: 0, duration: 2.2),
-                    .wait(forDuration: 1.2),
-                    .scaleX(to: 1, duration: 0.12),
-                    .moveBy(x: 50, y: 0, duration: 2.2)
-                ])),
-                .repeatForever(.sequence([
-                    .wait(forDuration: 3.4),
-                    .moveBy(x: 34, y: -8, duration: 2.0),
-                    .wait(forDuration: 2.6),
-                    .scaleX(to: -1, duration: 0.12),
-                    .moveBy(x: -34, y: 8, duration: 2.0),
-                    .scaleX(to: 1, duration: 0.12),
-                    .wait(forDuration: 1.0)
-                ]))
-            ]
-            let animation: SKAction = .group([idle, routes[index % routes.count]])
             items.append(Placement(
                 sprite: sprite, x: spot.x, y: spot.y, size: spot.size,
-                animation: animation, isCast: true, onFloor: true
+                onFloor: true, isCast: true
             ))
+        }
+
+        // Guest desk worker: Karen keeps the lively office company, the
+        // intern survives the hybrid one.
+        if stage == .lively {
+            items.append(Placement(sprite: "karen", x: 0.82, y: 0.33, size: 56, animation: Self.bob.copy() as? SKAction, onFloor: true))
+        }
+        if stage == .hybrid {
+            items.append(Placement(sprite: "intern", x: 0.82, y: 0.33, size: 56, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
 
         // --- Fixtures: the ficus is one pot whose state follows events.
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.78, y: 0.08, size: 50, onFloor: true))
-        items.append(Placement(sprite: "printer", x: 0.90, y: 0.15, size: 48))
-        if stage == .lively {
-            items.append(Placement(sprite: "pizza_box", x: 0.60, y: 0.36, size: 34, z: 0.6))
-        }
+        items.append(Placement(sprite: ficus, x: 0.82, y: 0.04, size: 52, onFloor: true))
+        items.append(Placement(sprite: "printer", x: 0.94, y: 0.18, size: 42, onFloor: true))
         if stage == .automated {
-            items.append(Placement(sprite: "drone", x: 0.62, y: 0.55, size: 38, animation: Self.float.copy() as? SKAction))
+            items.append(Placement(sprite: "drone", x: 0.50, y: 0.55, size: 40, animation: Self.float.copy() as? SKAction))
         }
 
         // --- Event props, each in its own curated spot.
         if active.contains("robot_cleaner") {
-            items.append(Placement(sprite: "robot_cleaner", x: 0.22, y: 0.01, size: 38, animation: Self.patrol.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "robot_cleaner", x: 0.24, y: 0.01, size: 40, animation: Self.patrol.copy() as? SKAction, onFloor: true))
         }
         if active.contains("layoff_gino") {
-            items.append(Placement(sprite: "mug_gino", x: 0.58, y: 0.16, size: 28, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "mug_gino", x: 0.62, y: 0.18, size: 28, animation: .repeatForever(.sequence([
                 .fadeAlpha(to: 0.55, duration: 1.5),
                 .fadeAlpha(to: 1.0, duration: 1.5)
             ])), onFloor: true))
         }
         if active.contains("ai_coffee_machine") {
-            items.append(Placement(sprite: "coffee_machine_ai", x: 0.06, y: 0.42, size: 44, z: 0.6, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "coffee_machine_ai", x: 0.90, y: 0.50, size: 44, z: 0.6, animation: .repeatForever(.sequence([
                 .scale(to: 1.1, duration: 0.4),
                 .scale(to: 1.0, duration: 0.4),
                 .wait(forDuration: 2)
             ]))))
         }
         if active.contains("barista_returns") {
-            items.append(Placement(sprite: "barista", x: 0.06, y: 0.42, size: 50, z: 0.6, animation: Self.bob.copy() as? SKAction))
+            items.append(Placement(sprite: "barista", x: 0.90, y: 0.50, size: 50, z: 0.6, animation: Self.bob.copy() as? SKAction))
         }
         if active.contains("manager_algorithm") {
-            items.append(Placement(sprite: "manager_chart", x: 0.50, y: 0.76, size: 44, z: 0.5, animation: Self.float.copy() as? SKAction))
+            items.append(Placement(sprite: "manager_chart", x: 0.14, y: 0.62, size: 46, z: 0.5, animation: Self.float.copy() as? SKAction))
         }
         if active.contains("manager_human") {
-            items.append(Placement(sprite: "manager_human", x: 0.50, y: 0.76, size: 50, z: 0.5, animation: Self.bob.copy() as? SKAction))
+            items.append(Placement(sprite: "manager_human", x: 0.14, y: 0.62, size: 52, z: 0.5, animation: Self.bob.copy() as? SKAction))
         }
         if active.contains("memes_die") {
-            items.append(Placement(sprite: "kpi_dashboard", x: 0.91, y: 0.74, size: 44, z: 0.5))
+            items.append(Placement(sprite: "kpi_dashboard", x: 0.50, y: 0.74, size: 46, z: 0.5))
         }
         if active.contains("memes_revive") {
-            items.append(Placement(sprite: "meme_wall", x: 0.91, y: 0.74, size: 44, z: 0.5, animation: .repeatForever(.sequence([
+            items.append(Placement(sprite: "meme_wall", x: 0.50, y: 0.74, size: 46, z: 0.5, animation: .repeatForever(.sequence([
                 .scale(to: 1.06, duration: 0.5),
                 .scale(to: 1.0, duration: 0.5)
             ]))))
         }
         return items
+    }
+
+    // MARK: - Nodes
+
+    private func addBackground() {
+        let texture = SKTexture(imageNamed: "bg_\(stage.rawValue)_v")
+        texture.filteringMode = .nearest
+        let node = SKSpriteNode(texture: texture)
+        let scale = max(size.width / texture.size().width, size.height / texture.size().height)
+        node.setScale(scale)
+        // Anchor the image's bottom to the scene's bottom: the floor stays
+        // visible and the crop eats the ceiling instead.
+        node.position = CGPoint(x: size.width / 2, y: texture.size().height * scale / 2)
+        node.zPosition = -1
+        addChild(node)
     }
 
     private func addDaylight() {
@@ -316,16 +392,5 @@ final class OfficeScene: SKScene {
             .fadeOut(withDuration: 0.4),
             .removeFromParent()
         ]))
-    }
-
-    private func addBackground() {
-        let texture = SKTexture(imageNamed: "bg_\(stage.rawValue)")
-        texture.filteringMode = .nearest
-        let node = SKSpriteNode(texture: texture)
-        let scale = max(size.width / texture.size().width, size.height / texture.size().height)
-        node.setScale(scale)
-        node.position = CGPoint(x: size.width / 2, y: size.height / 2)
-        node.zPosition = -1
-        addChild(node)
     }
 }

@@ -81,7 +81,7 @@ struct GameView: View {
         model.choose(choice)
         SoundPlayer.shared.play(choice == .human ? .human : .ai)
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        scene.react()
+        scene.react(to: choice)
         scene.emote(for: choice)
         if let events = model.lastResolution?.events, !events.isEmpty {
             let isComeback = events.contains { !$0.requiresAny.isEmpty }
@@ -188,14 +188,28 @@ struct GameView: View {
         }
     }
 
+    /// One illustration per ending family.
+    private func endingImage(for ending: Ending) -> String {
+        switch ending.id {
+        case "employee_of_the_century", "burnout_speedrun": "ending_human"
+        case "corporate_singularity", "robots_with_feelings": "ending_ai"
+        default: "ending_hybrid"
+        }
+    }
+
     private var endingOverlay: some View {
         overlayCard {
-            Text("🏆")
-                .font(.system(size: 44))
             Text("THE END")
                 .font(Pixel.font(13))
                 .foregroundStyle(Pixel.creamDim)
             if let ending = model.ending {
+                Image(uiImage: UIImage(named: endingImage(for: ending)) ?? UIImage())
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 180)
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+                    .border(Pixel.border, width: 3)
                 Text(ending.title.uppercased())
                     .font(Pixel.font(20))
                     .foregroundStyle(Pixel.cream)
@@ -206,7 +220,7 @@ struct GameView: View {
                         .foregroundStyle(Pixel.cream.opacity(0.85))
                         .multilineTextAlignment(.center)
                 }
-                .frame(maxHeight: 190)
+                .frame(maxHeight: 140)
             }
             Button("Play again ▸") {
                 SoundPlayer.shared.play(.tap)
