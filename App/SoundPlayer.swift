@@ -30,6 +30,7 @@ final class SoundPlayer {
     }
 
     func play(_ effect: Effect) {
+        guard Settings.soundOn else { return }
         let player = players[effect]
         player?.currentTime = 0
         player?.play()

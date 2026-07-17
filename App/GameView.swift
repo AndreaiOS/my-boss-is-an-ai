@@ -3,10 +3,17 @@ import SpriteKit
 import MyBossCore
 
 struct GameView: View {
-    @State private var model = GameViewModel()
+    let onExitToTitle: () -> Void
+    @State private var model: GameViewModel
     @State private var scene = OfficeScene()
     /// Big "DAY N" stamp shown when a new day starts.
     @State private var dayStamp: Int?
+    @State private var showPause = false
+
+    init(freshStart: Bool = false, onExitToTitle: @escaping () -> Void = {}) {
+        self.onExitToTitle = onExitToTitle
+        _model = State(initialValue: GameViewModel(freshStart: freshStart))
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -43,6 +50,17 @@ struct GameView: View {
             showDayStamp(model.day)
         }
         .onChange(of: model.currentTaskIndex) { syncDaylight() }
+        .sheet(isPresented: $showPause) {
+            PauseSheet(
+                onRestart: {
+                    model.restartCampaign()
+                    syncScene()
+                    syncDaylight()
+                    showDayStamp(1)
+                },
+                onExitToTitle: onExitToTitle
+            )
+        }
         .onChange(of: model.phase) { _, phase in
             switch phase {
             case .workday:
@@ -80,7 +98,7 @@ struct GameView: View {
     private func resolveCurrentTask(with choice: WorkChoice) {
         model.choose(choice)
         SoundPlayer.shared.play(choice == .human ? .human : .ai)
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        Haptics.impact()
         scene.react(to: choice)
         scene.emote(for: choice)
         if let events = model.lastResolution?.events, !events.isEmpty {
@@ -88,7 +106,7 @@ struct GameView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 SoundPlayer.shared.play(isComeback ? .eventGood : .eventBad)
                 scene.shake()
-                UINotificationFeedbackGenerator().notificationOccurred(isComeback ? .success : .warning)
+                Haptics.notify(isComeback ? .success : .warning)
             }
         }
     }
@@ -109,6 +127,18 @@ struct GameView: View {
                 VStack(alignment: .trailing, spacing: 4) {
                     PixelMeter(icon: "🤖", value: model.office.automation, color: Pixel.ai)
                     PixelMeter(icon: "❤️", value: model.office.humanity, color: Pixel.bad)
+                }
+                Button {
+                    SoundPlayer.shared.play(.tap)
+                    showPause = true
+                } label: {
+                    Text("॥")
+                        .font(Pixel.font(16))
+                        .foregroundStyle(Pixel.cream)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Pixel.panel)
+                        .border(Pixel.border, width: 3)
                 }
             }
 

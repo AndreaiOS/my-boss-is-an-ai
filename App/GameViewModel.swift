@@ -26,6 +26,13 @@ final class GameViewModel {
 
     private static let saveURL = URL.documentsDirectory.appending(path: "save.json")
 
+    /// True when a saved campaign exists and is still in progress.
+    static var hasResumableSave: Bool {
+        guard let data = try? Data(contentsOf: saveURL),
+              let saved = try? JSONDecoder().decode(GameState.self, from: data) else { return false }
+        return !saved.isFinished
+    }
+
     var day: Int { engine.state.day }
     var office: OfficeState { engine.state.office }
     var triggeredEventIDs: [String] { engine.state.triggeredEventIDs }
@@ -35,10 +42,13 @@ final class GameViewModel {
         return todaysTasks[currentTaskIndex]
     }
 
-    init() {
+    init(freshStart: Bool = false) {
         catalog = (try? TaskCatalog.loadDefault()) ?? []
         events = (try? EventCatalog.loadDefault()) ?? []
         endings = (try? EndingCatalog.loadDefault()) ?? []
+        if freshStart {
+            try? FileManager.default.removeItem(at: Self.saveURL)
+        }
         let seed = UInt64.random(in: .min ... .max)
         if let data = try? Data(contentsOf: Self.saveURL),
            let saved = try? JSONDecoder().decode(GameState.self, from: data),
@@ -62,7 +72,21 @@ final class GameViewModel {
         if currentTaskIndex >= todaysTasks.count {
             engine.endDay()
             save()
-            phase = engine.state.isFinished ? .campaignOver : .daySummary
+            if engine.state.isFinished {
+                phase = .campaignOver
+                reportToGameCenter()
+            } else {
+                phase = .daySummary
+            }
+        }
+    }
+
+    private func reportToGameCenter() {
+        let completed = UserDefaults.standard.integer(forKey: "campaignsCompleted") + 1
+        UserDefaults.standard.set(completed, forKey: "campaignsCompleted")
+        GameCenter.shared.reportCampaignsCompleted(completed)
+        if let ending = engine.finale() {
+            GameCenter.shared.reportEnding(ending.id)
         }
     }
 

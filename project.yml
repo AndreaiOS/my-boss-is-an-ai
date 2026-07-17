@@ -13,6 +13,11 @@ targets:
     sources: [App]
     dependencies:
       - package: MyBossCore
+      - sdk: GameKit.framework
+    entitlements:
+      path: App/MyBossIsAnAI.entitlements
+      properties:
+        com.apple.developer.game-center: true
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
