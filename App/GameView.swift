@@ -15,7 +15,7 @@ struct GameView: View {
 
                 VStack(spacing: 0) {
                     SpriteView(scene: scene)
-                        .frame(height: geo.size.height * 0.56)
+                        .frame(height: geo.size.height * 0.66)
                         .clipped()
                     hud
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -96,17 +96,17 @@ struct GameView: View {
     // MARK: - HUD
 
     private var hud: some View {
-        VStack(spacing: 14) {
-            HStack(alignment: .top) {
+        VStack(spacing: 10) {
+            HStack(alignment: .center) {
                 Text("DAY \(model.day)")
-                    .font(Pixel.font(20))
+                    .font(Pixel.font(17))
                     .foregroundStyle(Pixel.cream)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                     .background(Pixel.panel)
                     .border(Pixel.border, width: 3)
                 Spacer()
-                VStack(alignment: .trailing, spacing: 6) {
+                VStack(alignment: .trailing, spacing: 4) {
                     PixelMeter(icon: "🤖", value: model.office.automation, color: Pixel.ai)
                     PixelMeter(icon: "❤️", value: model.office.humanity, color: Pixel.bad)
                 }
@@ -143,8 +143,8 @@ struct GameView: View {
                 Spacer(minLength: 0)
             }
         }
-        .padding(16)
-        .padding(.bottom, 6)
+        .padding(14)
+        .padding(.bottom, 2)
         .background(Pixel.panelDeep)
         .overlay(alignment: .top) { Rectangle().fill(Pixel.border).frame(height: 3) }
     }
