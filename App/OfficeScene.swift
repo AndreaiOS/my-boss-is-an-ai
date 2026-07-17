@@ -294,8 +294,8 @@ final class OfficeScene: SKScene {
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.74, y: 0.02, size: 76, onFloor: true))
-        items.append(Placement(sprite: "printer", x: 0.94, y: 0.18, size: 52, onFloor: true))
+        items.append(Placement(sprite: ficus, x: 0.70, y: -0.02, size: 88, onFloor: true))
+        items.append(Placement(sprite: "printer", x: 0.92, y: -0.02, size: 74, onFloor: true))
         if stage == .automated {
             items.append(Placement(sprite: "drone", x: 0.50, y: 0.55, size: 50, animation: Self.float.copy() as? SKAction))
         }
