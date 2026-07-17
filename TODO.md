@@ -4,6 +4,7 @@ Running task list, per the GDD workflow. Current milestone: **M4 done → M5 —
 
 ## Now
 
+- [ ] Integrate art batch 5 when ready: 2:3 backgrounds with foreground counter (`bg_*_v2.png`), `consultant.png`, `angry_client.png` — seat front-row props on the counter, use sprites in duel/consultant UI
 - [ ] Play a full campaign on a real device and tune the feel of the loop
 - [ ] M5: App Store metadata, screenshots, privacy declarations (no data collected)
 - [ ] M5: TestFlight build upload
