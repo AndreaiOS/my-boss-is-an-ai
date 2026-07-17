@@ -53,6 +53,21 @@ final class CampaignUITests: XCTestCase {
         XCTFail("Campaign did not reach the ending screen")
     }
 
+    /// Continues the seeded save and idles so the scene can be
+    /// screenshotted externally (used for placement verification).
+    func testShowcase() {
+        let app = XCUIApplication()
+        if let seed = ProcessInfo.processInfo.environment["SEEDSAVE"], !seed.isEmpty {
+            app.launchEnvironment["SEEDSAVE"] = seed
+        }
+        app.launch()
+        let continueButton = app.buttons["▸ CONTINUE"]
+        XCTAssertTrue(continueButton.waitForExistence(timeout: 10))
+        continueButton.tap()
+        XCTAssertTrue(app.buttons["🙋 MYSELF"].waitForExistence(timeout: 10))
+        sleep(25)
+    }
+
     private func tap(_ element: XCUIElement) -> Bool {
         guard element.exists, element.isHittable else { return false }
         element.tap()

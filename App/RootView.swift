@@ -27,7 +27,15 @@ struct RootView: View {
         }
         .statusBarHidden()
         .animation(.easeInOut(duration: 0.3), value: screen)
-        .onAppear { GameCenter.shared.authenticate() }
+        .onAppear {
+            GameCenter.shared.authenticate()
+            // Verification hook: jump straight into the game (e.g. to
+            // screenshot a seeded save from the command line).
+            if CommandLine.arguments.contains("-skipTitle")
+                || ProcessInfo.processInfo.environment["SKIPTITLE"] == "1" {
+                enterGame(fresh: false)
+            }
+        }
     }
 
     private func enterGame(fresh: Bool) {
