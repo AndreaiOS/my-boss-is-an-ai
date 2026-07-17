@@ -113,18 +113,25 @@ struct GameView: View {
             }
 
             if let resolution = model.lastResolution {
-                dialog(header: "WHAT HAPPENED", text: resolution.consequence.flavorText)
-                ForEach(resolution.events) { event in
-                    Text(event.flavorText)
-                        .font(Pixel.font(12))
-                        .foregroundStyle(.black.opacity(0.85))
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(10)
-                        .background(Pixel.human.opacity(0.9))
-                        .border(Pixel.border, width: 3)
+                // Long gags + event banners can outgrow the HUD: the
+                // message area scrolls, the button stays pinned below.
+                ScrollView {
+                    VStack(spacing: 10) {
+                        dialog(header: "WHAT HAPPENED", text: resolution.consequence.flavorText)
+                        ForEach(resolution.events) { event in
+                            Text(event.flavorText)
+                                .font(Pixel.font(12))
+                                .foregroundStyle(.black.opacity(0.85))
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(10)
+                                .background(Pixel.human.opacity(0.9))
+                                .border(Pixel.border, width: 3)
+                        }
+                    }
                 }
-                Spacer(minLength: 0)
+                .scrollBounceBehavior(.basedOnSize)
                 Button("Next ▸") { SoundPlayer.shared.play(.tap); model.advanceAfterConsequence() }
                     .buttonStyle(PixelButtonStyle(color: Pixel.cream))
             } else if let task = model.currentTask {
