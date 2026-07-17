@@ -1,0 +1,63 @@
+# M5 checklist — from repo to TestFlight to App Store
+
+Everything here happens on https://appstoreconnect.apple.com (ASC) or in
+Xcode, signed in with the developer account (team `RA4VQQK3U6`).
+
+## 1. Create the app record (ASC, ~5 min)
+
+1. ASC → My Apps → **+** → New App.
+2. Platform iOS, Name **My Boss Is an AI**, primary language English (U.S.),
+   Bundle ID **co.andreaios.mybossisanai** (already registered by Xcode),
+   SKU `mybossisanai` (any unique string).
+
+## 2. Game Center (ASC, ~10 min)
+
+App page → Services → **Game Center**:
+
+- Leaderboard → **+**, Classic, ID `campaigns_completed`, integer, best = highest,
+  name "Campaigns Completed".
+- Achievements → **+** one per ending (100 pts each, not hidden):
+
+| Achievement ID | Name |
+|---|---|
+| `ending.robots_with_feelings` | Robots With Feelings |
+| `ending.corporate_singularity` | The Corporate Singularity |
+| `ending.ghost_in_the_open_space` | Ghost in the Open Space |
+| `ending.employee_of_the_century` | Employee of the Century |
+| `ending.burnout_speedrun` | Burnout Speedrun (Any%) |
+| `ending.great_compromise` | The Great Compromise |
+| `ending.just_another_quarter` | Just Another Quarter |
+
+(IDs must match exactly — the game reports `ending.<id>` from endings.json.)
+
+## 3. Version metadata (ASC, ~10 min)
+
+Copy from [metadata.md](metadata.md): subtitle, promotional text,
+description, keywords, support URL, privacy policy URL. Add the Italian
+localization. Upload screenshots from `docs/appstore/screenshots/`
+(6.9-inch iPhone set).
+
+**App Privacy** → Data Collection: **Data Not Collected.**
+(The game is fully offline; Game Center data is handled by Apple.)
+
+**Age rating questionnaire**: all "None" → 4+.
+
+## 4. Archive & upload (Xcode, ~10 min)
+
+1. `xcodegen generate` if the project file is missing.
+2. Xcode → target MyBossIsAnAI → destination **Any iOS Device (arm64)**.
+3. Product → **Archive**.
+4. Organizer → Distribute App → **App Store Connect** → Upload (defaults ok).
+5. Wait for processing (~15 min), then TestFlight tab → add yourself as
+   internal tester → install via the TestFlight app on your iPhone.
+
+## 5. Submit (when TestFlight feels right)
+
+ASC → App Store tab → select the build → Add for Review → Submit.
+First review typically takes 1–2 days.
+
+## Answers reviewers may ask
+
+- Export compliance: uses only standard encryption (none beyond HTTPS/OS) → **No**.
+- Content rights: all art/audio generated for this project; no third-party IP.
+- Advertising identifier (IDFA): **No**.

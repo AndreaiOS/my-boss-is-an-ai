@@ -4,13 +4,16 @@ import SwiftUI
 struct MyBossApp: App {
     init() {
         #if DEBUG
-        // Verification hook: UI tests can inject a save to showcase any
-        // combination of day/scores/events before the title screen looks
-        // for one.
-        if let seeded = ProcessInfo.processInfo.environment["SEEDSAVE"],
-           !seeded.isEmpty {
+        // Verification hooks for UI tests: inject a save to showcase any
+        // combination of day/scores/events, and keep the Game Center
+        // sign-in sheet from covering screenshots.
+        let env = ProcessInfo.processInfo.environment
+        if let seeded = env["SEEDSAVE"], !seeded.isEmpty {
             try? seeded.data(using: .utf8)?
                 .write(to: URL.documentsDirectory.appending(path: "save.json"))
+        }
+        if env["UITEST"] == "1" {
+            UserDefaults.standard.set(true, forKey: "gcPromptShown")
         }
         #endif
     }

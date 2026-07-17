@@ -6,8 +6,9 @@ Running task list, per the GDD workflow. Current milestone: **M4 done → M5 —
 
 - [x] Art batch 4/5 integrated: counter backgrounds + consultant/angry client sprites
 - [ ] Play a full campaign on a real device and tune the feel of the loop
-- [ ] M5: App Store metadata, screenshots, privacy declarations (no data collected)
-- [ ] M5: TestFlight build upload
+- [x] M5: App Store metadata (EN+IT in docs/appstore/metadata.md), 6.9" screenshots (docs/appstore/screenshots/), PRIVACY.md, version 1.0.0, bundle id co.andreaios.mybossisanai
+- [ ] M5: create app record + Game Center IDs on App Store Connect (docs/appstore/checklist.md)
+- [ ] M5: TestFlight build upload (Xcode Archive)
 - [ ] M5: Game Center setup in App Store Connect — enable Game Center, create leaderboard `campaigns_completed` and one achievement per ending: `ending.robots_with_feelings`, `ending.corporate_singularity`, `ending.ghost_in_the_open_space`, `ending.employee_of_the_century`, `ending.burnout_speedrun`, `ending.great_compromise`, `ending.just_another_quarter`
 
 ## Later

@@ -55,8 +55,21 @@ final class CampaignUITests: XCTestCase {
 
     /// Continues the seeded save and idles so the scene can be
     /// screenshotted externally (used for placement verification).
+    /// Idles on the title screen for external screenshots.
+    func testTitleShowcase() {
+        let app = XCUIApplication()
+        app.launchEnvironment["UITEST"] = "1"
+        if let seed = ProcessInfo.processInfo.environment["SEEDSAVE"], !seed.isEmpty {
+            app.launchEnvironment["SEEDSAVE"] = seed
+        }
+        app.launch()
+        XCTAssertTrue(app.buttons["NEW GAME"].waitForExistence(timeout: 10))
+        sleep(25)
+    }
+
     func testShowcase() {
         let app = XCUIApplication()
+        app.launchEnvironment["UITEST"] = "1"
         if let seed = ProcessInfo.processInfo.environment["SEEDSAVE"], !seed.isEmpty {
             app.launchEnvironment["SEEDSAVE"] = seed
         }
