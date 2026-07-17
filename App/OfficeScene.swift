@@ -284,17 +284,17 @@ final class OfficeScene: SKScene {
         // Guest desk worker: Karen keeps the lively office company, the
         // intern survives the hybrid one.
         if stage == .lively {
-            items.append(Placement(sprite: "karen", x: 0.82, y: 0.33, size: 70, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "karen", x: 0.10, y: 0.05, size: 106, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
         if stage == .hybrid {
-            items.append(Placement(sprite: "intern", x: 0.82, y: 0.33, size: 70, animation: Self.bob.copy() as? SKAction, onFloor: true))
+            items.append(Placement(sprite: "intern", x: 0.10, y: 0.05, size: 106, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
 
         // --- Fixtures: the ficus is one pot whose state follows events.
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
             : active.contains("ficus_reborn") ? "ficus_sprout"
             : "ficus_healthy"
-        items.append(Placement(sprite: ficus, x: 0.82, y: 0.04, size: 64, onFloor: true))
+        items.append(Placement(sprite: ficus, x: 0.74, y: 0.02, size: 76, onFloor: true))
         items.append(Placement(sprite: "printer", x: 0.94, y: 0.18, size: 52, onFloor: true))
         if stage == .automated {
             items.append(Placement(sprite: "drone", x: 0.50, y: 0.55, size: 50, animation: Self.float.copy() as? SKAction))
