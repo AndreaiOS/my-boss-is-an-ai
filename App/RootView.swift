@@ -25,6 +25,7 @@ struct RootView: View {
                     .id(session)
             }
         }
+        .statusBarHidden()
         .animation(.easeInOut(duration: 0.3), value: screen)
         .onAppear { GameCenter.shared.authenticate() }
     }

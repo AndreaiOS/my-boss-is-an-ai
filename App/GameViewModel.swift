@@ -169,6 +169,9 @@ final class GameViewModel {
         GameCenter.shared.reportCampaignsCompleted(completed)
         if let ending = engine.finale() {
             GameCenter.shared.reportEnding(ending.id)
+            var found = Set(UserDefaults.standard.stringArray(forKey: "endingsFound") ?? [])
+            found.insert(ending.id)
+            UserDefaults.standard.set(Array(found).sorted(), forKey: "endingsFound")
         }
     }
 

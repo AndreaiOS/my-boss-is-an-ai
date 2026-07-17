@@ -116,24 +116,43 @@ final class OfficeScene: SKScene {
     func emote(for choice: WorkChoice) {
         let symbols = choice == .human ? ["❤️", "😄", "💪", "🍕"] : ["⚡️", "😨", "📉", "🫠"]
         for (index, member) in cast.enumerated() where index < 2 {
-            let label = SKLabelNode(text: symbols[(tick + index) % symbols.count])
-            label.fontSize = 24
-            label.position = CGPoint(
-                x: member.node.position.x,
-                y: member.node.position.y + member.node.frame.height + 10
-            )
-            label.zPosition = 8
-            addChild(label)
-            label.run(.sequence([
-                .wait(forDuration: 0.12 * Double(index)),
-                .group([
-                    .moveBy(x: 0, y: 26, duration: 0.7),
-                    .sequence([.wait(forDuration: 0.45), .fadeOut(withDuration: 0.25)])
-                ]),
-                .removeFromParent()
-            ]))
+            popEmote(symbols[(tick + index) % symbols.count], above: member.node, delay: 0.12 * Double(index))
         }
         tick += 1
+    }
+
+    private func popEmote(_ symbol: String, above node: SKNode, delay: TimeInterval = 0) {
+        let label = SKLabelNode(text: symbol)
+        label.fontSize = 24
+        label.position = CGPoint(
+            x: node.position.x,
+            y: node.position.y + node.frame.height + 10
+        )
+        label.zPosition = 8
+        addChild(label)
+        label.run(.sequence([
+            .wait(forDuration: delay),
+            .group([
+                .moveBy(x: 0, y: 26, duration: 0.7),
+                .sequence([.wait(forDuration: 0.45), .fadeOut(withDuration: 0.25)])
+            ]),
+            .removeFromParent()
+        ]))
+    }
+
+    /// Every few seconds someone in the office has a thought of their own.
+    private func startIdleChatter() {
+        removeAction(forKey: "chatter")
+        run(.repeatForever(.sequence([
+            .wait(forDuration: 8),
+            .run { [weak self] in
+                guard let self, !self.cast.isEmpty else { return }
+                self.tick += 1
+                let symbols = ["💬", "☕️", "💤", "🎵", "🧾"]
+                let member = self.cast[self.tick % self.cast.count]
+                self.popEmote(symbols[self.tick % symbols.count], above: member.node)
+            }
+        ])), withKey: "chatter")
     }
 
     /// Warms the light as the workday progresses (0 = morning, 1 = sunset).
@@ -242,6 +261,7 @@ final class OfficeScene: SKScene {
         addBackground()
         addDaylight()
         startPaperDrift()
+        startIdleChatter()
 
         for placement in composition() {
             let texture = SKTexture(imageNamed: placement.sprite)
@@ -430,9 +450,12 @@ final class OfficeScene: SKScene {
         let node = SKSpriteNode(texture: texture)
         let scale = max(size.width / texture.size().width, size.height / texture.size().height)
         node.setScale(scale)
-        // Anchor near the bottom, nudged down 10% so the counter's wooden
-        // face doesn't eat the scene; the crop eats the ceiling instead.
-        node.position = CGPoint(x: size.width / 2, y: texture.size().height * scale / 2 - size.height * 0.10)
+        // Anchor near the bottom, nudged down so the counter's wooden face
+        // doesn't eat the scene — but never past the image's real overflow,
+        // or a gap would open at the top (e.g. on the full-screen title).
+        let overflow = texture.size().height * scale - size.height
+        let shift = min(size.height * 0.10, max(overflow, 0))
+        node.position = CGPoint(x: size.width / 2, y: texture.size().height * scale / 2 - shift)
         node.zPosition = -1
         addChild(node)
     }

@@ -10,6 +10,8 @@ struct TitleView: View {
     @State private var showOptions = false
 
     private var canContinue: Bool { GameViewModel.hasResumableSave }
+    private var endingsFound: Int { UserDefaults.standard.stringArray(forKey: "endingsFound")?.count ?? 0 }
+    private var endingsTotal: Int { (try? EndingCatalog.loadDefault())?.count ?? 7 }
 
     var body: some View {
         ZStack {
@@ -51,6 +53,15 @@ struct TitleView: View {
                         .buttonStyle(PixelButtonStyle(color: canContinue ? Pixel.cream : Pixel.human))
                     Button("Options") { SoundPlayer.shared.play(.tap); showOptions = true }
                         .buttonStyle(PixelButtonStyle(color: Pixel.ai))
+                    if endingsFound > 0 {
+                        Text("ENDINGS FOUND \(endingsFound)/\(endingsTotal)")
+                            .font(Pixel.font(11))
+                            .foregroundStyle(Pixel.cream)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Pixel.bg.opacity(0.75))
+                            .padding(.top, 4)
+                    }
                 }
                 .padding(.horizontal, 40)
                 .padding(.bottom, 40)
