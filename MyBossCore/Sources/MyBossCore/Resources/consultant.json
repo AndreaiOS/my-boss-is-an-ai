@@ -1,0 +1,66 @@
+[
+  {
+    "id": "transformation_package",
+    "pitch": "Psst. AI Transformation Package, Deluxe tier. Today only: 3% off. Your competitors already bought TWO.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_1",
+      "flavorText": "You sign. The package is a PDF and a fridge magnet that says 'DISRUPT'. The invoice is not a PDF.",
+      "automationDelta": 8,
+      "humanityDelta": -4
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_1",
+      "flavorText": "You close the door. Through it, muffled: 'I'll be back Thursday. Everyone signs eventually.'",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    }
+  },
+  {
+    "id": "synergy_audit",
+    "pitch": "I sense untapped synergies in this office. For a modest fee, my algorithm will find them. It found 43 at the bakery downstairs.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_2",
+      "flavorText": "The algorithm finds one synergy: 'fire everyone'. The consultant calls it 'a great starting point'.",
+      "automationDelta": 8,
+      "humanityDelta": -4
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_2",
+      "flavorText": "'No synergies? NO SYNERGIES?' He leaves. The bakery downstairs closes a week later. Coincidence?",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    }
+  },
+  {
+    "id": "chief_ai_officer",
+    "pitch": "You need a Chief AI Officer. I happen to BE one. I also happen to be available. And certified. Self-certified.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_3",
+      "flavorText": "His first act as CAIO: renaming the meeting rooms to 'Neural', 'Quantum' and 'Blockchain'. His second act: lunch.",
+      "automationDelta": 8,
+      "humanityDelta": -4
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_3",
+      "flavorText": "He nods slowly. 'Bold. Very bold. I'll note that in my newsletter.' You are now in a newsletter.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    }
+  },
+  {
+    "id": "robot_lease",
+    "pitch": "Lease-a-Bot™! Why hire humans who need 'salaries' and 'weekends' when you can lease Gino 2.0? He never mourns a mug.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_4",
+      "flavorText": "Gino 2.0 arrives. It holds the mug wrong. Everyone notices. Nobody says anything. The silence is deafening.",
+      "automationDelta": 8,
+      "humanityDelta": -5
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_4",
+      "flavorText": "'You can't put a price on humanity!' you shout. He immediately quotes one. It's surprisingly specific.",
+      "automationDelta": -2,
+      "humanityDelta": 4
+    }
+  }
+]

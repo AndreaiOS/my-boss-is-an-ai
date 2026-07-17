@@ -47,6 +47,8 @@ public final class GameEngine {
     private let catalog: [OfficeTask]
     private let events: [OfficeEvent]
     private let endings: [Ending]
+    private let duels: [Duel]
+    private let consultants: [ConsultantOffer]
     private var rng: SeededRandomNumberGenerator
 
     public init(
@@ -54,11 +56,15 @@ public final class GameEngine {
         seed: UInt64,
         campaignLength: Int = 7,
         events: [OfficeEvent] = [],
-        endings: [Ending] = []
+        endings: [Ending] = [],
+        duels: [Duel] = [],
+        consultants: [ConsultantOffer] = []
     ) {
         self.catalog = catalog
         self.events = events
         self.endings = endings
+        self.duels = duels
+        self.consultants = consultants
         rng = SeededRandomNumberGenerator(seed: seed)
         state = GameState(campaignLength: campaignLength)
     }
@@ -69,11 +75,15 @@ public final class GameEngine {
         seed: UInt64,
         state: GameState,
         events: [OfficeEvent] = [],
-        endings: [Ending] = []
+        endings: [Ending] = [],
+        duels: [Duel] = [],
+        consultants: [ConsultantOffer] = []
     ) {
         self.catalog = catalog
         self.events = events
         self.endings = endings
+        self.duels = duels
+        self.consultants = consultants
         rng = SeededRandomNumberGenerator(seed: seed)
         self.state = state
     }
@@ -95,7 +105,32 @@ public final class GameEngine {
     /// together with any newly triggered office events — so the
     /// presentation layer can show everything immediately.
     public func resolve(_ task: OfficeTask, with choice: WorkChoice) -> Resolution {
-        let consequence = task.consequence(for: choice)
+        apply(task.consequence(for: choice))
+    }
+
+    /// The meeting duel scheduled for today, if any: even days from day 2,
+    /// rotating through the catalog.
+    public func duelForToday() -> Duel? {
+        guard !duels.isEmpty, state.day >= 2, state.day % 2 == 0 else { return nil }
+        return duels[(state.day / 2 - 1) % duels.count]
+    }
+
+    public func resolve(_ duel: Duel, comebackIndex: Int) -> Resolution {
+        apply(comebackIndex == duel.correctIndex ? duel.winConsequence : duel.loseConsequence)
+    }
+
+    /// The consultant knocking before tonight's summary: odd days from
+    /// day 3, rotating through the catalog.
+    public func consultantForTonight() -> ConsultantOffer? {
+        guard !consultants.isEmpty, state.day >= 3, state.day % 2 == 1 else { return nil }
+        return consultants[((state.day - 3) / 2) % consultants.count]
+    }
+
+    public func resolve(_ offer: ConsultantOffer, accepted: Bool) -> Resolution {
+        apply(accepted ? offer.acceptConsequence : offer.refuseConsequence)
+    }
+
+    private func apply(_ consequence: Consequence) -> Resolution {
         state.office.apply(consequence)
         let fired = events.filter { event in
             !state.triggeredEventIDs.contains(event.id)

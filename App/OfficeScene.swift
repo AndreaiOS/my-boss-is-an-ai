@@ -143,6 +143,86 @@ final class OfficeScene: SKScene {
         daylight?.alpha = 0.22 * progress
     }
 
+    // MARK: - Tap to examine
+
+    /// One-liners shown when the player pokes things, Monkey Island style.
+    private static let examineLines: [String: [String]] = [
+        "worker_a": ["\"I'm fine. This is my third coffee. I'm fine.\"", "\"Have you tried turning HR off and on again?\""],
+        "worker_b": ["\"I'm updating my LinkedIn. Just in case.\"", "\"This laptop has seen things.\""],
+        "gino": ["\"Twenty-two years here. The mug was a gift from the '09 audit.\"", "\"You touch the mug, we have a problem.\""],
+        "robot_worker": ["\"PERFORMING TEAMWORK. MORALE AT ACCEPTABLE LEVELS.\"", "{\"smalltalk\": \"weather\", \"status\": \"delightful\"}"],
+        "karen": ["\"I laminated the birthday calendar. ALL the birthdays.\"", "\"My cat could do your boss's job. Politely.\""],
+        "intern": ["\"Video 61 of 74. Send help. Or coffee.\"", "\"Is... is the mug load-bearing?\""],
+        "ficus_healthy": ["The ficus thrives. It has heard every secret in this office.", "It leans toward you. It missed you."],
+        "ficus_wilted": ["It's not dead. It's 'pivoting to dormancy'.", "A single leaf falls. Somewhere, a drone logs it."],
+        "ficus_sprout": ["A tiny sprout. Hope, in vase form.", "Someone has been talking to it at night. HR knows who."],
+        "printer": ["It fears no jam. It fears obsolescence.", "PC LOAD LETTER. It refuses to elaborate."],
+        "pizza_box": ["Cold. Sacred. Communal.", "The last slice has been under negotiation since Tuesday."],
+        "robot_cleaner": ["It judges your crumbs. Silently. At 60 decibels.", "It has mapped the office. And your weaknesses."],
+        "mug_gino": ["Gino's mug. Nobody touches it. Nobody ever will.", "It still smells faintly of the '09 audit."],
+        "coffee_machine_ai": ["\"YOUR USUAL, VALUED RESOURCE #4?\"", "It spells your name right. Every time. Unsettling."],
+        "barista": ["\"One 'Andrra'? 'Andrae'? Whatever, it's yours.\"", "\"The machine never asked about your weekend. I do.\""],
+        "manager_chart": ["Your manager. Currently 34% 'synergy', 66% 'concern'.", "It scheduled a 1:1 with itself. It went poorly."],
+        "manager_human": ["\"Let's put a pin in that and circle back.\"", "\"My door is always open. That's why I'm cold.\""],
+        "kpi_dashboard": ["The memes are gone. The KPIs remain. Forever.", "Engagement: up. Joy: not found (404)."],
+        "meme_wall": ["Today's entry: a cat in a tie. Masterpiece.", "Productivity -12%. Morale +200%. Net positive."],
+        "drone": ["It waters plants and judges you. Multitasking.", "It attended the ficus funeral. Late. With confetti. Wrong event."]
+    ]
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let tapped = nodes(at: location)
+            .compactMap { node -> (SKNode, String)? in
+                guard let name = node.name, Self.examineLines[name] != nil else { return nil }
+                return (node, name)
+            }
+            .max { $0.0.zPosition < $1.0.zPosition }
+        guard let (node, name) = tapped, let lines = Self.examineLines[name] else { return }
+        tick += 1
+        showBubble(lines[tick % lines.count], above: node)
+    }
+
+    private func showBubble(_ text: String, above node: SKNode) {
+        childNode(withName: "examine_bubble")?.removeFromParent()
+
+        let label = SKLabelNode(text: text)
+        label.fontName = "Menlo-Bold"
+        label.fontSize = 11
+        label.fontColor = SKColor(red: 0.07, green: 0.05, blue: 0.04, alpha: 1)
+        label.numberOfLines = 0
+        label.preferredMaxLayoutWidth = size.width * 0.62
+        label.verticalAlignmentMode = .center
+
+        let padding: CGFloat = 10
+        let background = SKShapeNode(
+            rect: label.frame.insetBy(dx: -padding, dy: -padding),
+            cornerRadius: 4
+        )
+        background.fillColor = SKColor(red: 0.96, green: 0.90, blue: 0.78, alpha: 0.97)
+        background.strokeColor = SKColor(red: 0.07, green: 0.05, blue: 0.04, alpha: 1)
+        background.lineWidth = 2
+
+        let bubble = SKNode()
+        bubble.name = "examine_bubble"
+        bubble.addChild(background)
+        bubble.addChild(label)
+        bubble.zPosition = 9
+
+        let width = background.frame.width
+        let x = min(max(node.position.x, width / 2 + 6), size.width - width / 2 - 6)
+        let y = min(node.position.y + node.frame.height + 26, size.height - 40)
+        bubble.position = CGPoint(x: x, y: y)
+        bubble.setScale(0.6)
+        addChild(bubble)
+        bubble.run(.sequence([
+            .scale(to: 1.0, duration: 0.12),
+            .wait(forDuration: 2.6),
+            .fadeOut(withDuration: 0.3),
+            .removeFromParent()
+        ]))
+    }
+
     /// Quick horizontal shake when an office event fires.
     func shake() {
         for child in children {
@@ -167,6 +247,7 @@ final class OfficeScene: SKScene {
             let texture = SKTexture(imageNamed: placement.sprite)
             texture.filteringMode = .nearest
             let node = SKSpriteNode(texture: texture)
+            node.name = placement.sprite
             node.size = CGSize(width: placement.size, height: placement.size)
             if placement.onFloor {
                 node.anchorPoint = CGPoint(x: 0.5, y: 0)

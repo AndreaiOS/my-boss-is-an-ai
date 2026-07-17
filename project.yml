@@ -7,6 +7,17 @@ packages:
   MyBossCore:
     path: MyBossCore
 targets:
+  MyBossIsAnAIUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: MyBossIsAnAI
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.andreaios.mybossisanai.uitests
+        TEST_TARGET_NAME: MyBossIsAnAI
   MyBossIsAnAI:
     type: application
     platform: iOS

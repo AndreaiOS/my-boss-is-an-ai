@@ -1,0 +1,117 @@
+[
+  {
+    "id": "agile_disruptive",
+    "opponent": "The Angry Client",
+    "provocation": "We need to be more AGILE and DISRUPTIVE, or we're finished!",
+    "comebacks": [
+      "We could hold a meeting about it.",
+      "Sir, you've disrupted your own coffee onto your shirt.",
+      "I'll circle back on that."
+    ],
+    "correctIndex": 1,
+    "winConsequence": {
+      "eventID": "duel_win_agile",
+      "flavorText": "The client looks down. Silence. Then: 'You're right. Let's just do good work.' Victory.",
+      "automationDelta": -3,
+      "humanityDelta": 8
+    },
+    "loseConsequence": {
+      "eventID": "duel_lose_agile",
+      "flavorText": "He books seventeen alignment workshops. You attend all of them. In spirit, you are elsewhere.",
+      "automationDelta": 3,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "synergy_leverage",
+    "opponent": "The Consultant's Cousin",
+    "provocation": "Let's leverage our synergies to maximize stakeholder value!",
+    "comebacks": [
+      "Absolutely, let's touch base offline.",
+      "Which stakeholder? Gino? Gino just wants his mug.",
+      "I have a deck about that."
+    ],
+    "correctIndex": 1,
+    "winConsequence": {
+      "eventID": "duel_win_synergy",
+      "flavorText": "He opens his mouth. Closes it. 'Who... who is Gino?' The spell is broken. The room applauds.",
+      "automationDelta": -3,
+      "humanityDelta": 8
+    },
+    "loseConsequence": {
+      "eventID": "duel_lose_synergy",
+      "flavorText": "Your deck had 4 slides. His had 400. You drown in synergy.",
+      "automationDelta": 3,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "do_more_with_less",
+    "opponent": "The Budget Manager",
+    "provocation": "This quarter we'll simply do MORE with LESS!",
+    "comebacks": [
+      "More what? Less what? I need specifics.",
+      "We tried that. The printer is still crying.",
+      "Great vision, chief."
+    ],
+    "correctIndex": 1,
+    "winConsequence": {
+      "eventID": "duel_win_more",
+      "flavorText": "Everyone turns to the printer. It sobs once, softly. The budget is restored out of pure guilt.",
+      "automationDelta": -3,
+      "humanityDelta": 8
+    },
+    "loseConsequence": {
+      "eventID": "duel_lose_more",
+      "flavorText": "'Great vision, chief' was, in retrospect, a surrender. The snack budget is gone.",
+      "automationDelta": 3,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "ai_first_company",
+    "opponent": "The Visionary VP",
+    "provocation": "From today, we are an AI-FIRST company! Humans... second. Or third.",
+    "comebacks": [
+      "Who will laugh at your golf stories, sir?",
+      "Understood. Deploying.",
+      "Can the AI attend your birthday party?"
+    ],
+    "correctIndex": 0,
+    "winConsequence": {
+      "eventID": "duel_win_aifirst",
+      "flavorText": "His lip trembles. Nobody laughs at his golf stories like Karen does. 'Humans... first-ish,' he whispers.",
+      "automationDelta": -4,
+      "humanityDelta": 8
+    },
+    "loseConsequence": {
+      "eventID": "duel_lose_aifirst",
+      "flavorText": "The AI attends the birthday party. It brings a mathematically optimal gift. Everyone cries, for different reasons.",
+      "automationDelta": 4,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "back_to_office",
+    "opponent": "The Middle Manager",
+    "provocation": "Everyone back to the office five days a week! Culture doesn't build itself!",
+    "comebacks": [
+      "The culture is currently a fridge with someone's 2019 yogurt.",
+      "Yes sir, culture sir.",
+      "Define 'culture'. Cite sources."
+    ],
+    "correctIndex": 0,
+    "winConsequence": {
+      "eventID": "duel_win_rto",
+      "flavorText": "He checks the fridge. He meets the yogurt. He now works remotely. From another city.",
+      "automationDelta": -3,
+      "humanityDelta": 8
+    },
+    "loseConsequence": {
+      "eventID": "duel_lose_rto",
+      "flavorText": "'Cite sources' triggered a 90-minute presentation on culture. With a quiz at the end.",
+      "automationDelta": 3,
+      "humanityDelta": -6
+    }
+  }
+]

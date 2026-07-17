@@ -52,6 +52,24 @@ struct PixelButtonStyle: ButtonStyle {
     }
 }
 
+/// Comeback options in meeting duels: smaller, left-aligned, no shouting.
+struct PixelComebackButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(Pixel.font(12))
+            .foregroundStyle(Pixel.cream)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
+            .background(configuration.isPressed ? Pixel.panel : Pixel.panelDeep)
+            .border(Pixel.border, width: 3)
+            .background(Pixel.border.offset(x: 0, y: configuration.isPressed ? 1 : 4))
+            .offset(y: configuration.isPressed ? 3 : 0)
+            .animation(.linear(duration: 0.05), value: configuration.isPressed)
+    }
+}
+
 /// Ten-block retro meter for a 0...100 score. Blocks light up one after
 /// the other and the number ticks when the value changes.
 struct PixelMeter: View {

@@ -63,7 +63,7 @@ struct GameView: View {
         }
         .onChange(of: model.phase) { _, phase in
             switch phase {
-            case .workday:
+            case .workday, .duel:
                 break
             case .daySummary:
                 // The office transforms behind the summary overlay, so the
@@ -93,6 +93,15 @@ struct GameView: View {
             try? await Task.sleep(for: .seconds(1.2))
             withAnimation(.easeOut(duration: 0.3)) { dayStamp = nil }
         }
+    }
+
+    private func fightDuel(comebackIndex: Int) {
+        model.fight(comebackIndex: comebackIndex)
+        let won = model.lastDuelWon == true
+        SoundPlayer.shared.play(won ? .eventGood : .eventBad)
+        Haptics.notify(won ? .success : .error)
+        scene.react(to: won ? .human : .ai)
+        if won { scene.emote(for: .human) } else { scene.shake() }
     }
 
     private func resolveCurrentTask(with choice: WorkChoice) {
@@ -147,7 +156,12 @@ struct GameView: View {
                 // message area scrolls, the button stays pinned below.
                 ScrollView {
                     VStack(spacing: 10) {
-                        dialog(header: "WHAT HAPPENED", text: resolution.consequence.flavorText)
+                        dialog(
+                            header: model.phase == .duel
+                                ? (model.lastDuelWon == true ? "DUEL WON 🏆" : "DUEL LOST 💥")
+                                : "WHAT HAPPENED",
+                            text: resolution.consequence.flavorText
+                        )
                         ForEach(resolution.events) { event in
                             Text(event.flavorText)
                                 .font(Pixel.font(12))
@@ -159,11 +173,30 @@ struct GameView: View {
                                 .background(Pixel.human.opacity(0.9))
                                 .border(Pixel.border, width: 3)
                         }
+                        if let remark = model.aiRemark {
+                            Text("🤖 the AI: \(remark)")
+                                .font(Pixel.font(11))
+                                .foregroundStyle(Pixel.ai.opacity(0.95))
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                 }
                 .scrollBounceBehavior(.basedOnSize)
                 Button("Next ▸") { SoundPlayer.shared.play(.tap); model.advanceAfterConsequence() }
                     .buttonStyle(PixelButtonStyle(color: Pixel.cream))
+            } else if model.phase == .duel, let duel = model.currentDuel {
+                ScrollView {
+                    VStack(spacing: 10) {
+                        dialog(header: "⚔️ MEETING DUEL — \(duel.opponent.uppercased())", text: "“\(duel.provocation)”")
+                        ForEach(duel.comebacks.indices, id: \.self) { index in
+                            Button(duel.comebacks[index]) { fightDuel(comebackIndex: index) }
+                                .buttonStyle(PixelComebackButtonStyle())
+                        }
+                    }
+                }
+                .scrollBounceBehavior(.basedOnSize)
             } else if let task = model.currentTask {
                 dialog(
                     header: "TASK \(model.currentTaskIndex + 1)/\(model.todaysTasks.count)",
@@ -203,25 +236,57 @@ struct GameView: View {
 
     private var daySummaryOverlay: some View {
         overlayCard {
-            Text("🌙")
-                .font(.system(size: 44))
-            Text("DAY \(model.day - 1) COMPLETE")
-                .font(Pixel.font(22))
-                .foregroundStyle(Pixel.cream)
-            Text(stageBlurb)
-                .font(Pixel.font(13))
-                .foregroundStyle(Pixel.creamDim)
-                .multilineTextAlignment(.center)
-            VStack(spacing: 6) {
-                PixelMeter(icon: "🤖", value: model.office.automation, color: Pixel.ai)
-                PixelMeter(icon: "❤️", value: model.office.humanity, color: Pixel.bad)
+            if let offer = model.consultantOffer, model.consultantResolution == nil {
+                // The consultant knocks before the night ends.
+                Text("🕴")
+                    .font(.system(size: 44))
+                Text("A KNOCK AT THE DOOR")
+                    .font(Pixel.font(16))
+                    .foregroundStyle(Pixel.cream)
+                Text("“\(offer.pitch)”")
+                    .font(Pixel.font(13))
+                    .foregroundStyle(Pixel.cream.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                Button("Sign here 🖊") {
+                    SoundPlayer.shared.play(.ai)
+                    model.answerConsultant(accepted: true)
+                    syncScene()
+                }
+                .buttonStyle(PixelButtonStyle(color: Pixel.ai))
+                Button("Slam the door") {
+                    SoundPlayer.shared.play(.human)
+                    model.answerConsultant(accepted: false)
+                    syncScene()
+                }
+                .buttonStyle(PixelButtonStyle(color: Pixel.human))
+            } else {
+                Text("🌙")
+                    .font(.system(size: 44))
+                Text("DAY \(model.day - 1) COMPLETE")
+                    .font(Pixel.font(22))
+                    .foregroundStyle(Pixel.cream)
+                if let reaction = model.consultantResolution {
+                    Text(reaction.consequence.flavorText)
+                        .font(Pixel.font(12))
+                        .foregroundStyle(Pixel.cream.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                } else {
+                    Text(stageBlurb)
+                        .font(Pixel.font(13))
+                        .foregroundStyle(Pixel.creamDim)
+                        .multilineTextAlignment(.center)
+                }
+                VStack(spacing: 6) {
+                    PixelMeter(icon: "🤖", value: model.office.automation, color: Pixel.ai)
+                    PixelMeter(icon: "❤️", value: model.office.humanity, color: Pixel.bad)
+                }
+                Button("Start day \(model.day) ▸") {
+                    SoundPlayer.shared.play(.tap)
+                    model.startNextDay()
+                    showDayStamp(model.day)
+                }
+                .buttonStyle(PixelButtonStyle(color: Pixel.human))
             }
-            Button("Start day \(model.day) ▸") {
-                SoundPlayer.shared.play(.tap)
-                model.startNextDay()
-                showDayStamp(model.day)
-            }
-            .buttonStyle(PixelButtonStyle(color: Pixel.human))
         }
     }
 
