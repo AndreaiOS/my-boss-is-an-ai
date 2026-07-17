@@ -1,15 +1,15 @@
 # TODO
 
-Running task list, per the GDD workflow. Current milestone: **M4 done → M5 — App Store launch**.
+Running task list, per the GDD workflow. Current milestone: **M5 — submitted to App Review on 2026-07-17** 🚀
 
 ## Now
 
 - [x] Art batch 4/5 integrated: counter backgrounds + consultant/angry client sprites
 - [ ] Play a full campaign on a real device and tune the feel of the loop
 - [x] M5: App Store metadata (EN+IT in docs/appstore/metadata.md), 6.9" screenshots (docs/appstore/screenshots/), PRIVACY.md, version 1.0.0, bundle id co.andreaios.mybossisanai
-- [ ] M5: create app record + Game Center IDs on App Store Connect (docs/appstore/checklist.md)
-- [ ] M5: TestFlight build upload (Xcode Archive)
-- [ ] M5: Game Center setup in App Store Connect — enable Game Center, create leaderboard `campaigns_completed` and one achievement per ending: `ending.robots_with_feelings`, `ending.corporate_singularity`, `ending.ghost_in_the_open_space`, `ending.employee_of_the_century`, `ending.burnout_speedrun`, `ending.great_compromise`, `ending.just_another_quarter`
+- [x] M5: ASC app record, Game Center (leaderboard + 7 achievements), metadata, screenshots, privacy, pricing — SUBMITTED for review
+- [ ] Wait for App Review (typically 1–2 days); fix anything they flag
+- [ ] Post-launch ideas: batch-2 Monkey Island features (insult-duel expansion, three-act structure), more tasks/events, iPad support
 
 ## Later
 
