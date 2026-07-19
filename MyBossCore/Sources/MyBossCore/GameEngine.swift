@@ -7,14 +7,30 @@ public struct GameState: Codable, Equatable, Sendable {
     public var office: OfficeState
     /// IDs of office events that already fired; they never repeat.
     public var triggeredEventIDs: [String]
+    /// Meeting duels won this campaign — feeds the daily challenge score.
+    /// Absent in v1.0 saves, so it decodes with a default.
+    public var duelsWon: Int
 
     public var isFinished: Bool { day > campaignLength }
+
+    /// Daily challenge score: staying human matters most, winning duels helps.
+    public var dailyScore: Int { office.humanity * 2 + 25 * duelsWon }
 
     public init(campaignLength: Int) {
         day = 1
         self.campaignLength = campaignLength
         office = OfficeState()
         triggeredEventIDs = []
+        duelsWon = 0
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        day = try container.decode(Int.self, forKey: .day)
+        campaignLength = try container.decode(Int.self, forKey: .campaignLength)
+        office = try container.decode(OfficeState.self, forKey: .office)
+        triggeredEventIDs = try container.decode([String].self, forKey: .triggeredEventIDs)
+        duelsWon = try container.decodeIfPresent(Int.self, forKey: .duelsWon) ?? 0
     }
 }
 
@@ -115,8 +131,9 @@ public final class GameEngine {
         return duels[(state.day / 2 - 1) % duels.count]
     }
 
-    public func resolve(_ duel: Duel, comebackIndex: Int) -> Resolution {
-        apply(comebackIndex == duel.correctIndex ? duel.winConsequence : duel.loseConsequence)
+    public func resolve(_ duel: Duel, won: Bool) -> Resolution {
+        if won { state.duelsWon += 1 }
+        return apply(won ? duel.winConsequence : duel.loseConsequence)
     }
 
     /// The consultant knocking before tonight's summary: odd days from

@@ -44,4 +44,13 @@ final class GameCenter {
             leaderboardIDs: ["campaigns_completed"]
         ) { _ in }
     }
+
+    /// Leaderboard `daily_challenge`: today's shared-seed campaign score.
+    func reportDailyScore(_ score: Int) {
+        guard isAuthenticated else { return }
+        GKLeaderboard.submitScore(
+            score, context: 0, player: GKLocalPlayer.local,
+            leaderboardIDs: ["daily_challenge"]
+        ) { _ in }
+    }
 }

@@ -6,7 +6,7 @@ struct RootView: View {
 
     private enum Screen: Equatable {
         case title
-        case game(fresh: Bool, session: Int)
+        case game(fresh: Bool, daily: Bool, session: Int)
     }
 
     @State private var screen: Screen = .title
@@ -18,10 +18,11 @@ struct RootView: View {
             case .title:
                 TitleView(
                     onContinue: { enterGame(fresh: false) },
-                    onNewGame: { enterGame(fresh: true) }
+                    onNewGame: { enterGame(fresh: true) },
+                    onDailyChallenge: { enterGame(fresh: true, daily: true) }
                 )
-            case .game(let fresh, let session):
-                GameView(freshStart: fresh, onExitToTitle: { screen = .title })
+            case .game(let fresh, let daily, let session):
+                GameView(freshStart: fresh, daily: daily, onExitToTitle: { screen = .title })
                     .id(session)
             }
         }
@@ -38,8 +39,8 @@ struct RootView: View {
         }
     }
 
-    private func enterGame(fresh: Bool) {
+    private func enterGame(fresh: Bool, daily: Bool = false) {
         session += 1
-        screen = .game(fresh: fresh, session: session)
+        screen = .game(fresh: fresh, daily: daily, session: session)
     }
 }

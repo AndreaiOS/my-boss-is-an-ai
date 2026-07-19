@@ -62,5 +62,53 @@
       "automationDelta": -2,
       "humanityDelta": 4
     }
+  },
+  {
+    "id": "prompt_bootcamp",
+    "pitch": "Prompt Engineering Bootcamp! For a modest five figures, your team learns to say 'please' to the machine. Politeness is a deliverable now.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_5",
+      "flavorText": "Day one: 'please'. Day two: 'thank you'. Day three: the invoice. The AI now expects flattery before every task.",
+      "automationDelta": 8,
+      "humanityDelta": -4
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_5",
+      "flavorText": "'Rude,' he mutters, leaving. 'The machines will remember this.' Somewhere, the printer takes notes.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    }
+  },
+  {
+    "id": "metaverse_office",
+    "pitch": "The office of the FUTURE is virtual! Headsets for everyone. Gino can be an eagle. Think about it. An EAGLE.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_6",
+      "flavorText": "Meetings now happen inside a virtual volcano. Gino, as an eagle, refuses to land. Productivity soars. Technically.",
+      "automationDelta": 8,
+      "humanityDelta": -4
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_6",
+      "flavorText": "He puts the headset on anyway and walks into the actual door. 'The metaverse has sharp edges,' he whispers.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    }
+  },
+  {
+    "id": "data_lake",
+    "pitch": "You need a DATA LAKE. What you have is a data puddle. Frankly, it's embarrassing for everyone involved.",
+    "acceptConsequence": {
+      "eventID": "consultant_acc_7",
+      "flavorText": "The data lake is installed. Nobody knows what's in it. Legend says there's a fish. IT feeds it CSVs at midnight.",
+      "automationDelta": 8,
+      "humanityDelta": -4
+    },
+    "refuseConsequence": {
+      "eventID": "consultant_ref_7",
+      "flavorText": "'Fine. Enjoy your puddle.' On his way out he steps in an actual puddle. Karma ships same-day now.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    }
   }
 ]

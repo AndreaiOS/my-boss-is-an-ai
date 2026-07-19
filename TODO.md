@@ -1,15 +1,17 @@
 # TODO
 
-Running task list, per the GDD workflow. Current milestone: **M5 — submitted to App Review on 2026-07-17** 🚀
+Running task list, per the GDD workflow. Current milestone: **v1.1 in progress** (v1.0.0 submitted to App Review on 2026-07-17 🚀)
 
 ## Now
 
-- [x] Art batch 4/5 integrated: counter backgrounds + consultant/angry client sprites
+- [x] v1.1: best-of-3 meeting duels — `DuelRound`/`DuelBout` in core, duels.json migrated to rounds (6 duels × 3 rounds), engine `resolve(duel, won:)` (47 core tests)
+- [x] v1.1: learned comebacks (Monkey Island rules) — losing a round marks the right answer with ★ forever (`ComebackSchool`, UserDefaults)
+- [x] v1.1: daily challenge — shared UTC date seed (`DailySeed`), title-screen button, score = humanity×2 + 25×duelsWon submitted to GC leaderboard `daily_challenge`; v1.0 saves still load
+- [x] v1.1: more content — 7 consultant offers, 24 AI remarks; bump to 1.1.0
+- [ ] v1.1: create the `daily_challenge` recurring leaderboard in ASC (checklist.md §2) before submitting 1.1.0
 - [ ] Play a full campaign on a real device and tune the feel of the loop
-- [x] M5: App Store metadata (EN+IT in docs/appstore/metadata.md), 6.9" screenshots (docs/appstore/screenshots/), PRIVACY.md, version 1.0.0, bundle id co.andreaios.mybossisanai
-- [x] M5: ASC app record, Game Center (leaderboard + 7 achievements), metadata, screenshots, privacy, pricing — SUBMITTED for review
-- [ ] Wait for App Review (typically 1–2 days); fix anything they flag
-- [ ] Post-launch ideas: batch-2 Monkey Island features (insult-duel expansion, three-act structure), more tasks/events, iPad support
+- [ ] Wait for App Review of v1.0.0 (typically 1–2 days); fix anything they flag
+- [ ] Post-launch ideas: three-act structure, more tasks/events, iPad support
 
 ## Later
 

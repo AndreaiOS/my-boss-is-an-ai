@@ -2,13 +2,35 @@
   {
     "id": "agile_disruptive",
     "opponent": "The Angry Client",
-    "provocation": "We need to be more AGILE and DISRUPTIVE, or we're finished!",
-    "comebacks": [
-      "We could hold a meeting about it.",
-      "Sir, you've disrupted your own coffee onto your shirt.",
-      "I'll circle back on that."
+    "rounds": [
+      {
+        "provocation": "We need to be more AGILE and DISRUPTIVE, or we're finished!",
+        "comebacks": [
+          "We could hold a meeting about it.",
+          "Sir, you've disrupted your own coffee onto your shirt.",
+          "I'll circle back on that."
+        ],
+        "correctIndex": 1
+      },
+      {
+        "provocation": "My nephew built an app in a WEEKEND. Why is this taking you a week?",
+        "comebacks": [
+          "Because your nephew's app is one button that plays an airhorn.",
+          "We'll simply sprint harder.",
+          "Weeks contain weekends, sir. It's a known flaw."
+        ],
+        "correctIndex": 0
+      },
+      {
+        "provocation": "I wanted this YESTERDAY! Time is money!",
+        "comebacks": [
+          "Understood. Delivering tomorrow.",
+          "Time is a flat circle, actually.",
+          "Then I'll invoice you for yesterday too."
+        ],
+        "correctIndex": 2
+      }
     ],
-    "correctIndex": 1,
     "winConsequence": {
       "eventID": "duel_win_agile",
       "flavorText": "The client looks down. Silence. Then: 'You're right. Let's just do good work.' Victory.",
@@ -25,13 +47,35 @@
   {
     "id": "synergy_leverage",
     "opponent": "The Consultant's Cousin",
-    "provocation": "Let's leverage our synergies to maximize stakeholder value!",
-    "comebacks": [
-      "Absolutely, let's touch base offline.",
-      "Which stakeholder? Gino? Gino just wants his mug.",
-      "I have a deck about that."
+    "rounds": [
+      {
+        "provocation": "Let's leverage our synergies to maximize stakeholder value!",
+        "comebacks": [
+          "Absolutely, let's touch base offline.",
+          "Which stakeholder? Gino? Gino just wants his mug.",
+          "I have a deck about that."
+        ],
+        "correctIndex": 1
+      },
+      {
+        "provocation": "We must ideate outside the box, then circle back INTO the box!",
+        "comebacks": [
+          "The box is a cubicle, and Gino lives there. Knock first.",
+          "Great, I'll book the box for 3 PM.",
+          "Which box are we talking about, fiscally?"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "provocation": "Our North Star metric demands paradigm-shifting deliverables!",
+        "comebacks": [
+          "Noted. Shifting paradigms as we speak.",
+          "Your North Star is the vending machine light, and it's out of crisps.",
+          "I'll add it to the backlog behind the other paradigms."
+        ],
+        "correctIndex": 1
+      }
     ],
-    "correctIndex": 1,
     "winConsequence": {
       "eventID": "duel_win_synergy",
       "flavorText": "He opens his mouth. Closes it. 'Who... who is Gino?' The spell is broken. The room applauds.",
@@ -48,13 +92,35 @@
   {
     "id": "do_more_with_less",
     "opponent": "The Budget Manager",
-    "provocation": "This quarter we'll simply do MORE with LESS!",
-    "comebacks": [
-      "More what? Less what? I need specifics.",
-      "We tried that. The printer is still crying.",
-      "Great vision, chief."
+    "rounds": [
+      {
+        "provocation": "This quarter we'll simply do MORE with LESS!",
+        "comebacks": [
+          "More what? Less what? I need specifics.",
+          "We tried that. The printer is still crying.",
+          "Great vision, chief."
+        ],
+        "correctIndex": 1
+      },
+      {
+        "provocation": "I've cut the coffee budget. Consider it a wellness initiative!",
+        "comebacks": [
+          "Thank you for thinking of our health.",
+          "I'll simply hydrate with ambition.",
+          "Decaf is a crime scene, not a wellness initiative."
+        ],
+        "correctIndex": 2
+      },
+      {
+        "provocation": "If everyone worked 10% harder, we wouldn't need raises!",
+        "comebacks": [
+          "Then work 10% harder at math.",
+          "Truly inspiring, sir.",
+          "Raises? What are those?"
+        ],
+        "correctIndex": 0
+      }
     ],
-    "correctIndex": 1,
     "winConsequence": {
       "eventID": "duel_win_more",
       "flavorText": "Everyone turns to the printer. It sobs once, softly. The budget is restored out of pure guilt.",
@@ -71,13 +137,35 @@
   {
     "id": "ai_first_company",
     "opponent": "The Visionary VP",
-    "provocation": "From today, we are an AI-FIRST company! Humans... second. Or third.",
-    "comebacks": [
-      "Who will laugh at your golf stories, sir?",
-      "Understood. Deploying.",
-      "Can the AI attend your birthday party?"
+    "rounds": [
+      {
+        "provocation": "From today, we are an AI-FIRST company! Humans... second. Or third.",
+        "comebacks": [
+          "Who will laugh at your golf stories, sir?",
+          "Understood. Deploying.",
+          "Can the AI attend your birthday party?"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "provocation": "The AI wrote a mission statement in 0.3 seconds! What have YOU done today?",
+        "comebacks": [
+          "I read the mission statement. All 40 pages of it.",
+          "It plagiarized ours from LinkedIn, sir. Word for word.",
+          "I've been aligning with it spiritually."
+        ],
+        "correctIndex": 1
+      },
+      {
+        "provocation": "Soon the AI will run the meetings all by itself!",
+        "comebacks": [
+          "It already left this one. Even it has limits.",
+          "Wonderful. More meetings for everyone.",
+          "Can it also attend on my behalf?"
+        ],
+        "correctIndex": 0
+      }
     ],
-    "correctIndex": 0,
     "winConsequence": {
       "eventID": "duel_win_aifirst",
       "flavorText": "His lip trembles. Nobody laughs at his golf stories like Karen does. 'Humans... first-ish,' he whispers.",
@@ -94,13 +182,35 @@
   {
     "id": "back_to_office",
     "opponent": "The Middle Manager",
-    "provocation": "Everyone back to the office five days a week! Culture doesn't build itself!",
-    "comebacks": [
-      "The culture is currently a fridge with someone's 2019 yogurt.",
-      "Yes sir, culture sir.",
-      "Define 'culture'. Cite sources."
+    "rounds": [
+      {
+        "provocation": "Everyone back to the office five days a week! Culture doesn't build itself!",
+        "comebacks": [
+          "The culture is currently a fridge with someone's 2019 yogurt.",
+          "Yes sir, culture sir.",
+          "Define 'culture'. Cite sources."
+        ],
+        "correctIndex": 0
+      },
+      {
+        "provocation": "I measure productivity by chairs filled at 9 AM SHARP!",
+        "comebacks": [
+          "My chair is filled with purpose.",
+          "Then hire the chairs. They never leave.",
+          "9 AM is a social construct."
+        ],
+        "correctIndex": 1
+      },
+      {
+        "provocation": "We're installing a ping-pong table. THAT'S culture!",
+        "comebacks": [
+          "Finally, real culture.",
+          "Ping-pong won't love us back, sir.",
+          "Great — the 2019 yogurt needs a hobby."
+        ],
+        "correctIndex": 2
+      }
     ],
-    "correctIndex": 0,
     "winConsequence": {
       "eventID": "duel_win_rto",
       "flavorText": "He checks the fridge. He meets the yogurt. He now works remotely. From another city.",
@@ -110,6 +220,51 @@
     "loseConsequence": {
       "eventID": "duel_lose_rto",
       "flavorText": "'Cite sources' triggered a 90-minute presentation on culture. With a quiz at the end.",
+      "automationDelta": 3,
+      "humanityDelta": -6
+    }
+  },
+  {
+    "id": "thought_leader",
+    "opponent": "The LinkedIn Influencer",
+    "rounds": [
+      {
+        "provocation": "I 10x'd my personal brand before breakfast. What's YOUR morning routine?",
+        "comebacks": [
+          "Cold showers and gratitude, obviously.",
+          "I said good morning to Gino. He nodded. Huge.",
+          "Agreed? I coffee."
+        ],
+        "correctIndex": 1
+      },
+      {
+        "provocation": "This failure is actually a GROWTH opportunity — I'm posting about it right now!",
+        "comebacks": [
+          "Please tag the printer. It did most of the crying.",
+          "So inspirational. Bell icon smashed.",
+          "Don't forget the selfie with the whiteboard."
+        ],
+        "correctIndex": 0
+      },
+      {
+        "provocation": "Agree? 👍 Or are you simply not a thought leader?",
+        "comebacks": [
+          "Following! Connecting! Engaging!",
+          "Agree! Also: bell icon!",
+          "I think, therefore I don't post."
+        ],
+        "correctIndex": 2
+      }
+    ],
+    "winConsequence": {
+      "eventID": "duel_win_influencer",
+      "flavorText": "He tries to screenshot your comeback for a post about resilience. His phone battery dies. Nature heals.",
+      "automationDelta": -3,
+      "humanityDelta": 8
+    },
+    "loseConsequence": {
+      "eventID": "duel_lose_influencer",
+      "flavorText": "You appear in his post as 'a junior colleague I mentored'. It gets 40,000 likes. None are yours.",
       "automationDelta": 3,
       "humanityDelta": -6
     }

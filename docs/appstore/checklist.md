@@ -16,6 +16,8 @@ App page → Services → **Game Center**:
 
 - Leaderboard → **+**, Classic, ID `campaigns_completed`, integer, best = highest,
   name "Campaigns Completed".
+- **v1.1** Leaderboard → **+**, Recurring (daily, 24h), ID `daily_challenge`, integer,
+  best = highest, name "Daily Challenge". Score = humanity×2 + 25×duels won (max 275).
 - Achievements → **+** one per ending (100 pts each, not hidden).
   Each needs a 1024x1024 image: use `docs/appstore/achievements/<achievement id>.png`.
 

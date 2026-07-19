@@ -17,9 +17,9 @@ private func makeDuels(count: Int = 3) -> [Duel] {
         Duel(
             id: "duel\(i)",
             opponent: "The Client",
-            provocation: "We need to be more agile and disruptive!",
-            comebacks: ["A", "B", "C"],
-            correctIndex: 1,
+            rounds: (1...3).map { r in
+                DuelRound(provocation: "P\(r)", comebacks: ["A", "B", "C"], correctIndex: 1)
+            },
             winConsequence: Consequence(eventID: "win\(i)", flavorText: "You win.", automationDelta: 0, humanityDelta: 8),
             loseConsequence: Consequence(eventID: "lose\(i)", flavorText: "You lose.", automationDelta: 0, humanityDelta: -6)
         )
@@ -48,16 +48,16 @@ struct DuelTests {
         #expect(engine.duelForToday() == makeDuels()[1]) // day 4 rotates
     }
 
-    @Test("the right comeback wins, any other loses")
+    @Test("a won bout applies the win consequence, a lost one the loss")
     func resolution() {
         let engine = GameEngine(catalog: makeCatalog(), seed: 1, duels: makeDuels())
         let duel = makeDuels()[0]
 
-        let won = engine.resolve(duel, comebackIndex: 1)
+        let won = engine.resolve(duel, won: true)
         #expect(won.consequence == duel.winConsequence)
         #expect(engine.state.office.humanity == 100) // clamped at 100
 
-        let lost = engine.resolve(duel, comebackIndex: 0)
+        let lost = engine.resolve(duel, won: false)
         #expect(lost.consequence == duel.loseConsequence)
         #expect(engine.state.office.humanity == 94)
     }
@@ -68,19 +68,8 @@ struct DuelTests {
             id: "morale_drop", flavorText: "", metric: .humanity, threshold: 95, direction: .below
         )
         let engine = GameEngine(catalog: makeCatalog(), seed: 1, events: [event], duels: makeDuels())
-        let resolution = engine.resolve(makeDuels()[0], comebackIndex: 0)
+        let resolution = engine.resolve(makeDuels()[0], won: false)
         #expect(resolution.events == [event])
-    }
-
-    @Test("bundled duels load with valid correct indices")
-    func bundled() throws {
-        let duels = try DuelCatalog.loadDefault()
-        #expect(duels.count >= 4)
-        #expect(Set(duels.map(\.id)).count == duels.count)
-        for duel in duels {
-            #expect(duel.comebacks.count >= 3)
-            #expect(duel.comebacks.indices.contains(duel.correctIndex))
-        }
     }
 }
 

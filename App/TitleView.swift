@@ -6,6 +6,7 @@ import MyBossCore
 struct TitleView: View {
     let onContinue: () -> Void
     let onNewGame: () -> Void
+    let onDailyChallenge: () -> Void
     @State private var scene = OfficeScene()
     @State private var showOptions = false
 
@@ -51,6 +52,16 @@ struct TitleView: View {
                     }
                     Button("New game") { SoundPlayer.shared.play(.tap); onNewGame() }
                         .buttonStyle(PixelButtonStyle(color: canContinue ? Pixel.cream : Pixel.human))
+                    VStack(spacing: 4) {
+                        Button("☀️ Daily challenge") { SoundPlayer.shared.play(.tap); onDailyChallenge() }
+                            .buttonStyle(PixelButtonStyle(color: Pixel.bad))
+                        Text("same office for everyone, once a day")
+                            .font(Pixel.font(9))
+                            .foregroundStyle(Pixel.cream)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Pixel.bg.opacity(0.75))
+                    }
                     Button("Options") { SoundPlayer.shared.play(.tap); showOptions = true }
                         .buttonStyle(PixelButtonStyle(color: Pixel.ai))
                     if endingsFound > 0 {

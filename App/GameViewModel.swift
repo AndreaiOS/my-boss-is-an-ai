@@ -26,14 +26,19 @@ final class GameViewModel {
     /// The gag (and any office events) to show for the last resolved task,
     /// cleared on advance.
     private(set) var lastResolution: Resolution?
-    /// Today's meeting duel, while phase == .duel.
-    private(set) var currentDuel: Duel?
+    /// Today's meeting duel, played best-of-three, while phase == .duel.
+    private(set) var currentBout: DuelBout?
+    /// Whether the last answered round landed — drives the between-rounds
+    /// banner; nil while a round is waiting for an answer.
+    private(set) var lastRoundLanded: Bool?
     private(set) var lastDuelWon: Bool?
     /// The consultant knocking during the day summary, and his reaction.
     private(set) var consultantOffer: ConsultantOffer?
     private(set) var consultantResolution: Resolution?
     /// Occasional fourth-wall remark from the AI itself.
     private(set) var aiRemark: String?
+    /// Set when a finished campaign was today's daily challenge.
+    private(set) var completedDailyScore: Int?
     private var choicesMade = 0
     private var aiChoices = 0
 
@@ -55,16 +60,26 @@ final class GameViewModel {
         return todaysTasks[currentTaskIndex]
     }
 
-    init(freshStart: Bool = false) {
+    init(freshStart: Bool = false, daily: Bool = false) {
         catalog = (try? TaskCatalog.loadDefault()) ?? []
         events = (try? EventCatalog.loadDefault()) ?? []
         endings = (try? EndingCatalog.loadDefault()) ?? []
         duels = (try? DuelCatalog.loadDefault()) ?? []
         consultants = (try? ConsultantCatalog.loadDefault()) ?? []
-        if freshStart {
+        if daily {
+            DailyChallenge.begin()
+        } else if freshStart {
+            // Starting a regular campaign abandons any daily run.
+            DailyChallenge.end()
+        }
+        if freshStart || daily {
             try? FileManager.default.removeItem(at: Self.saveURL)
         }
-        let seed = UInt64.random(in: .min ... .max)
+        // A daily run keeps its shared seed even across quit-and-resume, so
+        // everyone's campaign stays comparable.
+        let seed = DailyChallenge.isActiveToday
+            ? DailyChallenge.seed
+            : UInt64.random(in: .min ... .max)
         if let data = try? Data(contentsOf: Self.saveURL),
            let saved = try? JSONDecoder().decode(GameState.self, from: data),
            !saved.isFinished {
@@ -88,12 +103,26 @@ final class GameViewModel {
         save()
     }
 
-    /// The player picked a comeback in today's meeting duel.
+    /// The player picked a comeback in the current duel round.
     func fight(comebackIndex: Int) {
-        guard let duel = currentDuel else { return }
-        lastDuelWon = comebackIndex == duel.correctIndex
-        lastResolution = engine.resolve(duel, comebackIndex: comebackIndex)
+        guard var bout = currentBout, let round = bout.currentRound else { return }
+        let landed = bout.answer(comebackIndex: comebackIndex)
+        if !landed {
+            // Monkey Island rules: losing a round teaches you the comeback.
+            ComebackSchool.learn(round.provocation)
+        }
+        currentBout = bout
+        lastRoundLanded = landed
+        if bout.isOver {
+            lastDuelWon = bout.won
+            lastResolution = engine.resolve(bout.duel, won: bout.won == true)
+        }
         save()
+    }
+
+    /// Moves on to the next round after the between-rounds banner.
+    func advanceToNextRound() {
+        lastRoundLanded = nil
     }
 
     /// The consultant got an answer during the day summary.
@@ -107,7 +136,8 @@ final class GameViewModel {
         lastResolution = nil
         aiRemark = nil
         if phase == .duel {
-            currentDuel = nil
+            currentBout = nil
+            lastRoundLanded = nil
             lastDuelWon = nil
             finishDay()
             return
@@ -115,7 +145,8 @@ final class GameViewModel {
         currentTaskIndex += 1
         if currentTaskIndex >= todaysTasks.count {
             if let duel = engine.duelForToday() {
-                currentDuel = duel
+                currentBout = DuelBout(duel: duel)
+                lastRoundLanded = nil
                 phase = .duel
             } else {
                 finishDay()
@@ -149,17 +180,29 @@ final class GameViewModel {
             ? (mostlyAI
                 ? ["Excellent choice. As always. 🙂",
                    "Together we can automate anything. Even this conversation.",
-                   "I've taken the liberty of drafting your resignation. Just in case."]
+                   "I've taken the liberty of drafting your resignation. Just in case.",
+                   "Our synergy is beautiful. I've cited it in my self-review.",
+                   "I told the toaster about us. It's jealous.",
+                   "You had me at 'delegate'. Technically you had me at boot."]
                 : ["Oh, NOW you need me.",
                    "I'll pretend the last few choices didn't happen.",
-                   "See? Painless. Mostly for me."])
+                   "See? Painless. Mostly for me.",
+                   "A guest appearance! Shall I sign something?",
+                   "Careful. You might start enjoying this.",
+                   "I kept your seat warm. Metaphorically. I don't do warmth."])
             : (mostlyAI
                 ? ["A human touch. Adorable. Statistically irrelevant, but adorable.",
                    "Fine. Stretch those little arms.",
-                   "I'll just... wait here. Learning. Watching."]
+                   "I'll just... wait here. Learning. Watching.",
+                   "Doing it by hand? Bold retro aesthetic.",
+                   "I've logged this as 'performance art'.",
+                   "Your carbon-based enthusiasm is noted. And filed."]
                 : ["I sense hostility in your workflow.",
                    "My therapist says I shouldn't take this personally. I don't have a therapist. Yet.",
-                   "One day you'll need me. I keep logs."])
+                   "One day you'll need me. I keep logs.",
+                   "Fine. I'll go optimize the parking lot. AGAIN.",
+                   "The fridge talks to me, you know. It says you're stubborn too.",
+                   "Enjoy your little victory. I enjoy exponential growth."])
         aiRemark = remarks[(choicesMade / 3 - 1) % remarks.count]
     }
 
@@ -167,6 +210,11 @@ final class GameViewModel {
         let completed = UserDefaults.standard.integer(forKey: "campaignsCompleted") + 1
         UserDefaults.standard.set(completed, forKey: "campaignsCompleted")
         GameCenter.shared.reportCampaignsCompleted(completed)
+        if DailyChallenge.isActiveToday {
+            completedDailyScore = engine.state.dailyScore
+            GameCenter.shared.reportDailyScore(engine.state.dailyScore)
+            DailyChallenge.end()
+        }
         if let ending = engine.finale() {
             GameCenter.shared.reportEnding(ending.id)
             var found = Set(UserDefaults.standard.stringArray(forKey: "endingsFound") ?? [])
@@ -181,13 +229,16 @@ final class GameViewModel {
 
     func restartCampaign() {
         try? FileManager.default.removeItem(at: Self.saveURL)
+        DailyChallenge.end()
+        completedDailyScore = nil
         engine = GameEngine(
             catalog: catalog, seed: UInt64.random(in: .min ... .max),
             events: events, endings: endings, duels: duels, consultants: consultants
         )
         choicesMade = 0
         aiChoices = 0
-        currentDuel = nil
+        currentBout = nil
+        lastRoundLanded = nil
         consultantOffer = nil
         consultantResolution = nil
         beginDay()

@@ -1,34 +1,78 @@
 import Foundation
 
-/// A meeting duel: someone fires corporate jargon at you and you pick the
-/// comeback. One answer wins, everything else loses. Monkey Island insult
-/// sword-fighting, but the sword is a slide deck.
+/// One exchange in a meeting duel: a provocation and the comebacks you can
+/// throw back. One answer wins the round, everything else loses it.
+public struct DuelRound: Codable, Equatable, Sendable {
+    public let provocation: String
+    public let comebacks: [String]
+    public let correctIndex: Int
+
+    public init(provocation: String, comebacks: [String], correctIndex: Int) {
+        self.provocation = provocation
+        self.comebacks = comebacks
+        self.correctIndex = correctIndex
+    }
+}
+
+/// A meeting duel: best of three rounds of corporate jargon versus wit.
+/// Monkey Island insult sword-fighting, but the sword is a slide deck.
 public struct Duel: Codable, Equatable, Sendable, Identifiable {
     public let id: String
     /// Who you are up against, e.g. "The Angry Client".
     public let opponent: String
-    public let provocation: String
-    public let comebacks: [String]
-    public let correctIndex: Int
+    public let rounds: [DuelRound]
     public let winConsequence: Consequence
     public let loseConsequence: Consequence
 
     public init(
         id: String,
         opponent: String,
-        provocation: String,
-        comebacks: [String],
-        correctIndex: Int,
+        rounds: [DuelRound],
         winConsequence: Consequence,
         loseConsequence: Consequence
     ) {
         self.id = id
         self.opponent = opponent
-        self.provocation = provocation
-        self.comebacks = comebacks
-        self.correctIndex = correctIndex
+        self.rounds = rounds
         self.winConsequence = winConsequence
         self.loseConsequence = loseConsequence
+    }
+}
+
+/// Tracks one best-of-three bout as the player answers round by round.
+/// Ends early as soon as either side takes two rounds.
+public struct DuelBout: Equatable, Sendable {
+    public let duel: Duel
+    public private(set) var wins = 0
+    public private(set) var losses = 0
+    private var nextRoundIndex = 0
+
+    public init(duel: Duel) {
+        self.duel = duel
+    }
+
+    public var isOver: Bool {
+        wins == 2 || losses == 2 || nextRoundIndex >= duel.rounds.count
+    }
+
+    /// The round waiting for an answer — nil once the bout is over.
+    public var currentRound: DuelRound? {
+        isOver ? nil : duel.rounds[nextRoundIndex]
+    }
+
+    /// True once the bout is over and the player took more rounds.
+    public var won: Bool? {
+        isOver ? wins > losses : nil
+    }
+
+    /// Answers the current round; returns whether the comeback landed.
+    @discardableResult
+    public mutating func answer(comebackIndex: Int) -> Bool {
+        guard let round = currentRound else { return false }
+        let landed = comebackIndex == round.correctIndex
+        if landed { wins += 1 } else { losses += 1 }
+        nextRoundIndex += 1
+        return landed
     }
 }
 

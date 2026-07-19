@@ -10,9 +10,9 @@ struct GameView: View {
     @State private var dayStamp: Int?
     @State private var showPause = false
 
-    init(freshStart: Bool = false, onExitToTitle: @escaping () -> Void = {}) {
+    init(freshStart: Bool = false, daily: Bool = false, onExitToTitle: @escaping () -> Void = {}) {
         self.onExitToTitle = onExitToTitle
-        _model = State(initialValue: GameViewModel(freshStart: freshStart))
+        _model = State(initialValue: GameViewModel(freshStart: freshStart, daily: daily))
     }
 
     var body: some View {
@@ -97,11 +97,11 @@ struct GameView: View {
 
     private func fightDuel(comebackIndex: Int) {
         model.fight(comebackIndex: comebackIndex)
-        let won = model.lastDuelWon == true
-        SoundPlayer.shared.play(won ? .eventGood : .eventBad)
-        Haptics.notify(won ? .success : .error)
-        scene.react(to: won ? .human : .ai)
-        if won { scene.emote(for: .human) } else { scene.shake() }
+        let landed = model.lastRoundLanded == true
+        SoundPlayer.shared.play(landed ? .eventGood : .eventBad)
+        Haptics.notify(landed ? .success : .error)
+        scene.react(to: landed ? .human : .ai)
+        if landed { scene.emote(for: .human) } else { scene.shake() }
     }
 
     private func resolveCurrentTask(with choice: WorkChoice) {
@@ -186,7 +186,7 @@ struct GameView: View {
                 .scrollBounceBehavior(.basedOnSize)
                 Button("Next ▸") { SoundPlayer.shared.play(.tap); model.advanceAfterConsequence() }
                     .buttonStyle(PixelButtonStyle(color: Pixel.cream))
-            } else if model.phase == .duel, let duel = model.currentDuel {
+            } else if model.phase == .duel, let bout = model.currentBout {
                 ScrollView {
                     VStack(spacing: 10) {
                         HStack(spacing: 10) {
@@ -198,15 +198,40 @@ struct GameView: View {
                                 .font(Pixel.font(14))
                                 .foregroundStyle(Pixel.bad)
                             Spacer()
+                            Text("YOU \(bout.wins) — \(bout.losses) THEM")
+                                .font(Pixel.font(11))
+                                .foregroundStyle(Pixel.creamDim)
                         }
-                        dialog(header: duel.opponent.uppercased(), text: "“\(duel.provocation)”")
-                        ForEach(duel.comebacks.indices, id: \.self) { index in
-                            Button(duel.comebacks[index]) { fightDuel(comebackIndex: index) }
-                                .buttonStyle(PixelComebackButtonStyle())
+                        if let landed = model.lastRoundLanded {
+                            // Between rounds: the blow landed (or didn't).
+                            dialog(
+                                header: landed ? "ROUND WON 🎯" : "ROUND LOST 😖",
+                                text: landed
+                                    ? "A direct hit. The room takes notes."
+                                    : "That one stung. You will NOT fall for it again. (Learned ★)"
+                            )
+                        } else if let round = bout.currentRound {
+                            dialog(
+                                header: "\(bout.duel.opponent.uppercased()) · ROUND \(bout.wins + bout.losses + 1)/3",
+                                text: "“\(round.provocation)”"
+                            )
+                            let learned = ComebackSchool.hasLearned(round.provocation)
+                            ForEach(round.comebacks.indices, id: \.self) { index in
+                                let star = learned && index == round.correctIndex ? "★ " : ""
+                                Button(star + round.comebacks[index]) { fightDuel(comebackIndex: index) }
+                                    .buttonStyle(PixelComebackButtonStyle())
+                            }
                         }
                     }
                 }
                 .scrollBounceBehavior(.basedOnSize)
+                if model.lastRoundLanded != nil {
+                    Button("Next round ▸") {
+                        SoundPlayer.shared.play(.tap)
+                        model.advanceToNextRound()
+                    }
+                    .buttonStyle(PixelButtonStyle(color: Pixel.cream))
+                }
             } else if let task = model.currentTask {
                 dialog(
                     header: "TASK \(model.currentTaskIndex + 1)/\(model.todaysTasks.count)",
@@ -335,6 +360,14 @@ struct GameView: View {
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxHeight: 140)
+            }
+            if let score = model.completedDailyScore {
+                Text("☀️ DAILY SCORE: \(score)")
+                    .font(Pixel.font(15))
+                    .foregroundStyle(Pixel.bad)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .border(Pixel.bad, width: 3)
             }
             Button("Play again ▸") {
                 SoundPlayer.shared.play(.tap)

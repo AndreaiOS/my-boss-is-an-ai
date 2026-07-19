@@ -15,8 +15,8 @@ final class CampaignUITests: XCTestCase {
         newGame.tap()
 
         let knownLabels: Set<String> = [
-            "NEW GAME", "▸ CONTINUE", "OPTIONS", "॥",
-            "🙋 MYSELF", "🤖 THE AI", "NEXT ▸", "PLAY AGAIN ▸",
+            "NEW GAME", "▸ CONTINUE", "OPTIONS", "॥", "☀️ DAILY CHALLENGE",
+            "🙋 MYSELF", "🤖 THE AI", "NEXT ▸", "NEXT ROUND ▸", "PLAY AGAIN ▸",
             "SIGN HERE 🖊", "SLAM THE DOOR"
         ]
         var humanTurn = true
@@ -32,6 +32,7 @@ final class CampaignUITests: XCTestCase {
                 return
             }
             if tap(app.buttons["NEXT ▸"]) { continue }
+            if tap(app.buttons["NEXT ROUND ▸"]) { continue }
             if app.buttons["SIGN HERE 🖊"].exists {
                 _ = tap(app.buttons[step % 2 == 0 ? "SIGN HERE 🖊" : "SLAM THE DOOR"])
                 continue
