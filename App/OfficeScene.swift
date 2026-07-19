@@ -242,6 +242,90 @@ final class OfficeScene: SKScene {
         ]))
     }
 
+    // MARK: - Comic text
+
+    /// Where each event's sting should pop: the prop (or person) it's about.
+    private static let stingAnchors: [String: String] = [
+        "robot_cleaner": "robot_cleaner",
+        "layoff_gino": "mug_gino",
+        "gino_rehired": "gino",
+        "ai_coffee_machine": "coffee_machine_ai",
+        "barista_returns": "barista",
+        "manager_algorithm": "manager_chart",
+        "manager_human": "manager_human",
+        "coworkers_bots": "robot_worker",
+        "memes_die": "kpi_dashboard",
+        "memes_revive": "meme_wall",
+        "plant_funeral": "ficus_wilted",
+        "ficus_reborn": "ficus_sprout"
+    ]
+
+    /// A comic-book onomatopoeia: pops in, wobbles, drifts up, fades out.
+    func spawnComicText(_ text: String, at point: CGPoint? = nil) {
+        let anchor = point ?? CGPoint(x: size.width * 0.5, y: size.height * 0.45)
+        let container = SKNode()
+        container.position = CGPoint(
+            x: min(max(anchor.x, 50), size.width - 50),
+            y: min(anchor.y + 30, size.height - 50)
+        )
+        container.zPosition = 10
+        container.zRotation = tick % 2 == 0 ? 0.08 : -0.08
+
+        let shadow = SKLabelNode(text: text)
+        shadow.fontName = "Menlo-Bold"
+        shadow.fontSize = 20
+        shadow.fontColor = SKColor(red: 0.07, green: 0.05, blue: 0.04, alpha: 1)
+        shadow.position = CGPoint(x: 2.5, y: -2.5)
+        let face = SKLabelNode(text: text)
+        face.fontName = "Menlo-Bold"
+        face.fontSize = 20
+        face.fontColor = SKColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 1)
+        container.addChild(shadow)
+        container.addChild(face)
+
+        container.setScale(0.2)
+        addChild(container)
+        tick += 1
+        container.run(.sequence([
+            .group([
+                .sequence([
+                    .scale(to: 1.18, duration: 0.12),
+                    .scale(to: 1.0, duration: 0.08)
+                ]),
+                .sequence([
+                    .rotate(byAngle: container.zRotation > 0 ? -0.16 : 0.16, duration: 0.24)
+                ])
+            ]),
+            .wait(forDuration: 0.75),
+            .group([
+                .moveBy(x: 0, y: 26, duration: 0.4),
+                .fadeOut(withDuration: 0.4)
+            ]),
+            .removeFromParent()
+        ]))
+    }
+
+    /// Pops an event's sting over the prop it belongs to (center if the
+    /// prop is not on stage yet — it appears next morning).
+    func sting(_ text: String, forEvent id: String) {
+        let anchor = Self.stingAnchors[id].flatMap { childNode(withName: $0)?.position }
+        spawnComicText(text, at: anchor)
+    }
+
+    /// Short onomatopoeia for a task resolution, rotated by the scene tick.
+    func taskSting(for choice: WorkChoice) {
+        let pool = choice == .human
+            ? ["FATTO!", "YAY!", "BY HAND!", "OLD SCHOOL!"]
+            : ["BZZT!", "AUTOMATED.", "BEEP BOOP.", "UPLOADED."]
+        let member = cast.first?.node.position
+        spawnComicText(pool[tick % pool.count], at: member)
+    }
+
+    /// POW/OUCH for duel rounds.
+    func duelSting(won: Bool) {
+        spawnComicText(won ? "POW! 💥" : "OUCH...")
+    }
+
     /// Quick horizontal shake when an office event fires.
     func shake() {
         for child in children {

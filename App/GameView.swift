@@ -101,6 +101,7 @@ struct GameView: View {
         SoundPlayer.shared.play(landed ? .eventGood : .eventBad)
         Haptics.notify(landed ? .success : .error)
         scene.react(to: landed ? .human : .ai)
+        scene.duelSting(won: landed)
         if landed { scene.emote(for: .human) } else { scene.shake() }
     }
 
@@ -110,12 +111,22 @@ struct GameView: View {
         Haptics.impact()
         scene.react(to: choice)
         scene.emote(for: choice)
-        if let events = model.lastResolution?.events, !events.isEmpty {
-            let isComeback = events.contains { !$0.requiresAny.isEmpty }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                SoundPlayer.shared.play(isComeback ? .eventGood : .eventBad)
-                scene.shake()
-                Haptics.notify(isComeback ? .success : .warning)
+        scene.taskSting(for: choice)
+        celebrate(model.lastResolution?.events ?? [])
+    }
+
+    /// Shared fanfare when office events fire: shake, sound, comic sting.
+    private func celebrate(_ events: [OfficeEvent]) {
+        guard !events.isEmpty else { return }
+        let isComeback = events.contains { !$0.requiresAny.isEmpty }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            SoundPlayer.shared.play(isComeback ? .eventGood : .eventBad)
+            scene.shake()
+            Haptics.notify(isComeback ? .success : .warning)
+            for (index, event) in events.enumerated() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4 * Double(index)) {
+                    scene.sting(event.sting ?? "!", forEvent: event.id)
+                }
             }
         }
     }
