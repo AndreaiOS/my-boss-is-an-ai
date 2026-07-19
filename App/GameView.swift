@@ -126,6 +126,7 @@ struct GameView: View {
             for (index, event) in events.enumerated() {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4 * Double(index)) {
                     scene.sting(event.sting ?? "!", forEvent: event.id)
+                    scene.reactToEvent(event.id)
                 }
             }
         }

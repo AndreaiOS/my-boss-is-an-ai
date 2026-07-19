@@ -446,6 +446,73 @@ final class OfficeScene: SKScene {
         spawnComicText(won ? "POW! 💥" : "OUCH...")
     }
 
+    // MARK: - Event reactions
+
+    private static let fleeEvents: Set<String> = ["robot_cleaner", "overtime_ai", "coworkers_bots", "hr_chatbot", "manager_algorithm", "memes_die", "plant_funeral", "layoff_gino", "ai_coffee_machine"]
+    private static let applaudEvents: Set<String> = ["gino_rehired", "barista_returns", "memes_revive", "ficus_reborn", "manager_human", "hr_human"]
+
+    /// The cast physically reacts to the world changing: they flee the
+    /// scary stuff, applaud the comebacks, and gawk at everything else.
+    func reactToEvent(_ id: String) {
+        let anchor = Self.stingAnchors[id].flatMap { childNode(withName: $0)?.position }
+            ?? CGPoint(x: size.width * 0.5, y: size.height * 0.4)
+
+        if Self.applaudEvents.contains(id) {
+            for (index, member) in cast.enumerated() {
+                let node = member.node
+                node.run(.sequence([
+                    .wait(forDuration: 0.1 * Double(index)),
+                    .scaleX(to: anchor.x < node.position.x ? -1 : 1, duration: 0.1),
+                    .moveBy(x: 0, y: 14, duration: 0.12),
+                    .moveBy(x: 0, y: -14, duration: 0.12),
+                    .moveBy(x: 0, y: 14, duration: 0.12),
+                    .moveBy(x: 0, y: -14, duration: 0.12),
+                    .scaleX(to: 1, duration: 0.1)
+                ]))
+                popEmote(index % 2 == 0 ? "🎉" : "👏", above: node, delay: 0.15 * Double(index))
+                if let reactions = member.reactions {
+                    node.run(.sequence([
+                        .setTexture(reactions[0]),
+                        .wait(forDuration: 1.0),
+                        .setTexture(member.standing)
+                    ]))
+                }
+            }
+        } else if Self.fleeEvents.contains(id) {
+            for (index, member) in cast.enumerated() {
+                let node = member.node
+                let away: CGFloat = node.position.x >= anchor.x ? 26 : -26
+                node.run(.sequence([
+                    .wait(forDuration: 0.08 * Double(index)),
+                    .scaleX(to: away < 0 ? -1 : 1, duration: 0.08),
+                    .moveBy(x: away, y: 0, duration: 0.18),
+                    .wait(forDuration: 0.9),
+                    .scaleX(to: away < 0 ? 1 : -1, duration: 0.08),
+                    .moveBy(x: -away, y: 0, duration: 0.3),
+                    .scaleX(to: 1, duration: 0.08)
+                ]))
+                popEmote(["😨", "😱", "🫣"][index % 3], above: node, delay: 0.1 * Double(index))
+                if let reactions = member.reactions {
+                    node.run(.sequence([
+                        .setTexture(reactions[1]),
+                        .wait(forDuration: 1.0),
+                        .setTexture(member.standing)
+                    ]))
+                }
+            }
+        } else {
+            for (index, member) in cast.enumerated() {
+                let node = member.node
+                node.run(.sequence([
+                    .scaleX(to: anchor.x < node.position.x ? -1 : 1, duration: 0.12),
+                    .wait(forDuration: 1.2),
+                    .scaleX(to: 1, duration: 0.12)
+                ]))
+                popEmote("❓", above: node, delay: 0.12 * Double(index))
+            }
+        }
+    }
+
     /// Quick horizontal shake when an office event fires.
     func shake() {
         for child in children {
