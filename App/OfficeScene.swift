@@ -17,9 +17,13 @@ final class OfficeScene: SKScene {
 
     private struct CastMember {
         let node: SKSpriteNode
+        let sprite: String
         let standing: SKTexture
         /// [celebrating, shocked], if this character has reaction art.
         let reactions: [SKTexture]?
+        let walkFrames: [SKTexture]?
+        /// The base wander loop, re-attached after a vignette interrupts it.
+        let routeAction: SKAction
     }
 
     private struct Placement {
@@ -153,6 +157,122 @@ final class OfficeScene: SKScene {
                 self.popEmote(symbols[self.tick % symbols.count], above: member.node)
             }
         ])), withKey: "chatter")
+    }
+
+    // MARK: - Office life vignettes
+
+    /// Every few seconds the director sends someone on a little errand:
+    /// a coffee break, a chat, Gino checking on his mug, a stretch.
+    private func startDirector() {
+        removeAction(forKey: "director")
+        run(.repeatForever(.sequence([
+            .wait(forDuration: 7, withRange: 4),
+            .run { [weak self] in self?.runVignette() }
+        ])), withKey: "director")
+    }
+
+    private func runVignette() {
+        let free = cast.filter { $0.node.action(forKey: "vignette") == nil }
+        guard let member = free.randomElement() else { return }
+
+        if member.sprite == "gino", let mug = firstNode(named: ["mug_gino", "printer"]), Bool.random() {
+            walkErrand(member, to: mug.position, emote: "❤️")
+        } else if let partner = free.filter({ $0.node !== member.node }).randomElement(), Bool.random() {
+            chat(member, with: partner)
+        } else if let spot = firstNode(named: ["coffee_machine_ai", "barista", "printer"]) {
+            walkErrand(member, to: spot.position, emote: "☕️")
+        } else {
+            stretch(member)
+        }
+    }
+
+    private func firstNode(named names: [String]) -> SKNode? {
+        for name in names {
+            if let node = childNode(withName: name) { return node }
+        }
+        return nil
+    }
+
+    /// A walk cycle for vignette moves, mirroring the base route's steps.
+    private func vignetteStep(_ member: CastMember, dx: CGFloat, dy: CGFloat, duration: TimeInterval) -> SKAction {
+        let move = SKAction.moveBy(x: dx, y: dy, duration: duration)
+        guard let frames = member.walkFrames else { return move }
+        let cycle = SKAction.animate(with: frames, timePerFrame: 0.13, resize: false, restore: true)
+        return .group([move, .repeat(cycle, count: max(1, Int(duration / 0.39)))])
+    }
+
+    /// Walk toward a spot (stopping short), emote, walk back, resume wandering.
+    private func walkErrand(_ member: CastMember, to target: CGPoint, emote: String) {
+        let node = member.node
+        node.removeAction(forKey: "route")
+        let origin = node.position
+        var dx = target.x - origin.x
+        var dy = target.y - origin.y
+        let distance = max(hypot(dx, dy), 1)
+        let capped = min(distance - 34, 120)
+        guard capped > 12 else { resumeRoute(member); return }
+        dx *= capped / distance
+        dy *= capped / distance
+        let duration = TimeInterval(capped / 42)
+
+        node.run(.sequence([
+            .scaleX(to: dx < 0 ? -1 : 1, duration: 0.1),
+            vignetteStep(member, dx: dx, dy: dy, duration: duration),
+            .run { [weak self] in self?.popEmote(emote, above: node) },
+            .wait(forDuration: 1.4),
+            .scaleX(to: dx < 0 ? 1 : -1, duration: 0.1),
+            vignetteStep(member, dx: -dx, dy: -dy, duration: duration),
+            .scaleX(to: 1, duration: 0.1),
+            .move(to: origin, duration: 0.1),
+            .run { [weak self] in self?.resumeRoute(member) }
+        ]), withKey: "vignette")
+    }
+
+    /// Two colleagues huddle for a moment of extremely important gossip.
+    private func chat(_ member: CastMember, with partner: CastMember) {
+        let node = member.node
+        node.removeAction(forKey: "route")
+        let origin = node.position
+        let side: CGFloat = partner.node.position.x >= origin.x ? -1 : 1
+        let target = CGPoint(x: partner.node.position.x + 34 * side, y: partner.node.position.y)
+        let dx = target.x - origin.x
+        let dy = target.y - origin.y
+        let duration = TimeInterval(max(hypot(dx, dy), 20) / 42)
+
+        // The partner just stands there being talked at.
+        partner.node.run(.wait(forDuration: duration + 2.6), withKey: "vignette")
+
+        node.run(.sequence([
+            .scaleX(to: dx < 0 ? -1 : 1, duration: 0.1),
+            vignetteStep(member, dx: dx, dy: dy, duration: duration),
+            .run { [weak self] in self?.popEmote("💬", above: node) },
+            .wait(forDuration: 0.8),
+            .run { [weak self] in self?.popEmote(["🙄", "😂", "🤫"].randomElement()!, above: partner.node) },
+            .wait(forDuration: 0.8),
+            .run { [weak self] in self?.popEmote("😄", above: node) },
+            .wait(forDuration: 0.6),
+            .scaleX(to: dx < 0 ? 1 : -1, duration: 0.1),
+            vignetteStep(member, dx: -dx, dy: -dy, duration: duration),
+            .scaleX(to: 1, duration: 0.1),
+            .move(to: origin, duration: 0.1),
+            .run { [weak self] in self?.resumeRoute(member) }
+        ]), withKey: "vignette")
+    }
+
+    /// A stationary beat: stretch, yawn, hum. Riveting office cinema.
+    private func stretch(_ member: CastMember) {
+        let node = member.node
+        node.run(.sequence([
+            .group([.scaleX(to: 1.1, duration: 0.3), .scaleY(to: 0.92, duration: 0.3)]),
+            .group([.scaleX(to: 0.94, duration: 0.3), .scaleY(to: 1.1, duration: 0.3)]),
+            .run { [weak self] in self?.popEmote(["💤", "🎵", "🙆"].randomElement()!, above: node) },
+            .group([.scaleX(to: 1.0, duration: 0.25), .scaleY(to: 1.0, duration: 0.25)])
+        ]), withKey: "vignette")
+    }
+
+    private func resumeRoute(_ member: CastMember) {
+        guard member.node.action(forKey: "route") == nil else { return }
+        member.node.run(member.routeAction, withKey: "route")
     }
 
     /// Warms the light as the workday progresses (0 = morning, 1 = sunset).
@@ -375,11 +495,17 @@ final class OfficeScene: SKScene {
                 ])
                 let walkFrames = Self.walkSheets[placement.sprite].map { frames(fromSheet: $0, count: 3) }
                 let reactions = Self.reactSheets[placement.sprite].map { frames(fromSheet: $0, count: 2) }
-                node.run(.group([idle, route(index: index, walkFrames: walkFrames)]))
-                cast.append(CastMember(node: node, standing: texture, reactions: reactions))
+                let routeAction = route(index: index, walkFrames: walkFrames)
+                node.run(idle)
+                node.run(routeAction, withKey: "route")
+                cast.append(CastMember(
+                    node: node, sprite: placement.sprite, standing: texture,
+                    reactions: reactions, walkFrames: walkFrames, routeAction: routeAction
+                ))
             }
             addChild(node)
         }
+        startDirector()
     }
 
     /// Slices a horizontal sprite sheet into equal square frames.
