@@ -14,6 +14,8 @@ public struct GameState: Codable, Equatable, Sendable {
     /// keeps a resumed daily challenge identical for everyone. Legacy saves
     /// get a random one.
     public var seed: UInt64
+    /// Tasks already dealt this campaign — a task never repeats.
+    public var dealtTaskIDs: [String]
 
     public var isFinished: Bool { day > campaignLength }
 
@@ -27,6 +29,7 @@ public struct GameState: Codable, Equatable, Sendable {
         triggeredEventIDs = []
         duelsWon = 0
         self.seed = seed
+        dealtTaskIDs = []
     }
 
     public init(from decoder: Decoder) throws {
@@ -37,6 +40,7 @@ public struct GameState: Codable, Equatable, Sendable {
         triggeredEventIDs = try container.decode([String].self, forKey: .triggeredEventIDs)
         duelsWon = try container.decodeIfPresent(Int.self, forKey: .duelsWon) ?? 0
         seed = try container.decodeIfPresent(UInt64.self, forKey: .seed) ?? .random(in: .min ... .max)
+        dealtTaskIDs = try container.decodeIfPresent([String].self, forKey: .dealtTaskIDs) ?? []
     }
 }
 
@@ -124,10 +128,15 @@ public final class GameEngine {
         return endings.first { $0.matches(state.office) }
     }
 
-    /// Deals 3–5 unique tasks for today's workday.
+    /// Deals 3–5 unique tasks for today's workday, never repeating a task
+    /// within the campaign (with a defensive refill if the catalog runs dry).
     public func startDay() -> [OfficeTask] {
         let count = Int.random(in: 3...5, using: &rng)
-        return Array(catalog.shuffled(using: &rng).prefix(count))
+        var pool = catalog.filter { !state.dealtTaskIDs.contains($0.id) }
+        if pool.count < count { pool = catalog }
+        let dealt = Array(pool.shuffled(using: &rng).prefix(count))
+        state.dealtTaskIDs.append(contentsOf: dealt.map(\.id))
+        return dealt
     }
 
     /// Applies the choice's consequence to the office and returns it —

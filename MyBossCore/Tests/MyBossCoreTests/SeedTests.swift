@@ -86,6 +86,25 @@ struct SeedTests {
         #expect(orders.count > 1)
     }
 
+    @Test("a campaign never deals the same task twice")
+    func noRepeats() {
+        let engine = GameEngine(catalog: makeCatalog(count: 36), seed: 5)
+        var dealt: [String] = []
+        for _ in 1...7 {
+            dealt += engine.startDay().map(\.id)
+            engine.endDay()
+        }
+        #expect(Set(dealt).count == dealt.count)
+        #expect(engine.state.dealtTaskIDs == dealt)
+    }
+
+    @Test("an exhausted catalog refills instead of dead-ending")
+    func refill() {
+        let engine = GameEngine(catalog: makeCatalog(count: 10), seed: 5)
+        for _ in 1...3 { _ = engine.startDay(); engine.endDay() }
+        #expect(!engine.startDay().isEmpty) // a 4th day can overflow 10 tasks
+    }
+
     @Test("consultant order follows the seed too")
     func consultantOrderDeterministic() {
         let offers = (0..<4).map { i in
