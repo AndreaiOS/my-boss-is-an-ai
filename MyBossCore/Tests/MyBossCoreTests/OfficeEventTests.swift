@@ -82,6 +82,13 @@ struct OfficeEventTests {
         #expect(events.count >= 5)
         #expect(Set(events.map(\.id)).count == events.count)
     }
+
+    @Test("every bundled event carries a comic sting")
+    func stings() throws {
+        for event in try EventCatalog.loadDefault() {
+            #expect(event.sting?.isEmpty == false, "missing sting on \(event.id)")
+        }
+    }
 }
 
 @Suite("Campaign balance")

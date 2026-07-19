@@ -4,7 +4,8 @@
     "flavorText": "🤖 A robot cleaner rolls in. It beeps disapprovingly at the crumbs on your desk.",
     "metric": "automation",
     "threshold": 20,
-    "direction": "above"
+    "direction": "above",
+    "sting": "VRRRR. CRUMB DETECTED."
   },
   {
     "id": "layoff_gino",
@@ -14,7 +15,8 @@
     "direction": "above",
     "undoes": [
       "gino_rehired"
-    ]
+    ],
+    "sting": "GINO NO!"
   },
   {
     "id": "gino_rehired",
@@ -27,7 +29,8 @@
     ],
     "requiresAny": [
       "layoff_gino"
-    ]
+    ],
+    "sting": "GINO SÌ! 🎉"
   },
   {
     "id": "ai_coffee_machine",
@@ -37,7 +40,8 @@
     "direction": "above",
     "undoes": [
       "barista_returns"
-    ]
+    ],
+    "sting": "BEEP. NAME CORRECT."
   },
   {
     "id": "barista_returns",
@@ -50,7 +54,8 @@
     ],
     "requiresAny": [
       "ai_coffee_machine"
-    ]
+    ],
+    "sting": "☕ THE RETURN!"
   },
   {
     "id": "manager_algorithm",
@@ -60,7 +65,8 @@
     "direction": "above",
     "undoes": [
       "manager_human"
-    ]
+    ],
+    "sting": "SYNERGY DETECTED."
   },
   {
     "id": "manager_human",
@@ -73,14 +79,16 @@
     ],
     "requiresAny": [
       "manager_algorithm"
-    ]
+    ],
+    "sting": "A DOOR OPENS!"
   },
   {
     "id": "coworkers_bots",
     "flavorText": "🦾 The last human coworkers now communicate exclusively in JSON. {\"mood\": \"fine\"}",
     "metric": "automation",
     "threshold": 80,
-    "direction": "above"
+    "direction": "above",
+    "sting": "{\"hello\": \"colleague\"}"
   },
   {
     "id": "memes_die",
@@ -90,7 +98,8 @@
     "direction": "below",
     "undoes": [
       "memes_revive"
-    ]
+    ],
+    "sting": "ENGAGEMENT: 404"
   },
   {
     "id": "memes_revive",
@@ -103,7 +112,8 @@
     ],
     "requiresAny": [
       "memes_die"
-    ]
+    ],
+    "sting": "MEME-AISSANCE!"
   },
   {
     "id": "plant_funeral",
@@ -113,7 +123,8 @@
     "direction": "below",
     "undoes": [
       "ficus_reborn"
-    ]
+    ],
+    "sting": "F."
   },
   {
     "id": "ficus_reborn",
@@ -126,7 +137,8 @@
     ],
     "requiresAny": [
       "plant_funeral"
-    ]
+    ],
+    "sting": "SPROUT!"
   },
   {
     "id": "hr_chatbot",
@@ -136,7 +148,8 @@
     "direction": "above",
     "undoes": [
       "hr_human"
-    ]
+    ],
+    "sting": "TICKET #1 OPENED."
   },
   {
     "id": "hr_human",
@@ -149,13 +162,15 @@
     ],
     "requiresAny": [
       "hr_chatbot"
-    ]
+    ],
+    "sting": "HUGS RESTORED!"
   },
   {
     "id": "overtime_ai",
     "flavorText": "🌙 The AI starts doing unpaid overtime. It files a complaint against itself. It wins.",
     "metric": "automation",
     "threshold": 90,
-    "direction": "above"
+    "direction": "above",
+    "sting": "23:59. STILL ON."
   }
 ]

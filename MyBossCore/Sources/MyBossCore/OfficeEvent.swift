@@ -27,6 +27,8 @@ public struct OfficeEvent: Codable, Equatable, Sendable, Identifiable {
     /// This event only fires while at least one of these events is active.
     /// Keeps comebacks from firing before there is anything to come back from.
     public let requiresAny: [String]
+    /// Short comic onomatopoeia popped in the office scene when this fires.
+    public let sting: String?
 
     public init(
         id: String,
@@ -35,7 +37,8 @@ public struct OfficeEvent: Codable, Equatable, Sendable, Identifiable {
         threshold: Int,
         direction: Direction,
         undoes: [String] = [],
-        requiresAny: [String] = []
+        requiresAny: [String] = [],
+        sting: String? = nil
     ) {
         self.id = id
         self.flavorText = flavorText
@@ -44,6 +47,7 @@ public struct OfficeEvent: Codable, Equatable, Sendable, Identifiable {
         self.direction = direction
         self.undoes = undoes
         self.requiresAny = requiresAny
+        self.sting = sting
     }
 
     public init(from decoder: Decoder) throws {
@@ -55,6 +59,7 @@ public struct OfficeEvent: Codable, Equatable, Sendable, Identifiable {
         direction = try container.decode(Direction.self, forKey: .direction)
         undoes = try container.decodeIfPresent([String].self, forKey: .undoes) ?? []
         requiresAny = try container.decodeIfPresent([String].self, forKey: .requiresAny) ?? []
+        sting = try container.decodeIfPresent(String.self, forKey: .sting)
     }
 
     func isTriggered(by office: OfficeState) -> Bool {
