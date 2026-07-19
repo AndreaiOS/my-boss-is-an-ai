@@ -85,10 +85,9 @@ public final class GameEngine {
         self.catalog = catalog
         self.events = events
         self.endings = endings
-        self.duels = duels
-        self.consultants = consultants
         rng = SeededRandomNumberGenerator(seed: seed)
         state = GameState(campaignLength: campaignLength, seed: seed)
+        (self.duels, self.consultants) = Self.shuffledEncounters(duels, consultants, seed: seed)
     }
 
     /// Resumes a campaign from a previously saved state, reusing the seed
@@ -104,10 +103,18 @@ public final class GameEngine {
         self.catalog = catalog
         self.events = events
         self.endings = endings
-        self.duels = duels
-        self.consultants = consultants
         rng = SeededRandomNumberGenerator(seed: state.seed)
         self.state = state
+        (self.duels, self.consultants) = Self.shuffledEncounters(duels, consultants, seed: state.seed)
+    }
+
+    /// Each campaign meets duels and consultants in its own order, fixed by
+    /// the campaign seed so resume (and the daily challenge) agree.
+    private static func shuffledEncounters(
+        _ duels: [Duel], _ consultants: [ConsultantOffer], seed: UInt64
+    ) -> ([Duel], [ConsultantOffer]) {
+        var shuffleRng = SeededRandomNumberGenerator(seed: seed)
+        return (duels.shuffled(using: &shuffleRng), consultants.shuffled(using: &shuffleRng))
     }
 
     /// The campaign's ending — nil while days remain. First match in

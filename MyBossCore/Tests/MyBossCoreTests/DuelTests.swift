@@ -32,12 +32,16 @@ struct DuelTests {
     @Test("no duel on day one, a deterministic one on even days")
     func schedule() {
         let engine = GameEngine(catalog: makeCatalog(), seed: 1, duels: makeDuels())
+        let twin = GameEngine(catalog: makeCatalog(), seed: 1, duels: makeDuels())
         #expect(engine.duelForToday() == nil)
 
         for task in engine.startDay() { _ = engine.resolve(task, with: .ai) }
         engine.endDay()
+        for task in twin.startDay() { _ = twin.resolve(task, with: .ai) }
+        twin.endDay()
         let day2 = engine.duelForToday()
-        #expect(day2 == makeDuels()[0])
+        #expect(day2 != nil)
+        #expect(day2 == twin.duelForToday()) // same seed, same duel
 
         for task in engine.startDay() { _ = engine.resolve(task, with: .ai) }
         engine.endDay()
@@ -45,7 +49,9 @@ struct DuelTests {
 
         for task in engine.startDay() { _ = engine.resolve(task, with: .ai) }
         engine.endDay()
-        #expect(engine.duelForToday() == makeDuels()[1]) // day 4 rotates
+        let day4 = engine.duelForToday()
+        #expect(day4 != nil)
+        #expect(day4 != day2) // day 4 rotates to a different duel
     }
 
     @Test("a won bout applies the win consequence, a lost one the loss")
@@ -98,7 +104,8 @@ struct ConsultantTests {
 
         for task in engine.startDay() { _ = engine.resolve(task, with: .ai) }
         engine.endDay() // now day 3
-        #expect(engine.consultantForTonight() == makeOffers()[0])
+        let day3 = engine.consultantForTonight()
+        #expect(day3 != nil)
 
         for task in engine.startDay() { _ = engine.resolve(task, with: .ai) }
         engine.endDay() // day 4
@@ -106,7 +113,9 @@ struct ConsultantTests {
 
         for task in engine.startDay() { _ = engine.resolve(task, with: .ai) }
         engine.endDay() // day 5 rotates
-        #expect(engine.consultantForTonight() == makeOffers()[1])
+        let day5 = engine.consultantForTonight()
+        #expect(day5 != nil)
+        #expect(day5 != day3)
     }
 
     @Test("accepting and refusing apply their consequences")
