@@ -75,16 +75,14 @@ final class GameViewModel {
         if freshStart || daily {
             try? FileManager.default.removeItem(at: Self.saveURL)
         }
-        // A daily run keeps its shared seed even across quit-and-resume, so
-        // everyone's campaign stays comparable.
-        let seed = DailyChallenge.isActiveToday
-            ? DailyChallenge.seed
-            : UInt64.random(in: .min ... .max)
+        // The daily challenge shares its seed with the whole world; the
+        // state persists it, so resume keeps the campaign identical.
+        let seed = daily ? DailySeed.seed() : UInt64.random(in: .min ... .max)
         if let data = try? Data(contentsOf: Self.saveURL),
            let saved = try? JSONDecoder().decode(GameState.self, from: data),
            !saved.isFinished {
             engine = GameEngine(
-                catalog: catalog, seed: seed, state: saved, events: events,
+                catalog: catalog, state: saved, events: events,
                 endings: endings, duels: duels, consultants: consultants
             )
         } else {

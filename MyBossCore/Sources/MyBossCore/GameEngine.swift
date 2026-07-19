@@ -10,18 +10,23 @@ public struct GameState: Codable, Equatable, Sendable {
     /// Meeting duels won this campaign — feeds the daily challenge score.
     /// Absent in v1.0 saves, so it decodes with a default.
     public var duelsWon: Int
+    /// The campaign's seed, fixed at start: drives duel/consultant order and
+    /// keeps a resumed daily challenge identical for everyone. Legacy saves
+    /// get a random one.
+    public var seed: UInt64
 
     public var isFinished: Bool { day > campaignLength }
 
     /// Daily challenge score: staying human matters most, winning duels helps.
     public var dailyScore: Int { office.humanity * 2 + 25 * duelsWon }
 
-    public init(campaignLength: Int) {
+    public init(campaignLength: Int, seed: UInt64 = .random(in: .min ... .max)) {
         day = 1
         self.campaignLength = campaignLength
         office = OfficeState()
         triggeredEventIDs = []
         duelsWon = 0
+        self.seed = seed
     }
 
     public init(from decoder: Decoder) throws {
@@ -31,6 +36,7 @@ public struct GameState: Codable, Equatable, Sendable {
         office = try container.decode(OfficeState.self, forKey: .office)
         triggeredEventIDs = try container.decode([String].self, forKey: .triggeredEventIDs)
         duelsWon = try container.decodeIfPresent(Int.self, forKey: .duelsWon) ?? 0
+        seed = try container.decodeIfPresent(UInt64.self, forKey: .seed) ?? .random(in: .min ... .max)
     }
 }
 
@@ -82,13 +88,13 @@ public final class GameEngine {
         self.duels = duels
         self.consultants = consultants
         rng = SeededRandomNumberGenerator(seed: seed)
-        state = GameState(campaignLength: campaignLength)
+        state = GameState(campaignLength: campaignLength, seed: seed)
     }
 
-    /// Resumes a campaign from a previously saved state.
+    /// Resumes a campaign from a previously saved state, reusing the seed
+    /// the campaign started with.
     public init(
         catalog: [OfficeTask],
-        seed: UInt64,
         state: GameState,
         events: [OfficeEvent] = [],
         endings: [Ending] = [],
@@ -100,7 +106,7 @@ public final class GameEngine {
         self.endings = endings
         self.duels = duels
         self.consultants = consultants
-        rng = SeededRandomNumberGenerator(seed: seed)
+        rng = SeededRandomNumberGenerator(seed: state.seed)
         self.state = state
     }
 

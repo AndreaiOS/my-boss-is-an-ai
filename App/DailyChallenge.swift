@@ -27,6 +27,4 @@ enum DailyChallenge {
     static func end() {
         UserDefaults.standard.removeObject(forKey: key)
     }
-
-    static var seed: UInt64 { DailySeed.seed() }
 }

@@ -68,7 +68,7 @@ struct OfficeEventTests {
 
         let data = try JSONEncoder().encode(engine.state)
         let saved = try JSONDecoder().decode(GameState.self, from: data)
-        let resumed = GameEngine(catalog: makeCatalog(), seed: 2, state: saved, events: [robotCleaner])
+        let resumed = GameEngine(catalog: makeCatalog(), state: saved, events: [robotCleaner])
 
         // Already triggered before saving: must not fire again after restore.
         let tasks2 = resumed.startDay()
