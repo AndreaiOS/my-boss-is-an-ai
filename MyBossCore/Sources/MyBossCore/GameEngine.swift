@@ -49,6 +49,11 @@ public struct GameState: Codable, Equatable, Sendable {
 public struct Resolution: Equatable, Sendable {
     public let consequence: Consequence
     public let events: [OfficeEvent]
+
+    public init(consequence: Consequence, events: [OfficeEvent]) {
+        self.consequence = consequence
+        self.events = events
+    }
 }
 
 /// Deterministic RNG (SplitMix64) so workdays are reproducible in tests
@@ -167,6 +172,12 @@ public final class GameEngine {
 
     public func resolve(_ offer: ConsultantOffer, accepted: Bool) -> Resolution {
         apply(accepted ? offer.acceptConsequence : offer.refuseConsequence)
+    }
+
+    /// The reward for nailing a micro-gag: a nudge of humanity, never a
+    /// penalty for failing. Comedy first.
+    public func resolveMicroGameBonus() -> Resolution {
+        apply(Consequence(eventID: "micro_bonus", flavorText: "", automationDelta: 0, humanityDelta: 2))
     }
 
     private func apply(_ consequence: Consequence) -> Resolution {

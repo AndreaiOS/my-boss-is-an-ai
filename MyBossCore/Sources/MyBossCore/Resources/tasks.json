@@ -45,7 +45,8 @@
       "flavorText": "A sentient coffee machine arrives. It judges your caffeine intake. Loudly.",
       "automationDelta": 6,
       "humanityDelta": -4
-    }
+    },
+    "microGame": "coffee_rush"
   },
   {
     "id": "fix_printer",
@@ -61,7 +62,8 @@
       "flavorText": "The AI declares the printer obsolete. The printer prints one final tear.",
       "automationDelta": 5,
       "humanityDelta": -4
-    }
+    },
+    "microGame": "printer_smash"
   },
   {
     "id": "team_meeting",
@@ -109,7 +111,8 @@
       "flavorText": "The AI fixes everything in 2 seconds, then quietly deletes 'lasagna'. Monster.",
       "automationDelta": 5,
       "humanityDelta": -3
-    }
+    },
+    "microGame": "find_lasagna"
   },
   {
     "id": "client_call",

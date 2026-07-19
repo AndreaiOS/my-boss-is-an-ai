@@ -13,12 +13,22 @@ public struct OfficeTask: Codable, Equatable, Sendable, Identifiable {
     public let title: String
     public let humanConsequence: Consequence
     public let aiConsequence: Consequence
+    /// Optional WarioWare micro-gag played when the player picks Human.
+    /// The AI never plays: delegating means not playing.
+    public let microGame: String?
 
-    public init(id: String, title: String, humanConsequence: Consequence, aiConsequence: Consequence) {
+    public init(
+        id: String,
+        title: String,
+        humanConsequence: Consequence,
+        aiConsequence: Consequence,
+        microGame: String? = nil
+    ) {
         self.id = id
         self.title = title
         self.humanConsequence = humanConsequence
         self.aiConsequence = aiConsequence
+        self.microGame = microGame
     }
 
     public func consequence(for choice: WorkChoice) -> Consequence {
