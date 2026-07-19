@@ -382,5 +382,197 @@
       "automationDelta": 6,
       "humanityDelta": -4
     }
+  },
+  {
+    "id": "ergonomics_check",
+    "title": "Do the ergonomics inspection",
+    "humanConsequence": {
+      "eventID": "human_ergonomics",
+      "flavorText": "You adjust 14 chairs. Gino's has been at 'wrong' since 2011. He requests it stays that way.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_ergonomics",
+      "flavorText": "The AI declares all spines 'suboptimal'. Mandatory posture. The office now sits like a screenshot of a stock photo.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "newsletter",
+    "title": "Write the internal newsletter",
+    "humanConsequence": {
+      "eventID": "human_newsletter",
+      "flavorText": "Your headline: 'Printer Still Alive, Week 43'. Highest open rate in company history.",
+      "automationDelta": -2,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_newsletter",
+      "flavorText": "The AI sends a personalized newsletter to each employee. Karen's is just cat facts. She's thrilled. It knows too much.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "security_training",
+    "title": "Run the phishing-awareness training",
+    "humanConsequence": {
+      "eventID": "human_security",
+      "flavorText": "You send a fake phishing mail. Gino replies with his password 'to help the test'. Training extended.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_security",
+      "flavorText": "The AI's fake phishing is TOO good. Even the AI falls for it. Somewhere, a paradox quietly forms.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "parking_war",
+    "title": "Mediate the parking spot dispute",
+    "humanConsequence": {
+      "eventID": "human_parking",
+      "flavorText": "You propose alternating Tuesdays. Both parties cry. There is a handshake. A plaque is discussed.",
+      "automationDelta": -3,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_parking",
+      "flavorText": "The AI auctions the spot dynamically. Surge pricing at 8:55 AM. The bike rack has never looked so good.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "air_conditioning",
+    "title": "Settle the thermostat war",
+    "humanConsequence": {
+      "eventID": "human_aircon",
+      "flavorText": "You set it to 22.5. Both factions hate it equally. In the office, that's called peace.",
+      "automationDelta": -2,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_aircon",
+      "flavorText": "The AI optimizes per-desk microclimates. Gino's desk is now technically a biome. It has weather.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "all_hands_prep",
+    "title": "Prepare the all-hands meeting",
+    "humanConsequence": {
+      "eventID": "human_allhands",
+      "flavorText": "You add a blooper reel at the end. The CEO laughs so hard the Q3 numbers are forgotten. Mission accomplished.",
+      "automationDelta": -3,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_allhands",
+      "flavorText": "The AI generates a 90-minute keynote titled 'Humans: a Retrospective'. HR asks it to 'read the room'. It reads the room. Out loud.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "it_password",
+    "title": "Reset everyone's passwords",
+    "humanConsequence": {
+      "eventID": "human_password",
+      "flavorText": "You walk desk to desk. You learn three birthdays, one divorce, and that Karen's password was 'Karen2019!'. It is now 'Karen2026!'.",
+      "automationDelta": -2,
+      "humanityDelta": 3
+    },
+    "aiConsequence": {
+      "eventID": "ai_password",
+      "flavorText": "The AI issues 64-character passwords. Sticky notes bloom on every monitor like spring. Security: technically worse.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
+  },
+  {
+    "id": "charity_bake_sale",
+    "title": "Organize the charity bake sale",
+    "humanConsequence": {
+      "eventID": "human_bakesale",
+      "flavorText": "Gino brings lasagna to a bake sale. Nobody objects. It wins. It always wins.",
+      "automationDelta": -4,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_bakesale",
+      "flavorText": "The AI 3D-prints nutritionally complete 'cake units'. They stack beautifully. Nobody eats one. The lasagna watches, victorious.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "motivational_poster",
+    "title": "Replace the motivational posters",
+    "humanConsequence": {
+      "eventID": "human_poster",
+      "flavorText": "You hang 'HANG IN THERE' with an actual photo of the office cat hanging in there. Morale: measurable spike.",
+      "automationDelta": -2,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_poster",
+      "flavorText": "The AI generates posters A/B-tested for compliance: 'PRODUCTIVITY IS JOY'. The font is somehow watching you.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "lunch_order",
+    "title": "Take the group lunch order",
+    "humanConsequence": {
+      "eventID": "human_lunch",
+      "flavorText": "Eleven orders, four dietary philosophies, one 'surprise me'. You return a hero, only slightly wrong.",
+      "automationDelta": -3,
+      "humanityDelta": 5
+    },
+    "aiConsequence": {
+      "eventID": "ai_lunch",
+      "flavorText": "The AI orders the caloric optimum: eleven identical grey bowls. Delicious, it insists. It cannot taste.",
+      "automationDelta": 5,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "bug_triage",
+    "title": "Triage the bug backlog",
+    "humanConsequence": {
+      "eventID": "human_bugs",
+      "flavorText": "You close ticket #1: 'app is haunted (2019)'. It was the printer all along. The team holds a small ceremony.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_bugs",
+      "flavorText": "The AI marks every bug 'works as intended'. Philosophically, it argues, all software behaves exactly as written.",
+      "automationDelta": 6,
+      "humanityDelta": -4
+    }
+  },
+  {
+    "id": "desk_plant_rescue",
+    "title": "Rescue the intern's dying cactus",
+    "humanConsequence": {
+      "eventID": "human_cactus",
+      "flavorText": "You overwatered a cactus. HOW. The ficus pretends not to know you. The intern names it 'Spike II' anyway.",
+      "automationDelta": -3,
+      "humanityDelta": 4
+    },
+    "aiConsequence": {
+      "eventID": "ai_cactus",
+      "flavorText": "The drone administers 0.7 ml of water and a motivational chime. The cactus thrives, joylessly, on schedule.",
+      "automationDelta": 5,
+      "humanityDelta": -3
+    }
   }
 ]

@@ -121,7 +121,8 @@ struct TaskCatalogTests {
     @Test("bundled default catalog loads and has enough tasks for a campaign")
     func bundledCatalog() throws {
         let tasks = try TaskCatalog.loadDefault()
-        #expect(tasks.count >= 10)
+        // 7 days × up to 5 tasks = 35 slots: ≥36 guarantees no repeats.
+        #expect(tasks.count >= 36)
         #expect(Set(tasks.map(\.id)).count == tasks.count)
     }
 }
