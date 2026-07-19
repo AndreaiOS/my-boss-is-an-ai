@@ -17,7 +17,7 @@ final class CampaignUITests: XCTestCase {
         let knownLabels: Set<String> = [
             "NEW GAME", "▸ CONTINUE", "OPTIONS", "॥", "☀️ DAILY CHALLENGE",
             "🙋 MYSELF", "🤖 THE AI", "NEXT ▸", "NEXT ROUND ▸", "PLAY AGAIN ▸",
-            "SIGN HERE 🖊", "SLAM THE DOOR"
+            "SIGN HERE 🖊", "SLAM THE DOOR", "STOP!", "🖨"
         ]
         var humanTurn = true
 
@@ -33,6 +33,10 @@ final class CampaignUITests: XCTestCase {
             }
             if tap(app.buttons["NEXT ▸"]) { continue }
             if tap(app.buttons["NEXT ROUND ▸"]) { continue }
+            // Micro-games: mash the printer, try STOP; anything else in the
+            // overlay either wins the game or lets the timeout end it.
+            if tap(app.buttons["🖨"]) { continue }
+            if tap(app.buttons["STOP!"]) { continue }
             if app.buttons["SIGN HERE 🖊"].exists {
                 _ = tap(app.buttons[step % 2 == 0 ? "SIGN HERE 🖊" : "SLAM THE DOOR"])
                 continue

@@ -29,6 +29,10 @@ struct GameView: View {
                 }
                 .ignoresSafeArea(edges: .top)
 
+                if let kind = model.activeMicroGame {
+                    MicroGameOverlay(kind: kind) { won in finishMicroGame(won: won) }
+                        .zIndex(2)
+                }
                 if model.phase == .daySummary {
                     daySummaryOverlay
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -107,6 +111,23 @@ struct GameView: View {
 
     private func resolveCurrentTask(with choice: WorkChoice) {
         model.choose(choice)
+        if model.activeMicroGame != nil {
+            // A micro-gag opened instead: effects wait for its outcome.
+            SoundPlayer.shared.play(.tap)
+            return
+        }
+        playResolutionEffects(for: choice)
+    }
+
+    private func finishMicroGame(won: Bool) {
+        withAnimation(.spring(duration: 0.3)) {
+            model.finishMicroGame(won: won)
+        }
+        if won { scene.spawnComicText("🎯 CRIT!") }
+        playResolutionEffects(for: .human)
+    }
+
+    private func playResolutionEffects(for choice: WorkChoice) {
         SoundPlayer.shared.play(choice == .human ? .human : .ai)
         Haptics.impact()
         scene.react(to: choice)
@@ -184,6 +205,14 @@ struct GameView: View {
                                 .padding(10)
                                 .background(Pixel.human.opacity(0.9))
                                 .border(Pixel.border, width: 3)
+                        }
+                        if let line = model.microGameLine {
+                            Text("🎮 \(line)")
+                                .font(Pixel.font(11))
+                                .foregroundStyle(Pixel.bad)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         if let remark = model.aiRemark {
                             Text("🤖 the AI: \(remark)")

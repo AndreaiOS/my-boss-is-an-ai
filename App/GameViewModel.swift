@@ -39,6 +39,10 @@ final class GameViewModel {
     private(set) var aiRemark: String?
     /// Set when a finished campaign was today's daily challenge.
     private(set) var completedDailyScore: Int?
+    /// The WarioWare micro-gag currently on screen, if any.
+    private(set) var activeMicroGame: MicroGameKind?
+    /// The punchline for the finished micro-gag, shown with the task gag.
+    private(set) var microGameLine: String?
     private var choicesMade = 0
     private var aiChoices = 0
 
@@ -96,8 +100,30 @@ final class GameViewModel {
 
     func choose(_ choice: WorkChoice) {
         guard let task = currentTask else { return }
+        // Doing it yourself means actually doing it: some tasks open a
+        // micro-gag first. Delegating to the AI never plays.
+        if choice == .human, activeMicroGame == nil,
+           let id = task.microGame, let kind = MicroGameKind(id: id) {
+            activeMicroGame = kind
+            return
+        }
         lastResolution = engine.resolve(task, with: choice)
         updateAIRemark(after: choice)
+        save()
+    }
+
+    /// The micro-gag ended: resolve the task, add the bonus on a win.
+    func finishMicroGame(won: Bool) {
+        guard let task = currentTask, let kind = activeMicroGame else { return }
+        activeMicroGame = nil
+        microGameLine = won ? kind.successLine + " (+2 ❤️)" : kind.failureLine
+        var resolution = engine.resolve(task, with: .human)
+        if won {
+            let bonus = engine.resolveMicroGameBonus()
+            resolution = Resolution(consequence: resolution.consequence, events: resolution.events + bonus.events)
+        }
+        lastResolution = resolution
+        updateAIRemark(after: .human)
         save()
     }
 
@@ -133,6 +159,7 @@ final class GameViewModel {
     func advanceAfterConsequence() {
         lastResolution = nil
         aiRemark = nil
+        microGameLine = nil
         if phase == .duel {
             currentBout = nil
             lastRoundLanded = nil
@@ -237,6 +264,8 @@ final class GameViewModel {
         aiChoices = 0
         currentBout = nil
         lastRoundLanded = nil
+        activeMicroGame = nil
+        microGameLine = nil
         consultantOffer = nil
         consultantResolution = nil
         beginDay()
