@@ -73,6 +73,16 @@ final class CampaignUITests: XCTestCase {
         sleep(25)
     }
 
+    /// Opens the notebook from the title and idles for an external screenshot.
+    func testNotebookShowcase() {
+        let app = XCUIApplication()
+        app.launch()
+        let notebook = app.buttons["📓 NOTEBOOK"]
+        XCTAssertTrue(notebook.waitForExistence(timeout: 10))
+        notebook.tap()
+        sleep(25)
+    }
+
     func testShowcase() {
         let app = XCUIApplication()
         app.launchEnvironment["UITEST"] = "1"
