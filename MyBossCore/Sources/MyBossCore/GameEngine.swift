@@ -16,6 +16,8 @@ public struct GameState: Codable, Equatable, Sendable {
     public var seed: UInt64
     /// Tasks already dealt this campaign — a task never repeats.
     public var dealtTaskIDs: [String]
+    /// Authored story beats already shown; they fire once per campaign.
+    public var shownBeatIDs: [String]
 
     public var isFinished: Bool { day > campaignLength }
 
@@ -30,6 +32,7 @@ public struct GameState: Codable, Equatable, Sendable {
         duelsWon = 0
         self.seed = seed
         dealtTaskIDs = []
+        shownBeatIDs = []
     }
 
     public init(from decoder: Decoder) throws {
@@ -41,6 +44,7 @@ public struct GameState: Codable, Equatable, Sendable {
         duelsWon = try container.decodeIfPresent(Int.self, forKey: .duelsWon) ?? 0
         seed = try container.decodeIfPresent(UInt64.self, forKey: .seed) ?? .random(in: .min ... .max)
         dealtTaskIDs = try container.decodeIfPresent([String].self, forKey: .dealtTaskIDs) ?? []
+        shownBeatIDs = try container.decodeIfPresent([String].self, forKey: .shownBeatIDs) ?? []
     }
 }
 
@@ -80,6 +84,7 @@ public final class GameEngine {
     private let endings: [Ending]
     private let duels: [Duel]
     private let consultants: [ConsultantOffer]
+    private let beats: [StoryBeat]
     private var rng: SeededRandomNumberGenerator
 
     public init(
@@ -89,11 +94,13 @@ public final class GameEngine {
         events: [OfficeEvent] = [],
         endings: [Ending] = [],
         duels: [Duel] = [],
-        consultants: [ConsultantOffer] = []
+        consultants: [ConsultantOffer] = [],
+        beats: [StoryBeat] = []
     ) {
         self.catalog = catalog
         self.events = events
         self.endings = endings
+        self.beats = beats
         rng = SeededRandomNumberGenerator(seed: seed)
         state = GameState(campaignLength: campaignLength, seed: seed)
         (self.duels, self.consultants) = Self.shuffledEncounters(duels, consultants, seed: seed)
@@ -107,11 +114,13 @@ public final class GameEngine {
         events: [OfficeEvent] = [],
         endings: [Ending] = [],
         duels: [Duel] = [],
-        consultants: [ConsultantOffer] = []
+        consultants: [ConsultantOffer] = [],
+        beats: [StoryBeat] = []
     ) {
         self.catalog = catalog
         self.events = events
         self.endings = endings
+        self.beats = beats
         rng = SeededRandomNumberGenerator(seed: state.seed)
         self.state = state
         (self.duels, self.consultants) = Self.shuffledEncounters(duels, consultants, seed: state.seed)
@@ -161,6 +170,17 @@ public final class GameEngine {
     public func resolve(_ duel: Duel, won: Bool) -> Resolution {
         if won { state.duelsWon += 1 }
         return apply(won ? duel.winConsequence : duel.loseConsequence)
+    }
+
+    /// The Act-II-opening beat: offered once, on day 3.
+    public func midTurnBeat() -> StoryBeat? {
+        guard state.day == 3 else { return nil }
+        return beats.first { !state.shownBeatIDs.contains($0.id) }
+    }
+
+    public func resolve(_ beat: StoryBeat, choice: StoryChoice) -> Resolution {
+        state.shownBeatIDs.append(beat.id)
+        return apply(choice.consequence)
     }
 
     /// The consultant knocking before tonight's summary: odd days from
