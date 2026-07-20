@@ -16,6 +16,7 @@ final class CampaignUITests: XCTestCase {
 
         let knownLabels: Set<String> = [
             "NEW GAME", "▸ CONTINUE", "OPTIONS", "॥", "☀️ DAILY CHALLENGE",
+            "📓 NOTEBOOK", "SHARE ▸",
             "🙋 MYSELF", "🤖 THE AI", "NEXT ▸", "NEXT ROUND ▸", "PLAY AGAIN ▸",
             "SIGN HERE 🖊", "SLAM THE DOOR", "STOP!", "🖨"
         ]

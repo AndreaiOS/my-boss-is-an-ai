@@ -9,7 +9,9 @@ Running task list, per the GDD workflow. Current milestone: **v1.1 in progress**
 - [x] v1.1: daily challenge — shared UTC date seed (`DailySeed`), title-screen button, score = humanity×2 + 25×duelsWon submitted to GC leaderboard `daily_challenge`; v1.0 saves still load
 - [x] v1.1: more content — 7 consultant offers, 24 AI remarks; bump to 1.1.0
 - [x] v1.2 "alive office" (spec + plan in docs/superpowers/): no-repeat tasks (36 in catalog), persisted seed → every run differs (duels/consultants shuffled per campaign), comic-text stings (data-driven `sting` per event), office-life vignettes + physical event reactions, 3 WarioWare micro-gags (printer smash, coffee rush, find lasagna; +2 ❤️ on win, never a penalty) — 60 core tests + full-campaign UI test green
-- [ ] v1.1: create the `daily_challenge` recurring leaderboard in ASC (checklist.md §2) before submitting 1.1.0
+- [x] v1.3 "engagement & polish" (spec + plan in docs/superpowers/): shareable ending card (ImageRenderer + share sheet), daily-challenge streak (`DailyStreak`, GC leaderboard `daily_streak`), notebook/collection screen (endings X/7, learned comebacks, lifetime stats), adaptive per-stage chiptune music (`tools/make_music.py`, `MusicPlayer` crossfade + music toggle) — 71 core tests + full-campaign UI test green
+- [ ] Deferred: boss-in-scene presence (waiting on new sprite art from Andrea), authored three-act structure (separate design)
+- [ ] Before submitting 1.1.0: create GC leaderboards `daily_challenge` (recurring) and `daily_streak` (classic) in ASC (checklist.md §2)
 - [ ] Play a full campaign on a real device and tune the feel of the loop
 - [ ] Wait for App Review of v1.0.0 (typically 1–2 days); fix anything they flag
 - [ ] Post-launch ideas: three-act structure, more tasks/events, iPad support
