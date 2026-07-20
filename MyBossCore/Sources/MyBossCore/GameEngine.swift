@@ -85,6 +85,7 @@ public final class GameEngine {
     private let duels: [Duel]
     private let consultants: [ConsultantOffer]
     private let beats: [StoryBeat]
+    private let bossDuel: Duel?
     private var rng: SeededRandomNumberGenerator
 
     public init(
@@ -95,12 +96,14 @@ public final class GameEngine {
         endings: [Ending] = [],
         duels: [Duel] = [],
         consultants: [ConsultantOffer] = [],
-        beats: [StoryBeat] = []
+        beats: [StoryBeat] = [],
+        bossDuel: Duel? = nil
     ) {
         self.catalog = catalog
         self.events = events
         self.endings = endings
         self.beats = beats
+        self.bossDuel = bossDuel
         rng = SeededRandomNumberGenerator(seed: seed)
         state = GameState(campaignLength: campaignLength, seed: seed)
         (self.duels, self.consultants) = Self.shuffledEncounters(duels, consultants, seed: seed)
@@ -115,12 +118,14 @@ public final class GameEngine {
         endings: [Ending] = [],
         duels: [Duel] = [],
         consultants: [ConsultantOffer] = [],
-        beats: [StoryBeat] = []
+        beats: [StoryBeat] = [],
+        bossDuel: Duel? = nil
     ) {
         self.catalog = catalog
         self.events = events
         self.endings = endings
         self.beats = beats
+        self.bossDuel = bossDuel
         rng = SeededRandomNumberGenerator(seed: state.seed)
         self.state = state
         (self.duels, self.consultants) = Self.shuffledEncounters(duels, consultants, seed: state.seed)
@@ -170,6 +175,11 @@ public final class GameEngine {
     public func resolve(_ duel: Duel, won: Bool) -> Resolution {
         if won { state.duelsWon += 1 }
         return apply(won ? duel.winConsequence : duel.loseConsequence)
+    }
+
+    /// The climax duel against the Boss-AI, scheduled on the last day only.
+    public func bossDuelForToday() -> Duel? {
+        state.day == state.campaignLength ? bossDuel : nil
     }
 
     /// The Act-II-opening beat: offered once, on day 3.

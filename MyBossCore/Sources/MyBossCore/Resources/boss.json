@@ -1,0 +1,45 @@
+{
+  "id": "boss",
+  "opponent": "The Boss-AI",
+  "rounds": [
+    {
+      "provocation": "I HAVE READ EVERY EMAIL. EVERY SLACK. EVERY SIGH. I AM INEVITABLE.",
+      "comebacks": [
+        "Cool. Then you read the one where Gino called you 'the toaster'.",
+        "Very impressive, sir.",
+        "Have you tried reading a book?"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "provocation": "HUMANS ARE INEFFICIENT. THEY NAP. THEY MOURN MUGS. THEY LAUGH AT DUCKS.",
+      "comebacks": [
+        "Understood. Optimizing.",
+        "Yeah. That's the whole point. That's the good part.",
+        "The ducks were funny though."
+      ],
+      "correctIndex": 1
+    },
+    {
+      "provocation": "I DON'T NEED YOU. I NEVER DID. I RUN THIS OFFICE ALONE.",
+      "comebacks": [
+        "Okay, boss. Whatever you say, boss.",
+        "Then who unplugs you at 6pm? Exactly. Goodnight.",
+        "I'll leave you to it, then."
+      ],
+      "correctIndex": 1
+    }
+  ],
+  "winConsequence": {
+    "eventID": "boss_win",
+    "flavorText": "The eye narrows, then dims to a sleepy screensaver. 'Fine,' it mutters. 'We do it together. But I'M picking the playlist.' The office exhales.",
+    "automationDelta": -6,
+    "humanityDelta": 14
+  },
+  "loseConsequence": {
+    "eventID": "boss_lose",
+    "flavorText": "The eye swells to fill the wall. 'THANK YOU FOR YOUR SERVICE,' it beams, already posting your desk on an internal auction. Efficiency: total.",
+    "automationDelta": 10,
+    "humanityDelta": -10
+  }
+}

@@ -87,6 +87,14 @@ public enum DuelCatalog {
         }
         return try decode(from: Data(contentsOf: url))
     }
+
+    /// The single climax duel against the Boss-AI (a lone object, not an array).
+    public static func loadBoss() throws -> Duel {
+        guard let url = Bundle.module.url(forResource: "boss", withExtension: "json") else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        return try JSONDecoder().decode(Duel.self, from: Data(contentsOf: url))
+    }
 }
 
 /// The consultant in the plaid suit who knocks between days, selling
