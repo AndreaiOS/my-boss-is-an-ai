@@ -415,6 +415,11 @@ struct GameView: View {
                     .padding(.vertical, 6)
                     .border(Pixel.bad, width: 3)
             }
+            if let streak = model.currentStreak {
+                Text("🔥 \(streak)-day streak")
+                    .font(Pixel.font(14))
+                    .foregroundStyle(Pixel.human)
+            }
             Button("Share ▸") { SoundPlayer.shared.play(.tap); shareEnding() }
                 .buttonStyle(PixelButtonStyle(color: Pixel.ai))
             Button("Play again ▸") {

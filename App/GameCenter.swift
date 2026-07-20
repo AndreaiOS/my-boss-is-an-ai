@@ -53,4 +53,13 @@ final class GameCenter {
             leaderboardIDs: ["daily_challenge"]
         ) { _ in }
     }
+
+    /// Leaderboard `daily_streak`: best consecutive-days streak.
+    func reportDailyStreak(_ streak: Int) {
+        guard isAuthenticated else { return }
+        GKLeaderboard.submitScore(
+            streak, context: 0, player: GKLocalPlayer.local,
+            leaderboardIDs: ["daily_streak"]
+        ) { _ in }
+    }
 }

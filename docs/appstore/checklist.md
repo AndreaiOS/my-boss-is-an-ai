@@ -18,6 +18,8 @@ App page → Services → **Game Center**:
   name "Campaigns Completed".
 - **v1.1** Leaderboard → **+**, Recurring (daily, 24h), ID `daily_challenge`, integer,
   best = highest, name "Daily Challenge". Score = humanity×2 + 25×duels won (max 275).
+- **v1.3** Leaderboard → **+**, Classic, ID `daily_streak`, integer,
+  best = highest, name "Daily Streak". Best consecutive daily-challenge days.
 - Achievements → **+** one per ending (100 pts each, not hidden).
   Each needs a 1024x1024 image: use `docs/appstore/achievements/<achievement id>.png`.
 

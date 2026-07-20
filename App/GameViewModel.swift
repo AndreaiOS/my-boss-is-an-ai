@@ -39,6 +39,8 @@ final class GameViewModel {
     private(set) var aiRemark: String?
     /// Set when a finished campaign was today's daily challenge.
     private(set) var completedDailyScore: Int?
+    /// The player's consecutive-days streak, set when a daily run finishes.
+    private(set) var currentStreak: Int?
     /// The WarioWare micro-gag currently on screen, if any.
     private(set) var activeMicroGame: MicroGameKind?
     /// The punchline for the finished micro-gag, shown with the task gag.
@@ -238,6 +240,13 @@ final class GameViewModel {
         if DailyChallenge.isActiveToday {
             completedDailyScore = engine.state.dailyScore
             GameCenter.shared.reportDailyScore(engine.state.dailyScore)
+            let previous = UserDefaults.standard.integer(forKey: "dailyStreak")
+            let lastKey = UserDefaults.standard.integer(forKey: "dailyStreakLastDay")
+            let updated = DailyStreak.update(streak: previous, lastDayKey: lastKey, today: Date())
+            UserDefaults.standard.set(updated.streak, forKey: "dailyStreak")
+            UserDefaults.standard.set(updated.dayKey, forKey: "dailyStreakLastDay")
+            currentStreak = updated.streak
+            GameCenter.shared.reportDailyStreak(updated.streak)
             DailyChallenge.end()
         }
         if let ending = engine.finale() {
@@ -256,6 +265,7 @@ final class GameViewModel {
         try? FileManager.default.removeItem(at: Self.saveURL)
         DailyChallenge.end()
         completedDailyScore = nil
+        currentStreak = nil
         engine = GameEngine(
             catalog: catalog, seed: UInt64.random(in: .min ... .max),
             events: events, endings: endings, duels: duels, consultants: consultants
