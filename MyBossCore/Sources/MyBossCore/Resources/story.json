@@ -1,0 +1,33 @@
+[
+  {
+    "id": "the_announcement",
+    "title": "THE ANNOUNCEMENT",
+    "narration": {
+      "human": "Management has NOTICED you. All those tasks, done by human hands. 'It's… touching,' says the memo, in a font that means the opposite. 'But the future is efficient.' The boss screen flickers awake. It has been watching. It has notes.",
+      "ai": "Management is THRILLED. Productivity is up, humans are down, and someone got a plaque. 'Double it,' says the memo. The consultant returns, somehow shinier. The boss screen opens one eye and, terrifyingly, winks.",
+      "balanced": "A company-wide reorg is announced. Nobody can explain it. There is a new org chart shaped like a spiral. The consultant returns with a lanyard that says CHANGE AGENT. The boss screen wakes up, mid-yawn, and starts paying attention."
+    },
+    "choices": [
+      {
+        "label": "🤖 Embrace the future",
+        "flavorText": "You nod along. You use the word 'roadmap' unironically. Somewhere, Gino shivers and doesn't know why.",
+        "consequence": {
+          "eventID": "act2_embrace",
+          "flavorText": "You embrace the future. The future embraces back, a little too tightly.",
+          "automationDelta": 8,
+          "humanityDelta": -4
+        }
+      },
+      {
+        "label": "🙋 Quietly resist",
+        "flavorText": "You say 'absolutely' to everything and change nothing. It's not sabotage. It's… pacing.",
+        "consequence": {
+          "eventID": "act2_resist",
+          "flavorText": "You quietly resist. The spiral org chart mysteriously loses a loop overnight.",
+          "automationDelta": -4,
+          "humanityDelta": 5
+        }
+      }
+    ]
+  }
+]
