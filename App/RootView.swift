@@ -22,7 +22,7 @@ struct RootView: View {
                     onDailyChallenge: { enterGame(fresh: true, daily: true) }
                 )
             case .game(let fresh, let daily, let session):
-                GameView(freshStart: fresh, daily: daily, onExitToTitle: { screen = .title })
+                GameView(freshStart: fresh, daily: daily, onExitToTitle: { MusicPlayer.shared.stop(); screen = .title })
                     .id(session)
             }
         }

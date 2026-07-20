@@ -12,6 +12,11 @@ enum Settings {
         get { UserDefaults.standard.object(forKey: "hapticsOn") as? Bool ?? true }
         set { UserDefaults.standard.set(newValue, forKey: "hapticsOn") }
     }
+
+    static var musicOn: Bool {
+        get { UserDefaults.standard.object(forKey: "musicOn") as? Bool ?? true }
+        set { UserDefaults.standard.set(newValue, forKey: "musicOn") }
+    }
 }
 
 /// Haptics that respect the player's toggle.

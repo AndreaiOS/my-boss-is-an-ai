@@ -93,6 +93,7 @@ struct PauseSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var sound = Settings.soundOn
     @State private var haptics = Settings.hapticsOn
+    @State private var music = Settings.musicOn
 
     var body: some View {
         VStack(spacing: 16) {
@@ -101,6 +102,8 @@ struct PauseSheet: View {
                 .foregroundStyle(Pixel.cream)
             Toggle("Sound effects", isOn: $sound)
                 .onChange(of: sound) { Settings.soundOn = sound }
+            Toggle("Music", isOn: $music)
+                .onChange(of: music) { Settings.musicOn = music; if !music { MusicPlayer.shared.stop() } }
             Toggle("Haptics", isOn: $haptics)
                 .onChange(of: haptics) { Settings.hapticsOn = haptics }
             Button("Resume ▸") { dismiss() }
@@ -124,6 +127,7 @@ struct PauseSheet: View {
 struct OptionsSheet: View {
     @State private var sound = Settings.soundOn
     @State private var haptics = Settings.hapticsOn
+    @State private var music = Settings.musicOn
 
     var body: some View {
         VStack(spacing: 18) {
@@ -132,6 +136,8 @@ struct OptionsSheet: View {
                 .foregroundStyle(Pixel.cream)
             Toggle("Sound effects", isOn: $sound)
                 .onChange(of: sound) { Settings.soundOn = sound }
+            Toggle("Music", isOn: $music)
+                .onChange(of: music) { Settings.musicOn = music; if !music { MusicPlayer.shared.stop() } }
             Toggle("Haptics", isOn: $haptics)
                 .onChange(of: haptics) { Settings.hapticsOn = haptics }
             Text("Made by a human. Mostly.")

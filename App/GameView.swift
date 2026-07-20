@@ -83,6 +83,7 @@ struct GameView: View {
 
     private func syncScene() {
         scene.update(stage: model.office.stage, eventIDs: model.triggeredEventIDs)
+        MusicPlayer.shared.setStage(model.office.stage)
     }
 
     /// Morning light at the first task, sunset by the last.
