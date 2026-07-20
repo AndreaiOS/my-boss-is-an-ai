@@ -16,6 +16,9 @@ func MusicTrack(for stage: OfficeStage) -> String {
 final class MusicPlayer {
     static let shared = MusicPlayer()
 
+    /// Kept low so the music stays a background bed under the sound gags.
+    private static let activeVolume: Float = 0.28
+
     private var players: [String: AVAudioPlayer] = [:]
     private var current: String?
 
@@ -38,7 +41,7 @@ final class MusicPlayer {
         for (name, player) in players {
             if name == track {
                 if !player.isPlaying { player.currentTime = 0; player.play() }
-                player.setVolume(0.5, fadeDuration: 1.0)
+                player.setVolume(Self.activeVolume, fadeDuration: 1.0)
             } else {
                 player.setVolume(0, fadeDuration: 1.0)
             }
