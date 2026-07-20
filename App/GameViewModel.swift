@@ -9,6 +9,7 @@ final class GameViewModel {
 
     enum Phase {
         case workday
+        case storyBeat
         case duel
         case daySummary
         case campaignOver
@@ -20,6 +21,12 @@ final class GameViewModel {
     private let endings: [Ending]
     private let duels: [Duel]
     private let consultants: [ConsultantOffer]
+    private let beats: [StoryBeat]
+    private let bossDuel: Duel?
+    /// The Act-II turning point on screen, while phase == .storyBeat.
+    private(set) var currentBeat: StoryBeat?
+    /// Set when the campaign's boss duel has been decided.
+    private(set) var bossDuelWon: Bool?
     private(set) var todaysTasks: [OfficeTask] = []
     private(set) var currentTaskIndex = 0
     private(set) var phase: Phase = .workday
@@ -72,6 +79,8 @@ final class GameViewModel {
         endings = (try? EndingCatalog.loadDefault()) ?? []
         duels = (try? DuelCatalog.loadDefault()) ?? []
         consultants = (try? ConsultantCatalog.loadDefault()) ?? []
+        beats = (try? StoryBeatCatalog.loadDefault()) ?? []
+        bossDuel = try? DuelCatalog.loadBoss()
         if daily {
             DailyChallenge.begin()
         } else if freshStart {
@@ -89,12 +98,14 @@ final class GameViewModel {
            !saved.isFinished {
             engine = GameEngine(
                 catalog: catalog, state: saved, events: events,
-                endings: endings, duels: duels, consultants: consultants
+                endings: endings, duels: duels, consultants: consultants,
+                beats: beats, bossDuel: bossDuel
             )
         } else {
             engine = GameEngine(
                 catalog: catalog, seed: seed, events: events,
-                endings: endings, duels: duels, consultants: consultants
+                endings: endings, duels: duels, consultants: consultants,
+                beats: beats, bossDuel: bossDuel
             )
         }
         beginDay()
@@ -278,6 +289,8 @@ final class GameViewModel {
         lastRoundLanded = nil
         activeMicroGame = nil
         microGameLine = nil
+        currentBeat = nil
+        bossDuelWon = nil
         consultantOffer = nil
         consultantResolution = nil
         beginDay()
@@ -287,7 +300,35 @@ final class GameViewModel {
         todaysTasks = engine.startDay()
         currentTaskIndex = 0
         lastResolution = nil
+        // Act II opens with the mid-campaign turn before the workday.
+        if let beat = engine.midTurnBeat() {
+            currentBeat = beat
+            phase = .storyBeat
+            return
+        }
         phase = .workday
+    }
+
+    /// The narration variant chosen by how the player has been leaning.
+    var beatNarration: String {
+        currentBeat.map { $0.narration(for: Lean.from(engine.state.office)) } ?? ""
+    }
+
+    /// Act label for the current day, for the act-title stamp.
+    var actLabel: String {
+        switch Act(for: day) {
+        case .setup: "ACT I"
+        case .escalation: "ACT II"
+        case .climax: "ACT III"
+        }
+    }
+
+    func answerBeat(_ choice: StoryChoice) {
+        guard let beat = currentBeat else { return }
+        lastResolution = engine.resolve(beat, choice: choice)
+        currentBeat = nil
+        phase = .workday
+        save()
     }
 
     private func save() {

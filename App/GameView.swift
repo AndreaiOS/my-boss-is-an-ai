@@ -33,6 +33,13 @@ struct GameView: View {
                     MicroGameOverlay(kind: kind) { won in finishMicroGame(won: won) }
                         .zIndex(2)
                 }
+                if model.phase == .storyBeat, let beat = model.currentBeat {
+                    StoryBeatView(beat: beat, narration: model.beatNarration) { choice in
+                        model.answerBeat(choice)
+                        playResolutionEffects(for: .human)
+                    }
+                    .zIndex(3)
+                }
                 if model.phase == .daySummary {
                     daySummaryOverlay
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -67,7 +74,7 @@ struct GameView: View {
         }
         .onChange(of: model.phase) { _, phase in
             switch phase {
-            case .workday, .duel:
+            case .workday, .storyBeat, .duel:
                 break
             case .daySummary:
                 // The office transforms behind the summary overlay, so the
