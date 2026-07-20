@@ -368,13 +368,18 @@ struct GameView: View {
         }
     }
 
-    /// One illustration per ending family.
-    private func endingImage(for ending: Ending) -> String {
-        switch ending.id {
-        case "employee_of_the_century", "burnout_speedrun": "ending_human"
-        case "corporate_singularity", "robots_with_feelings": "ending_ai"
-        default: "ending_hybrid"
-        }
+    @MainActor
+    private func shareEnding() {
+        guard let ending = model.ending else { return }
+        let content = ShareCardContent(ending: ending, office: model.office, dailyScore: model.completedDailyScore)
+        let renderer = ImageRenderer(content: ShareCardView(content: content, artwork: EndingArt.image(for: ending)))
+        renderer.scale = 1
+        guard let image = renderer.uiImage else { return }
+        let activity = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow?.rootViewController }
+            .first?
+            .present(activity, animated: true)
     }
 
     private var endingOverlay: some View {
@@ -383,7 +388,7 @@ struct GameView: View {
                 .font(Pixel.font(13))
                 .foregroundStyle(Pixel.creamDim)
             if let ending = model.ending {
-                Image(uiImage: UIImage(named: endingImage(for: ending)) ?? UIImage())
+                Image(uiImage: UIImage(named: EndingArt.image(for: ending)) ?? UIImage())
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(height: 180)
@@ -410,6 +415,8 @@ struct GameView: View {
                     .padding(.vertical, 6)
                     .border(Pixel.bad, width: 3)
             }
+            Button("Share ▸") { SoundPlayer.shared.play(.tap); shareEnding() }
+                .buttonStyle(PixelButtonStyle(color: Pixel.ai))
             Button("Play again ▸") {
                 SoundPlayer.shared.play(.tap)
                 model.restartCampaign()
