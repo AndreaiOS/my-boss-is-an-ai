@@ -9,6 +9,7 @@ struct TitleView: View {
     let onDailyChallenge: () -> Void
     @State private var scene = OfficeScene()
     @State private var showOptions = false
+    @State private var showNotebook = false
 
     private var canContinue: Bool { GameViewModel.hasResumableSave }
     private var endingsFound: Int { UserDefaults.standard.stringArray(forKey: "endingsFound")?.count ?? 0 }
@@ -62,6 +63,8 @@ struct TitleView: View {
                             .padding(.vertical, 3)
                             .background(Pixel.bg.opacity(0.75))
                     }
+                    Button("📓 Notebook") { SoundPlayer.shared.play(.tap); showNotebook = true }
+                        .buttonStyle(PixelButtonStyle(color: Pixel.cream))
                     Button("Options") { SoundPlayer.shared.play(.tap); showOptions = true }
                         .buttonStyle(PixelButtonStyle(color: Pixel.ai))
                     if endingsFound > 0 {
@@ -79,6 +82,7 @@ struct TitleView: View {
             }
         }
         .sheet(isPresented: $showOptions) { OptionsSheet() }
+        .sheet(isPresented: $showNotebook) { NotebookView() }
     }
 }
 

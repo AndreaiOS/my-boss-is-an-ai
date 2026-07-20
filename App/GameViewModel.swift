@@ -121,6 +121,7 @@ final class GameViewModel {
         microGameLine = won ? kind.successLine + " (+2 ❤️)" : kind.failureLine
         var resolution = engine.resolve(task, with: .human)
         if won {
+            Stats.increment(.microGamesWon)
             let bonus = engine.resolveMicroGameBonus()
             resolution = Resolution(consequence: resolution.consequence, events: resolution.events + bonus.events)
         }
@@ -141,6 +142,7 @@ final class GameViewModel {
         lastRoundLanded = landed
         if bout.isOver {
             lastDuelWon = bout.won
+            if bout.won == true { Stats.increment(.duelsWonTotal) }
             lastResolution = engine.resolve(bout.duel, won: bout.won == true)
         }
         save()
