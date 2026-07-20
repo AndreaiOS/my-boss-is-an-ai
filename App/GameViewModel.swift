@@ -154,6 +154,7 @@ final class GameViewModel {
         if bout.isOver {
             lastDuelWon = bout.won
             if bout.won == true { Stats.increment(.duelsWonTotal) }
+            if bout.duel.id == "boss" { bossDuelWon = bout.won }
             lastResolution = engine.resolve(bout.duel, won: bout.won == true)
         }
         save()
@@ -184,7 +185,8 @@ final class GameViewModel {
         }
         currentTaskIndex += 1
         if currentTaskIndex >= todaysTasks.count {
-            if let duel = engine.duelForToday() {
+            // The Boss-AI climax takes precedence over the normal rotation.
+            if let duel = engine.bossDuelForToday() ?? engine.duelForToday() {
                 currentBout = DuelBout(duel: duel)
                 lastRoundLanded = nil
                 phase = .duel

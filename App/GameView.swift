@@ -8,6 +8,8 @@ struct GameView: View {
     @State private var scene = OfficeScene()
     /// Big "DAY N" stamp shown when a new day starts.
     @State private var dayStamp: Int?
+    /// "ACT I/II/III" stamp shown at act boundaries.
+    @State private var actStamp: String?
     @State private var showPause = false
 
     init(freshStart: Bool = false, daily: Bool = false, onExitToTitle: @escaping () -> Void = {}) {
@@ -52,6 +54,18 @@ struct GameView: View {
                     dayStampView(day)
                         .transition(.scale(scale: 2.4).combined(with: .opacity))
                 }
+                if let act = actStamp {
+                    Text(act)
+                        .font(Pixel.font(30))
+                        .foregroundStyle(Pixel.cream)
+                        .padding(.horizontal, 22)
+                        .padding(.vertical, 10)
+                        .background(Pixel.panel)
+                        .border(Pixel.border, width: 3)
+                        .offset(y: 66)
+                        .transition(.scale.combined(with: .opacity))
+                        .allowsHitTesting(false)
+                }
             }
             .animation(.spring(duration: 0.45), value: model.phase)
         }
@@ -59,8 +73,18 @@ struct GameView: View {
             syncScene()
             syncDaylight()
             showDayStamp(model.day)
+            showActStamp(model.actLabel)
         }
         .onChange(of: model.currentTaskIndex) { syncDaylight() }
+        .onChange(of: model.day) { _, day in
+            // A new act begins on days 1, 3 and 6.
+            if day == 1 || day == 3 || day == 6 { showActStamp(model.actLabel) }
+        }
+        .onChange(of: model.phase) { _, phase in
+            if phase == .duel, model.currentBout?.duel.id == "boss" {
+                scene.spawnComicText("THE BOSS AWAKENS")
+            }
+        }
         .sheet(isPresented: $showPause) {
             PauseSheet(
                 onRestart: {
@@ -104,6 +128,16 @@ struct GameView: View {
         Task {
             try? await Task.sleep(for: .seconds(1.2))
             withAnimation(.easeOut(duration: 0.3)) { dayStamp = nil }
+        }
+    }
+
+    private func showActStamp(_ text: String) {
+        // Show it just after the day stamp settles.
+        Task {
+            try? await Task.sleep(for: .seconds(0.9))
+            withAnimation(.spring(duration: 0.4)) { actStamp = text }
+            try? await Task.sleep(for: .seconds(1.4))
+            withAnimation(.easeOut(duration: 0.3)) { actStamp = nil }
         }
     }
 
@@ -414,6 +448,11 @@ struct GameView: View {
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxHeight: 140)
+            }
+            if let won = model.bossDuelWon {
+                Text(won ? "🏆 You beat the boss." : "💀 The boss won.")
+                    .font(Pixel.font(13))
+                    .foregroundStyle(won ? Pixel.human : Pixel.bad)
             }
             if let score = model.completedDailyScore {
                 Text("☀️ DAILY SCORE: \(score)")
