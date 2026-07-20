@@ -305,7 +305,10 @@ final class OfficeScene: SKScene {
         "manager_human": ["\"Let's put a pin in that and circle back.\"", "\"My door is always open. That's why I'm cold.\""],
         "kpi_dashboard": ["The memes are gone. The KPIs remain. Forever.", "Engagement: up. Joy: not found (404)."],
         "meme_wall": ["Today's entry: a cat in a tie. Masterpiece.", "Productivity -12%. Morale +200%. Net positive."],
-        "drone": ["It waters plants and judges you. Multitasking.", "It attended the ficus funeral. Late. With confetti. Wrong event."]
+        "drone": ["It waters plants and judges you. Multitasking.", "It attended the ficus funeral. Late. With confetti. Wrong event."],
+        "boss_monitor_lively": ["The boss screen. Currently a screensaver. Currently asleep. Enjoy it.", "A little logo bounces. It has never once hit the corner. Yet."],
+        "boss_monitor_hybrid": ["The screen opened an eye. 'Just observing,' it says. It is not just observing.", "A loading bar. Loading what? Don't ask. It's you. It's loading you."],
+        "boss_monitor_automated": ["The eye follows you across the room. Also across the parking lot. Also home.", "\"I'M NOT WATCHING,\" it beams, watching. The grin is new. The grin is worse."]
     ]
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -669,6 +672,16 @@ final class OfficeScene: SKScene {
         if stage == .hybrid {
             items.append(Placement(sprite: "intern", x: 0.70, y: 0.30, size: 76, animation: Self.bob.copy() as? SKAction, onFloor: true))
         }
+
+        // --- The boss: a wall monitor that watches harder as automation
+        // climbs — dozing screensaver, then an eye, then a giant grin.
+        let bossAnim: SKAction? = stage == .automated
+            ? .repeatForever(.sequence([
+                .scale(to: 1.06, duration: 0.9),
+                .scale(to: 1.0, duration: 0.9)
+            ]))
+            : nil
+        items.append(Placement(sprite: "boss_monitor_\(stage.rawValue)", x: 0.30, y: 0.82, size: 74, z: 0.5, animation: bossAnim))
 
         // --- Fixtures: the ficus is one pot whose state follows events.
         let ficus = active.contains("plant_funeral") ? "ficus_wilted"
